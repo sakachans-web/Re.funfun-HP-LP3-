@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Re.funfun | り.ふぁんふぁん</title>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600;700&family=Noto+Sans+JP:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--green:#4a6741;--green-light:#6b8f62;--green-pale:#e8efe6;--purple:#9b8aa0;--purple-light:#c4b5c9;--purple-pale:#f0eaf2;--beige:#f5f0e8;--cream:#faf7f2;--text:#3a3230;--text-light:#6b5e57;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Noto Sans JP',sans-serif;background:var(--cream);color:var(--text);line-height:1.8;}
+
+/* EDIT MODE */
+body.edit-mode [contenteditable]{outline:2px dashed var(--purple-light);border-radius:4px;cursor:text;min-height:1em;}
+body.edit-mode [contenteditable]:hover{outline-color:var(--purple);background:rgba(155,138,160,0.04);}
+body.edit-mode [contenteditable]:focus{outline:2px solid var(--purple);}
+body.edit-mode .editable-img{outline:2px dashed var(--purple-light);cursor:pointer;}
+body.edit-mode .editable-img:hover{outline-color:var(--purple);}
+.edit-badge{display:none;position:fixed;top:12px;left:50%;transform:translateX(-50%);background:var(--purple);color:white;padding:6px 18px;border-radius:20px;font-size:12px;z-index:9999;box-shadow:0 4px 16px rgba(155,138,160,0.4);}
+body.edit-mode .edit-badge{display:block;}
+.sec-wrap{position:relative;transition:opacity .15s;}
+.sec-wrap.dragging{opacity:0.4;}
+.sec-wrap.drag-over-top{border-top:3px solid var(--purple);}
+.sec-wrap.drag-over-bottom{border-bottom:3px solid var(--purple);}
+.sec-controls{display:none;position:absolute;top:10px;right:12px;z-index:100;align-items:center;gap:6px;}
+body.edit-mode .sec-controls{display:flex;}
+.sec-btn{background:white;border:1.5px solid var(--purple-light);border-radius:20px;padding:4px 10px;font-size:11px;cursor:pointer;color:var(--purple);font-family:'Noto Sans JP',sans-serif;box-shadow:0 2px 8px rgba(0,0,0,0.08);white-space:nowrap;}
+.sec-btn.is-hidden{background:var(--purple);color:white;border-color:var(--purple);}
+.drag-handle{font-size:15px;color:var(--purple-light);cursor:grab;padding:2px 6px;user-select:none;}
+.drag-handle:hover{color:var(--purple);}
+.sec-wrap.hidden-sec>*:not(.sec-controls){opacity:0.25;pointer-events:none;}
+body:not(.edit-mode) .sec-wrap.hidden-sec{display:none;}
+
+/* HEADER NAV */
+.site-header{background:var(--green);position:sticky;top:0;z-index:200;}
+.header-inner{max-width:900px;margin:0 auto;padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:56px;}
+.header-logo{font-family:'Shippori Mincho',serif;color:white;font-size:16px;letter-spacing:2px;text-decoration:none;}
+.header-nav{display:flex;gap:24px;}
+.header-nav a{color:rgba(255,255,255,0.85);font-size:13px;text-decoration:none;letter-spacing:1px;transition:color .2s;}
+.header-nav a:hover{color:white;}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px;}
+.hamburger span{width:22px;height:2px;background:white;border-radius:2px;transition:.3s;}
+.sp-nav{display:none;background:var(--green);padding:16px 20px;flex-direction:column;gap:0;}
+.sp-nav a{color:rgba(255,255,255,0.85);font-size:14px;text-decoration:none;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.1);}
+.sp-nav a:last-child{border-bottom:none;}
+
+/* HERO */
+.hero{background:linear-gradient(160deg,var(--green-pale) 0%,var(--beige) 60%,var(--purple-pale) 100%);padding:80px 20px 100px;text-align:center;position:relative;overflow:hidden;}
+.hero-eyebrow{display:inline-block;background:white;border:1.5px solid var(--green-pale);color:var(--green);font-size:11px;letter-spacing:3px;padding:6px 20px;border-radius:20px;margin-bottom:24px;box-shadow:0 2px 12px rgba(74,103,65,0.1);}
+.hero-catch{font-family:'Shippori Mincho',serif;font-size:clamp(26px,5vw,44px);font-weight:700;color:var(--green);line-height:1.45;margin-bottom:12px;}
+.hero-catch-mid{font-family:'Shippori Mincho',serif;font-size:clamp(16px,3vw,22px);color:var(--green);margin-bottom:20px;font-weight:600;letter-spacing:1px;}
+.hero-sub{font-size:14px;color:var(--text-light);margin-bottom:40px;line-height:2;max-width:460px;margin-left:auto;margin-right:auto;}
+.hero-img-wrap{width:100%;max-width:540px;height:320px;background:linear-gradient(135deg,var(--green-pale),var(--purple-pale));border-radius:20px;margin:0 auto 40px;display:flex;align-items:center;justify-content:center;color:var(--text-light);font-size:13px;border:2px dashed var(--purple-light);overflow:hidden;box-shadow:0 8px 32px rgba(74,103,65,0.1);}
+.hero-img-wrap img{width:100%;height:100%;object-fit:cover;}
+.btn-line{display:inline-block;background:#06C755;color:white;padding:16px 40px;border-radius:50px;font-size:15px;font-weight:500;text-decoration:none;letter-spacing:1px;box-shadow:0 4px 20px rgba(6,199,85,0.3);transition:transform .2s;}
+.btn-line:hover{transform:translateY(-2px);}
+
+/* SECTION COMMON */
+.section{padding:70px 20px;max-width:900px;margin:0 auto;}
+.section-title{font-family:'Shippori Mincho',serif;font-size:clamp(22px,4vw,32px);color:var(--green);text-align:center;margin-bottom:16px;}
+.divider{width:40px;height:2px;background:linear-gradient(to right,var(--green),var(--purple));margin:0 auto 48px;border-radius:2px;}
+
+/* SERVICE CARDS */
+.services-bg{background:var(--green-pale);padding:70px 20px;}
+.service-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px;max-width:900px;margin:0 auto;}
+.service-card{background:white;border-radius:20px;overflow:hidden;box-shadow:0 4px 24px rgba(74,103,65,0.08);transition:transform .2s,box-shadow .2s;}
+.service-card:hover{transform:translateY(-4px);box-shadow:0 8px 32px rgba(74,103,65,0.14);}
+.service-card-img{width:100%;height:180px;background:linear-gradient(135deg,var(--green-pale),var(--purple-pale));display:flex;align-items:center;justify-content:center;font-size:48px;position:relative;overflow:hidden;}
+.service-card-img img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;}
+.service-card-img .img-placeholder{position:relative;z-index:1;}
+.service-card-body{padding:24px;}
+.service-card-tag{display:inline-block;background:var(--green-pale);color:var(--green);font-size:11px;padding:3px 10px;border-radius:10px;margin-bottom:10px;font-weight:500;}
+.service-card-title{font-family:'Shippori Mincho',serif;font-size:20px;color:var(--green);margin-bottom:8px;line-height:1.4;}
+.service-card-desc{font-size:13px;color:var(--text-light);line-height:1.8;margin-bottom:20px;}
+.service-card-link{display:inline-flex;align-items:center;gap:6px;background:var(--green);color:white;padding:10px 22px;border-radius:30px;font-size:13px;font-weight:500;text-decoration:none;transition:background .2s;}
+.service-card-link:hover{background:var(--green-light);}
+/* 編集モード時のリンクURL変更 */
+.service-link-edit{display:none;margin-top:10px;}
+body.edit-mode .service-link-edit{display:flex;align-items:center;gap:8px;}
+.service-link-edit label{font-size:11px;color:var(--text-light);white-space:nowrap;}
+.service-link-edit input{flex:1;padding:6px 10px;border:1.5px solid #e0e0e0;border-radius:6px;font-size:12px;font-family:'Noto Sans JP',sans-serif;}
+
+/* PROFILE */
+.profile-outer{background:white;border-radius:24px;padding:36px;box-shadow:0 4px 24px rgba(74,103,65,0.08);border:1px solid var(--green-pale);}
+.profile-inner{display:flex;gap:32px;align-items:flex-start;flex-wrap:wrap;}
+.profile-img-wrap{width:140px;height:140px;border-radius:50%;background:linear-gradient(135deg,var(--green-pale),var(--purple-pale));border:4px solid white;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--text-light);text-align:center;overflow:hidden;box-shadow:0 4px 16px rgba(74,103,65,0.15);}
+.profile-img-wrap img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+.profile-text h3{font-family:'Shippori Mincho',serif;font-size:26px;color:var(--green);margin-bottom:4px;}
+.profile-text .prof-label{font-size:12px;color:var(--purple);margin-bottom:16px;letter-spacing:1px;}
+.profile-text p{font-size:14px;color:var(--text-light);line-height:2;}
+.profile-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;}
+.profile-tag{background:var(--green-pale);color:var(--green);font-size:11px;padding:4px 12px;border-radius:20px;font-weight:500;}
+
+/* INSTAGRAM */
+.instagram-bg{background:var(--purple-pale);padding:70px 20px;text-align:center;}
+.instagram-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:600px;margin:0 auto 28px;}
+.instagram-placeholder{aspect-ratio:1;background:linear-gradient(135deg,var(--purple-pale),var(--beige));border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:28px;border:1px solid var(--purple-light);}
+.btn-insta{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);color:white;padding:14px 32px;border-radius:50px;font-size:14px;font-weight:500;text-decoration:none;box-shadow:0 4px 20px rgba(220,39,67,0.3);transition:transform .2s;}
+.btn-insta:hover{transform:translateY(-2px);}
+
+/* CONTACT FORM */
+.contact-bg{background:var(--cream);padding:70px 20px;}
+.form-box{background:white;border-radius:20px;padding:40px;box-shadow:0 4px 24px rgba(74,103,65,0.08);max-width:600px;margin:0 auto;}
+.form-group{margin-bottom:20px;}
+.form-group label{display:block;font-size:13px;color:var(--text-light);margin-bottom:6px;font-weight:500;}
+.form-group label span{color:#dc2626;margin-left:4px;}
+.form-group input,.form-group textarea,.form-group select{width:100%;padding:12px 16px;border:1.5px solid #e0e0e0;border-radius:10px;font-family:'Noto Sans JP',sans-serif;font-size:14px;color:var(--text);transition:border-color .2s;background:white;}
+.form-group input:focus,.form-group textarea:focus,.form-group select:focus{outline:none;border-color:var(--green);}
+.form-group textarea{min-height:120px;resize:vertical;}
+.form-submit{width:100%;background:var(--green);color:white;border:none;padding:16px;border-radius:10px;font-size:15px;font-weight:500;cursor:pointer;font-family:'Noto Sans JP',sans-serif;transition:background .2s;margin-top:8px;}
+.form-submit:hover{background:var(--green-light);}
+.form-note{font-size:12px;color:var(--text-light);text-align:center;margin-top:12px;line-height:1.8;}
+
+/* CTA */
+.cta-bg{background:linear-gradient(160deg,var(--beige),var(--purple-pale));padding:70px 20px;text-align:center;}
+.btn-group{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-top:24px;}
+
+/* FOOTER */
+footer{background:var(--green);color:rgba(255,255,255,0.7);text-align:center;padding:32px 20px;font-size:12px;}
+footer .footer-logo{font-family:'Shippori Mincho',serif;font-size:18px;color:white;margin-bottom:8px;letter-spacing:2px;}
+footer .footer-links{display:flex;gap:20px;justify-content:center;margin-bottom:12px;flex-wrap:wrap;}
+footer .footer-links a{color:rgba(255,255,255,0.6);text-decoration:none;font-size:12px;}
+footer .footer-links a:hover{color:white;}
+
+/* ADMIN */
+#admin-trigger{position:fixed;bottom:24px;right:24px;background:var(--purple);color:white;border:none;padding:12px 20px;border-radius:50px;font-size:13px;cursor:pointer;font-family:'Noto Sans JP',sans-serif;box-shadow:0 4px 16px rgba(155,138,160,0.4);z-index:999;}
+.edit-toolbar{display:none;position:fixed;bottom:24px;right:24px;background:white;border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,0.15);padding:14px 18px;z-index:999;align-items:center;gap:10px;}
+.edit-toolbar.show{display:flex;}
+.toolbar-btn{padding:8px 16px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-family:'Noto Sans JP',sans-serif;font-weight:500;}
+.toolbar-save{background:var(--green);color:white;}
+.toolbar-logout{background:#f0f0f0;color:var(--text);}
+#login-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:2000;align-items:center;justify-content:center;}
+#login-box{background:white;border-radius:16px;padding:36px;width:300px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.3);}
+#login-box h3{font-family:'Shippori Mincho',serif;color:var(--green);font-size:20px;margin-bottom:6px;}
+#login-box p.sub{font-size:12px;color:var(--text-light);margin-bottom:20px;}
+#login-box input{width:100%;padding:12px 16px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:14px;margin-bottom:14px;text-align:center;letter-spacing:3px;}
+#login-box input:focus{outline:none;border-color:var(--green);}
+#login-box button{width:100%;background:var(--green);color:white;border:none;padding:13px;border-radius:8px;font-size:14px;cursor:pointer;font-family:'Noto Sans JP',sans-serif;}
+#login-error{color:#dc2626;font-size:12px;margin-top:8px;display:none;}
+.img-upload-input{display:none;}
+#toast{position:fixed;bottom:80px;right:24px;background:var(--green);color:white;padding:12px 20px;border-radius:8px;font-size:13px;opacity:0;transition:opacity .3s;z-index:9999;}
+
+@media(max-width:768px){
+  .header-nav{display:none;}
+  .hamburger{display:flex;}
+  .sp-nav.open{display:flex;}
+  .service-grid{grid-template-columns:1fr;}
+  .profile-inner{flex-direction:column;align-items:center;text-align:center;}
+  .profile-tags{justify-content:center;}
+  .instagram-grid{grid-template-columns:repeat(3,1fr);}
+  .btn-group{flex-direction:column;align-items:center;}
+}
+</style>
+</head>
+<body>
+
+<div class="edit-badge">✏️ 編集モード中 — ☰ でセクション並び替え可能</div>
+
+<!-- HEADER -->
+<header class="site-header">
+  <div class="header-inner">
+    <a href="#" class="header-logo">Re.funfun</a>
+    <nav class="header-nav">
+      <a href="#services">講座一覧</a>
+      <a href="#profile">プロフィール</a>
+      <a href="#instagram">Instagram</a>
+      <a href="#contact">お問い合わせ</a>
+    </nav>
+    <div class="hamburger" onclick="toggleNav()" id="hamburger">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+  <nav class="sp-nav" id="sp-nav">
+    <a href="#services" onclick="toggleNav()">講座一覧</a>
+    <a href="#profile" onclick="toggleNav()">プロフィール</a>
+    <a href="#instagram" onclick="toggleNav()">Instagram</a>
+    <a href="#contact" onclick="toggleNav()">お問い合わせ</a>
+  </nav>
+</header>
+
+<!-- HERO -->
+<div class="sec-wrap" data-sec="hero">
+  <div class="sec-controls"><span class="drag-handle">☰</span><button class="sec-btn" onclick="toggleSec(this)">👁 表示中</button></div>
+  <section class="hero">
+    <div class="hero-eyebrow" contenteditable="false">🌿 Re.funfun / り.ふぁんふぁん</div>
+    <h1 class="hero-catch" contenteditable="false">学んで終わり、じゃない。</h1>
+    <p class="hero-catch-mid" contenteditable="false">誰一人置いてきぼりにしない</p>
+    <p class="hero-sub" contenteditable="false">長崎県の小さな島から、全国へ。<br>60歳の今が、いちばん面白い。</p>
+    <div class="hero-img-wrap editable-img" id="hero-img-wrap" onclick="triggerImg('hero-img-input')">
+      <span id="hero-img-ph">📸 クリックして画像を追加</span>
+      <img id="hero-img" style="display:none;">
+    </div>
+    <input type="file" class="img-upload-input" id="hero-img-input" accept="image/*" onchange="setImg(this,'hero-img','hero-img-ph','hp_hero')">
+    <a href="#contact" class="btn-line">📲 お問い合わせはこちら</a>
+  </section>
+</div>
+
+<!-- SERVICES -->
+<div class="sec-wrap" id="services" data-sec="services">
+  <div class="sec-controls"><span class="drag-handle">☰</span><button class="sec-btn" onclick="toggleSec(this)">👁 表示中</button></div>
+  <section class="services-bg">
+    <div style="max-width:900px;margin:0 auto;">
+      <h2 class="section-title" contenteditable="false">講座・サービス一覧</h2>
+      <div class="divider"></div>
+      <div class="service-grid">
+
+        <!-- LP1 よもぎ蒸し -->
+        <div class="service-card">
+          <div class="service-card-img editable-img" id="s1-img-wrap" onclick="triggerImg('s1-img-input')">
+            <span class="img-placeholder" id="s1-img-ph">🌿</span>
+            <img id="s1-img" style="display:none;position:absolute;inset:0;width:100%;height:100%;object-fit:cover;">
+          </div>
+          <input type="file" class="img-upload-input" id="s1-img-input" accept="image/*" onchange="setImg(this,'s1-img','s1-img-ph','hp_s1')">
+          <div class="service-card-body">
+            <span class="service-card-tag" contenteditable="false">よもぎ蒸し</span>
+            <h3 class="service-card-title" contenteditable="false">よもぎ蒸し講座</h3>
+            <p class="service-card-desc" contenteditable="false">ゼロからスタートした還暦セラピスト講師が伝える、1日でしっかり身につく実践型講座。学んで終わりではなく、導入後のサポートまで丁寧に。</p>
+            <a href="yomogi_lp.html" class="service-card-link" id="s1-link">詳しく見る →</a>
+            <div class="service-link-edit">
+              <label>リンクURL：</label>
+              <input type="text" id="s1-link-input" value="yomogi_lp.html" onchange="document.getElementById('s1-link').href=this.value">
+            </div>
+          </div>
+        </div>
+
+        <!-- LP2 あたまほぐし -->
+        <div class="service-card">
+          <div class="service-card-img editable-img" id="s2-img-wrap" onclick="triggerImg('s2-img-input')">
+            <span class="img-placeholder" id="s2-img-ph">👐</span>
+            <img id="s2-img" style="display:none;position:absolute;inset:0;width:100%;height:100%;object-fit:cover;">
+          </div>
+          <input type="file" class="img-upload-input" id="s2-img-input" accept="image/*" onchange="setImg(this,'s2-img','s2-img-ph','hp_s2')">
+          <div class="service-card-body">
+            <span class="service-card-tag" contenteditable="false">あたまほぐし</span>
+            <h3 class="service-card-title" contenteditable="false">あたまほぐし講座</h3>
+            <p class="service-card-desc" contenteditable="false">やってみたい！がカタチになる。少人数制・出張対応・受講後フォローも充実。57歳で学び60歳でデビューした講師だからこそ伝えられること。</p>
+            <a href="atama_lp.html" class="service-card-link" id="s2-link">詳しく見る →</a>
+            <div class="service-link-edit">
+              <label>リンクURL：</label>
+              <input type="text" id="s2-link-input" value="atama_lp.html" onchange="document.getElementById('s2-link').href=this.value">
+            </div>
+          </div>
+        </div>
+
+        <!-- LP3 経理のがっこう -->
+        <div class="service-card">
+          <div class="service-card-img editable-img" id="s3-img-wrap" onclick="triggerImg('s3-img-input')">
+            <span class="img-placeholder" id="s3-img-ph">📊</span>
+            <img id="s3-img" style="display:none;position:absolute;inset:0;width:100%;height:100%;object-fit:cover;">
+          </div>
+          <input type="file" class="img-upload-input" id="s3-img-input" accept="image/*" onchange="setImg(this,'s3-img','s3-img-ph','hp_s3')">
+          <div class="service-card-body">
+            <span class="service-card-tag" contenteditable="false">経理・お金</span>
+            <h3 class="service-card-title" contenteditable="false">経理のがっこう</h3>
+            <p class="service-card-desc" contenteditable="false">できるかどうかではなく、必要かどうか。経理歴38年のサロンオーナーが、確定申告・節税・利益戦略までをやさしく教えます。</p>
+            <a href="keiri_lp.html" class="service-card-link" id="s3-link">詳しく見る →</a>
+            <div class="service-link-edit">
+              <label>リンクURL：</label>
+              <input type="text" id="s3-link-input" value="keiri_lp.html" onchange="document.getElementById('s3-link').href=this.value">
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- PROFILE -->
+<div class="sec-wrap" id="profile" data-sec="profile">
+  <div class="sec-controls"><span class="drag-handle">☰</span><button class="sec-btn" onclick="toggleSec(this)">👁 表示中</button></div>
+  <section class="section">
+    <h2 class="section-title" contenteditable="false">プロフィール</h2>
+    <div class="divider"></div>
+    <div class="profile-outer">
+      <div class="profile-inner">
+        <div class="profile-img-wrap editable-img" id="prof-img-wrap" onclick="triggerImg('prof-img-input')">
+          <span id="prof-img-ph">👩<br>写真</span>
+          <img id="prof-img" style="display:none;">
+        </div>
+        <input type="file" class="img-upload-input" id="prof-img-input" accept="image/*" onchange="setImg(this,'prof-img','prof-img-ph','hp_prof')">
+        <div class="profile-text">
+          <h3 contenteditable="false">尾崎 幸子</h3>
+          <p class="prof-label" contenteditable="false">おざきゆきこ / Re.funfun（り.ふぁんふぁん）</p>
+          <p contenteditable="false">長崎県の西の端、人口5,000人ほどの小さな島に暮らしています。昼間はフルタイムで経理事務員として働きながら、時間限定で自宅サロンを運営。60歳の今、「長崎が生んだ奇跡の60歳」とおかまママに命名していただきました（笑）。<br><br>学んで終わりではなく、そこからどう続けていくかまで大切にしています。導入後の運営・発信・続け方まで、一人ひとりに寄り添いながらサポートします。"誰一人置いてきぼりにしない"が、私の一番大切にしている言葉です。</p>
+          <div class="profile-tags">
+            <span class="profile-tag" contenteditable="false">経理歴38年</span>
+            <span class="profile-tag" contenteditable="false">サロンリピーター約90%</span>
+            <span class="profile-tag" contenteditable="false">長崎県西海市在住</span>
+            <span class="profile-tag" contenteditable="false">Instagram 認証済み</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- INSTAGRAM -->
+<div class="sec-wrap" id="instagram" data-sec="instagram">
+  <div class="sec-controls"><span class="drag-handle">☰</span><button class="sec-btn" onclick="toggleSec(this)">👁 表示中</button></div>
+  <section class="instagram-bg">
+    <h2 class="section-title" contenteditable="false">Instagram</h2>
+    <div class="divider"></div>
+    <p style="font-size:13px;color:var(--text-light);margin-bottom:28px;" contenteditable="false">@re_fun_fun ／ 認証バッジあり・約1,900人フォロワー</p>
+    <div class="instagram-grid">
+      <div class="instagram-placeholder">🌿</div>
+      <div class="instagram-placeholder">👐</div>
+      <div class="instagram-placeholder">📊</div>
+      <div class="instagram-placeholder">🌸</div>
+      <div class="instagram-placeholder">✨</div>
+      <div class="instagram-placeholder">💚</div>
+    </div>
+    <a href="https://www.instagram.com/re_fun_fun/" target="_blank" class="btn-insta">📸 Instagramをフォローする</a>
+    <p style="font-size:12px;color:var(--text-light);margin-top:14px;" contenteditable="false">※ WordPress実装時はInstagram埋め込みウィジェットに差し替えます</p>
+  </section>
+</div>
+
+<!-- CONTACT -->
+<div class="sec-wrap" id="contact" data-sec="contact">
+  <div class="sec-controls"><span class="drag-handle">☰</span><button class="sec-btn" onclick="toggleSec(this)">👁 表示中</button></div>
+  <section class="contact-bg">
+    <div style="max-width:900px;margin:0 auto;">
+      <h2 class="section-title" contenteditable="false">お問い合わせ</h2>
+      <div class="divider"></div>
+      <div class="form-box">
+        <div class="form-group">
+          <label>お名前<span>*</span></label>
+          <input type="text" placeholder="山田 花子">
+        </div>
+        <div class="form-group">
+          <label>メールアドレス<span>*</span></label>
+          <input type="email" placeholder="example@email.com">
+        </div>
+        <div class="form-group">
+          <label>電話番号</label>
+          <input type="tel" placeholder="090-0000-0000">
+        </div>
+        <div class="form-group">
+          <label>希望の講座<span>*</span></label>
+          <select>
+            <option value="">選択してください</option>
+            <option>よもぎ蒸し講座</option>
+            <option>あたまほぐし講座</option>
+            <option>経理のがっこう</option>
+            <option>その他</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>希望日時・受講スタイル</label>
+          <input type="text" placeholder="例：土日希望・1日完結">
+        </div>
+        <div class="form-group">
+          <label>お問い合わせ内容<span>*</span></label>
+          <textarea placeholder="ご質問・ご相談などお気軽にどうぞ"></textarea>
+        </div>
+        <button class="form-submit" onclick="submitForm()">送信する</button>
+        <p class="form-note" contenteditable="false">※ WordPress実装時はContact Form 7等に差し替えます<br>Instagram DM または 公式LINEからもお気軽にどうぞ</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- CTA -->
+<div class="sec-wrap" data-sec="cta">
+  <div class="sec-controls"><span class="drag-handle">☰</span><button class="sec-btn" onclick="toggleSec(this)">👁 表示中</button></div>
+  <section class="cta-bg">
+    <h2 class="section-title" contenteditable="false">まずはお気軽に</h2>
+    <div class="divider"></div>
+    <p style="font-size:14px;color:var(--text-light);" contenteditable="false">Instagram DM または 公式LINEからもお問い合わせいただけます</p>
+    <div class="btn-group">
+      <a href="https://lin.ee/Op7jMlR" class="btn-line">📲 公式LINEから連絡する</a>
+      <a href="https://www.instagram.com/re_fun_fun/" class="btn-insta">📸 Instagram DMから連絡する</a>
+    </div>
+  </section>
+</div>
+
+<footer>
+  <div class="footer-logo">Re.funfun</div>
+  <div class="footer-links">
+    <a href="#services">講座一覧</a>
+    <a href="#profile">プロフィール</a>
+    <a href="#instagram">Instagram</a>
+    <a href="#contact">お問い合わせ</a>
+  </div>
+  <p contenteditable="false">© Re.funfun / り.ふぁんふぁん　長崎県西海市大島町</p>
+</footer>
+
+<button id="admin-trigger" onclick="showLogin()">🔐 管理者ログイン</button>
+<div class="edit-toolbar" id="edit-toolbar">
+  <span style="font-size:12px;color:#999;">✏️ 編集中</span>
+  <button class="toolbar-btn toolbar-save" onclick="saveAll()">💾 保存</button>
+  <button class="toolbar-btn toolbar-logout" onclick="exitEdit()">終了</button>
+</div>
+<div id="login-overlay" style="display:none;align-items:center;justify-content:center;">
+  <div id="login-box">
+    <h3>管理者ログイン</h3><p class="sub">パスワードを入力してください</p>
+    <input type="password" id="login-pw" placeholder="••••••" onkeydown="if(event.key==='Enter')doLogin()">
+    <button onclick="doLogin()">ログイン</button><p id="login-error">パスワードが違います</p>
+  </div>
+</div>
+<div id="toast">✅ 保存しました！</div>
+
+<script>
+const PASS='refunfun2026',KEY='hp';
+let isEdit=false,dragSrc=null;
+
+function toggleNav(){
+  const nav=document.getElementById('sp-nav');
+  nav.classList.toggle('open');
+}
+
+function showLogin(){document.getElementById('login-overlay').style.display='flex';setTimeout(()=>document.getElementById('login-pw').focus(),100);}
+function doLogin(){if(document.getElementById('login-pw').value===PASS){document.getElementById('login-overlay').style.display='none';enterEdit();}else{document.getElementById('login-error').style.display='block';}}
+
+function enterEdit(){
+  isEdit=true;document.body.classList.add('edit-mode');
+  document.getElementById('admin-trigger').style.display='none';
+  document.getElementById('edit-toolbar').classList.add('show');
+  document.querySelectorAll('[contenteditable]').forEach(el=>el.contentEditable='true');
+  initDrag();loadSaved();
+}
+function exitEdit(){
+  isEdit=false;document.body.classList.remove('edit-mode');
+  document.getElementById('admin-trigger').style.display='block';
+  document.getElementById('edit-toolbar').classList.remove('show');
+  document.querySelectorAll('[contenteditable]').forEach(el=>el.contentEditable='false');
+  destroyDrag();
+}
+function toggleSec(btn){const w=btn.closest('.sec-wrap');const h=w.classList.toggle('hidden-sec');btn.textContent=h?'🚫 非表示中':'👁 表示中';btn.classList.toggle('is-hidden',h);}
+function triggerImg(id){if(isEdit)document.getElementById(id).click();}
+function setImg(input,imgId,phId,sk){
+  const f=input.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=e=>{
+    const img=document.getElementById(imgId);
+    img.src=e.target.result;img.style.display='block';
+    const ph=document.getElementById(phId);if(ph)ph.style.display='none';
+    try{localStorage.setItem(sk,e.target.result);}catch(e){}
+  };r.readAsDataURL(f);
+}
+
+function initDrag(){document.querySelectorAll('.sec-wrap').forEach(wrap=>{const handle=wrap.querySelector('.drag-handle');if(!handle)return;handle.onmousedown=()=>{wrap.draggable=true;};wrap.ondragstart=e=>{dragSrc=wrap;wrap.classList.add('dragging');e.dataTransfer.effectAllowed='move';};wrap.ondragover=e=>{e.preventDefault();if(wrap===dragSrc)return;const r=wrap.getBoundingClientRect();const mid=r.top+r.height/2;wrap.classList.remove('drag-over-top','drag-over-bottom');if(e.clientY<mid)wrap.classList.add('drag-over-top');else wrap.classList.add('drag-over-bottom');};wrap.ondragleave=()=>wrap.classList.remove('drag-over-top','drag-over-bottom');wrap.ondrop=e=>{e.stopPropagation();if(wrap===dragSrc)return;const r=wrap.getBoundingClientRect();const mid=r.top+r.height/2;if(e.clientY<mid)wrap.parentNode.insertBefore(dragSrc,wrap);else wrap.parentNode.insertBefore(dragSrc,wrap.nextSibling);wrap.classList.remove('drag-over-top','drag-over-bottom');};wrap.ondragend=()=>{wrap.draggable=false;wrap.classList.remove('dragging');document.querySelectorAll('.sec-wrap').forEach(w=>w.classList.remove('drag-over-top','drag-over-bottom'));dragSrc=null;};});}
+function destroyDrag(){document.querySelectorAll('.sec-wrap').forEach(w=>{w.draggable=false;w.ondragstart=w.ondragover=w.ondragleave=w.ondrop=w.ondragend=null;});}
+
+function submitForm(){
+  alert('WordPress実装時にお問い合わせフォームが機能します。\n現在はInstagram DM または 公式LINEをご利用ください。');
+}
+
+function saveAll(){
+  const order=[...document.querySelectorAll('.sec-wrap')].map(w=>w.dataset.sec);
+  const data={};document.querySelectorAll('[contenteditable]').forEach((el,i)=>{data['ce'+i]=el.innerHTML;});
+  const vis={};document.querySelectorAll('.sec-wrap').forEach(w=>{vis[w.dataset.sec]=w.classList.contains('hidden-sec');});
+  // LPリンクURL保存
+  const links={s1:document.getElementById('s1-link-input')?.value,s2:document.getElementById('s2-link-input')?.value,s3:document.getElementById('s3-link-input')?.value};
+  localStorage.setItem(KEY+'_order',JSON.stringify(order));
+  localStorage.setItem(KEY+'_content',JSON.stringify(data));
+  localStorage.setItem(KEY+'_vis',JSON.stringify(vis));
+  localStorage.setItem(KEY+'_links',JSON.stringify(links));
+  showToast();
+}
+
+function loadSaved(){
+  const oraw=localStorage.getItem(KEY+'_order');if(oraw){const order=JSON.parse(oraw);const footer=document.querySelector('footer');order.forEach(sec=>{const el=document.querySelector(`.sec-wrap[data-sec="${sec}"]`);if(el)footer.parentNode.insertBefore(el,footer);});}
+  const raw=localStorage.getItem(KEY+'_content');if(raw){const d=JSON.parse(raw);document.querySelectorAll('[contenteditable]').forEach((el,i)=>{if(d['ce'+i]!==undefined)el.innerHTML=d['ce'+i];});}
+  const visraw=localStorage.getItem(KEY+'_vis');if(visraw){const vis=JSON.parse(visraw);document.querySelectorAll('.sec-wrap').forEach(w=>{if(vis[w.dataset.sec]){w.classList.add('hidden-sec');const btn=w.querySelector('.sec-btn');if(btn){btn.textContent='🚫 非表示中';btn.classList.add('is-hidden');}}});}
+  const lraw=localStorage.getItem(KEY+'_links');if(lraw){const links=JSON.parse(lraw);if(links.s1){document.getElementById('s1-link').href=links.s1;if(document.getElementById('s1-link-input'))document.getElementById('s1-link-input').value=links.s1;}if(links.s2){document.getElementById('s2-link').href=links.s2;if(document.getElementById('s2-link-input'))document.getElementById('s2-link-input').value=links.s2;}if(links.s3){document.getElementById('s3-link').href=links.s3;if(document.getElementById('s3-link-input'))document.getElementById('s3-link-input').value=links.s3;}}
+  // 画像復元
+  [{sk:'hp_hero',img:'hero-img',ph:'hero-img-ph'},{sk:'hp_prof',img:'prof-img',ph:'prof-img-ph'},{sk:'hp_s1',img:'s1-img',ph:'s1-img-ph'},{sk:'hp_s2',img:'s2-img',ph:'s2-img-ph'},{sk:'hp_s3',img:'s3-img',ph:'s3-img-ph'}].forEach(({sk,img,ph})=>{const src=localStorage.getItem(sk);if(!src)return;const i=document.getElementById(img);i.src=src;i.style.display='block';const p=document.getElementById(ph);if(p)p.style.display='none';});
+}
+function showToast(){const t=document.getElementById('toast');t.style.opacity='1';setTimeout(()=>t.style.opacity='0',2500);}
+
+window.onload=()=>{
+  const visraw=localStorage.getItem(KEY+'_vis');if(visraw){const vis=JSON.parse(visraw);document.querySelectorAll('.sec-wrap').forEach(w=>{if(vis[w.dataset.sec])w.classList.add('hidden-sec');});}
+  const raw=localStorage.getItem(KEY+'_content');if(raw){const d=JSON.parse(raw);document.querySelectorAll('[contenteditable]').forEach((el,i)=>{if(d['ce'+i]!==undefined)el.innerHTML=d['ce'+i];});}
+  const lraw=localStorage.getItem(KEY+'_links');if(lraw){const links=JSON.parse(lraw);if(links.s1)document.getElementById('s1-link').href=links.s1;if(links.s2)document.getElementById('s2-link').href=links.s2;if(links.s3)document.getElementById('s3-link').href=links.s3;}
+  const oraw=localStorage.getItem(KEY+'_order');if(oraw){const order=JSON.parse(oraw);const footer=document.querySelector('footer');order.forEach(sec=>{const el=document.querySelector(`.sec-wrap[data-sec="${sec}"]`);if(el)footer.parentNode.insertBefore(el,footer);});}
+  [{sk:'hp_hero',img:'hero-img',ph:'hero-img-ph'},{sk:'hp_prof',img:'prof-img',ph:'prof-img-ph'},{sk:'hp_s1',img:'s1-img',ph:'s1-img-ph'},{sk:'hp_s2',img:'s2-img',ph:'s2-img-ph'},{sk:'hp_s3',img:'s3-img',ph:'s3-img-ph'}].forEach(({sk,img,ph})=>{const src=localStorage.getItem(sk);if(!src)return;const i=document.getElementById(img);i.src=src;i.style.display='block';const p=document.getElementById(ph);if(p)p.style.display='none';});
+};
+</script>
+</body>
+</html>

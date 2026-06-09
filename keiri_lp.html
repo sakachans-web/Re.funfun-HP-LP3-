@@ -16,11 +16,17 @@ body.edit-mode .editable-img{outline:2px dashed var(--purple-light);cursor:point
 body.edit-mode .editable-img:hover{outline-color:var(--purple);}
 .edit-badge{display:none;position:fixed;top:12px;left:50%;transform:translateX(-50%);background:var(--purple);color:white;padding:6px 18px;border-radius:20px;font-size:12px;z-index:9999;box-shadow:0 4px 16px rgba(155,138,160,0.4);}
 body.edit-mode .edit-badge{display:block;}
-.sec-wrap{position:relative;}
-.vis-toggle{display:none;position:absolute;top:10px;right:12px;z-index:100;background:white;border:1.5px solid var(--purple-light);border-radius:20px;padding:4px 12px;font-size:11px;cursor:pointer;color:var(--purple);font-family:'Noto Sans JP',sans-serif;box-shadow:0 2px 8px rgba(0,0,0,0.08);white-space:nowrap;}
-body.edit-mode .vis-toggle{display:block;}
-.sec-wrap.hidden-sec>*:not(.vis-toggle){opacity:0.25;pointer-events:none;}
-.vis-toggle.is-hidden{background:var(--purple);color:white;border-color:var(--purple);}
+.sec-wrap{position:relative;transition:opacity .15s;}
+.sec-wrap.dragging{opacity:0.4;}
+.sec-wrap.drag-over-top{border-top:3px solid var(--purple);}
+.sec-wrap.drag-over-bottom{border-bottom:3px solid var(--purple);}
+.sec-controls{display:none;position:absolute;top:10px;right:12px;z-index:100;align-items:center;gap:6px;}
+body.edit-mode .sec-controls{display:flex;}
+.sec-btn{background:white;border:1.5px solid var(--purple-light);border-radius:20px;padding:4px 10px;font-size:11px;cursor:pointer;color:var(--purple);font-family:'Noto Sans JP',sans-serif;box-shadow:0 2px 8px rgba(0,0,0,0.08);white-space:nowrap;}
+.sec-btn.is-hidden{background:var(--purple);color:white;border-color:var(--purple);}
+.drag-handle{font-size:15px;color:var(--purple-light);cursor:grab;padding:2px 6px;user-select:none;}
+.drag-handle:hover{color:var(--purple);}
+.sec-wrap.hidden-sec>*:not(.sec-controls){opacity:0.25;pointer-events:none;}
 body:not(.edit-mode) .sec-wrap.hidden-sec{display:none;}
 .site-header{background:var(--green);color:white;text-align:center;padding:12px 20px;font-family:'Shippori Mincho',serif;font-size:13px;letter-spacing:2px;}
 .section{padding:60px 20px;max-width:720px;margin:0 auto;}
@@ -28,13 +34,15 @@ body:not(.edit-mode) .sec-wrap.hidden-sec{display:none;}
 .divider{width:40px;height:2px;background:linear-gradient(to right,var(--accent),var(--purple));margin:0 auto 40px;border-radius:2px;}
 .hero{background:linear-gradient(160deg,var(--accent-pale) 0%,var(--beige) 60%,var(--green-pale) 100%);padding:60px 20px 80px;text-align:center;}
 .hero-label{display:inline-block;background:var(--accent);color:white;font-size:12px;letter-spacing:3px;padding:6px 20px;border-radius:20px;margin-bottom:24px;}
-.hero-catch{font-family:'Shippori Mincho',serif;font-size:clamp(22px,5vw,36px);font-weight:700;color:var(--accent);line-height:1.5;margin-bottom:16px;}
+.hero-catch{font-family:'Shippori Mincho',serif;font-size:clamp(22px,5vw,36px);font-weight:700;color:var(--accent);line-height:1.5;margin-bottom:12px;}
+.hero-catch-mid{font-family:'Shippori Mincho',serif;font-size:clamp(18px,3.5vw,26px);color:var(--accent);margin-bottom:16px;font-weight:600;letter-spacing:1px;}
 .hero-sub{font-size:14px;color:var(--text-light);margin-bottom:32px;line-height:1.9;}
 .hero-img-wrap{width:100%;max-width:500px;height:280px;background:linear-gradient(135deg,var(--accent-pale),var(--green-pale));border-radius:16px;margin:0 auto 32px;display:flex;align-items:center;justify-content:center;color:var(--text-light);font-size:13px;border:2px dashed var(--purple-light);overflow:hidden;}
 .hero-img-wrap img{width:100%;height:100%;object-fit:cover;}
 .btn-primary{display:inline-block;background:#06C755;color:white;padding:16px 40px;border-radius:50px;font-size:15px;font-weight:500;text-decoration:none;letter-spacing:1px;box-shadow:0 4px 20px rgba(6,199,85,0.3);transition:transform .2s;}
 .btn-primary:hover{transform:translateY(-2px);}
 .bg-accent-pale{background:var(--accent-pale);padding:60px 20px;}
+/* お悩み */
 .editable-list{list-style:none;max-width:600px;margin:0 auto;}
 .editable-list li{background:white;border-radius:12px;padding:14px 18px 14px 50px;margin-bottom:10px;position:relative;font-size:14px;box-shadow:0 2px 8px rgba(90,110,138,0.08);}
 .editable-list li::before{content:'✓';position:absolute;left:16px;top:14px;color:var(--accent);font-weight:700;font-size:16px;}
@@ -56,7 +64,8 @@ body.edit-mode .add-card-btn{display:block;}
 /* 説明会 */
 .setsumeikai-bg{background:linear-gradient(135deg,var(--accent) 0%,#3a5070 100%);padding:60px 20px;text-align:center;color:white;}
 .setsumeikai-bg .section-title{color:white;}
-.setsumeikai-title-wrap{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:16px;}
+.period-wrap{display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:16px;}
+.period-label{font-family:'Shippori Mincho',serif;font-size:clamp(20px,4vw,28px);color:white;}
 .period-num{font-family:'Shippori Mincho',serif;font-size:clamp(20px,4vw,28px);color:white;background:rgba(255,255,255,0.2);border-radius:8px;padding:2px 12px;}
 body.edit-mode .period-num{outline:2px dashed rgba(255,255,255,0.5);cursor:text;}
 .schedule-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px;max-width:700px;margin:0 auto 24px;}
@@ -97,7 +106,7 @@ body.edit-mode .voice-del{display:flex;}
 .btn-insta:hover{transform:translateY(-2px);}
 footer{background:var(--green);color:rgba(255,255,255,0.7);text-align:center;padding:24px 20px;font-size:12px;}
 #admin-trigger{position:fixed;bottom:24px;right:24px;background:var(--purple);color:white;border:none;padding:12px 20px;border-radius:50px;font-size:13px;cursor:pointer;font-family:'Noto Sans JP',sans-serif;box-shadow:0 4px 16px rgba(155,138,160,0.4);z-index:999;}
-.edit-toolbar{display:none;position:fixed;bottom:24px;right:24px;background:white;border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,0.15);padding:14px 18px;z-index:999;align-items:center;gap:10px;flex-wrap:wrap;max-width:320px;}
+.edit-toolbar{display:none;position:fixed;bottom:24px;right:24px;background:white;border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,0.15);padding:14px 18px;z-index:999;align-items:center;gap:10px;}
 .edit-toolbar.show{display:flex;}
 .toolbar-btn{padding:8px 16px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-family:'Noto Sans JP',sans-serif;font-weight:500;}
 .toolbar-save{background:var(--green);color:white;}
@@ -124,15 +133,16 @@ footer{background:var(--green);color:rgba(255,255,255,0.7);text-align:center;pad
 </style>
 </head>
 <body>
-<div class="edit-badge">✏️ 編集モード中</div>
+<div class="edit-badge">✏️ 編集モード中 — ☰ でセクション並び替え可能</div>
 <div class="site-header">Re.funfun ／ り.ふぁんふぁん</div>
 
 <div class="sec-wrap" data-sec="hero">
-  <button class="vis-toggle" onclick="toggleSec(this)">👁 表示中</button>
+  <div class="sec-controls"><span class="drag-handle">☰</span><button class="sec-btn" onclick="toggleSec(this)">👁 表示中</button></div>
   <section class="hero">
-    <div class="hero-label">経理のがっこう</div>
+    <div class="hero-label" contenteditable="false">経理のがっこう</div>
     <h1 class="hero-catch" contenteditable="false">できるかどうかではなく、<br>必要かどうか。</h1>
-    <p class="hero-sub" contenteditable="false">経理歴38年。サロンオーナーの数字の悩みに、ど真剣に向き合います。</p>
+    <p class="hero-catch-mid" contenteditable="false">経理歴38年。サロンオーナーの数字の悩みに、ど真剣に向き合います。</p>
+    <p class="hero-sub" contenteditable="false">小さな島から、全国のサロンオーナーへ。</p>
     <div class="hero-img-wrap editable-img" id="hero-img-wrap" onclick="triggerImg('hero-img-input')">
       <span id="hero-img-ph">📸 クリックして画像を追加</span><img id="hero-img" style="display:none;">
     </div>
@@ -142,17 +152,17 @@ footer{background:var(--green);color:rgba(255,255,255,0.7);text-align:center;pad
 </div>
 
 <div class="sec-wrap" data-sec="worries">
-  <button class="vis-toggle" onclick="toggleSec(this)">👁 表示中</button>
+  <div class="sec-controls"><span class="drag-handle">☰</span><button class="sec-btn" onclick="toggleSec(this)">👁 表示中</button></div>
   <section class="bg-accent-pale">
     <div class="section">
       <h2 class="section-title" contenteditable="false">こんなお悩みありませんか？</h2>
       <div class="divider"></div>
       <ul class="editable-list" id="worries-list">
-        <li>確定申告が毎年怖い・よくわからない<button class="del-item" onclick="delItem(this)">✕</button></li>
-        <li>会計ソフトを入れたけど使いこなせていない<button class="del-item" onclick="delItem(this)">✕</button></li>
-        <li>経費や節税のことを誰にも聞けない<button class="del-item" onclick="delItem(this)">✕</button></li>
-        <li>売上は上がってるのに手元にお金が残らない<button class="del-item" onclick="delItem(this)">✕</button></li>
-        <li>個人事業主として数字をきちんと管理したい<button class="del-item" onclick="delItem(this)">✕</button></li>
+        <li contenteditable="false">確定申告が毎年怖い・よくわからない<button class="del-item" onclick="delItem(this)">✕</button></li>
+        <li contenteditable="false">会計ソフトを入れたけど使いこなせていない<button class="del-item" onclick="delItem(this)">✕</button></li>
+        <li contenteditable="false">経費や節税のことを誰にも聞けない<button class="del-item" onclick="delItem(this)">✕</button></li>
+        <li contenteditable="false">売上は上がってるのに手元にお金が残らない<button class="del-item" onclick="delItem(this)">✕</button></li>
+        <li contenteditable="false">個人事業主として数字をきちんと管理したい<button class="del-item" onclick="delItem(this)">✕</button></li>
       </ul>
       <button class="add-item-btn" onclick="addItem('worries-list')">＋ 項目を追加</button>
     </div>
@@ -160,7 +170,7 @@ footer{background:var(--green);color:rgba(255,255,255,0.7);text-align:center;pad
 </div>
 
 <div class="sec-wrap" data-sec="curriculum">
-  <button class="vis-toggle" onclick="toggleSec(this)">👁 表示中</button>
+  <div class="sec-controls"><span class="drag-handle">☰</span><button class="sec-btn" onclick="toggleSec(this)">👁 表示中</button></div>
   <section class="section">
     <h2 class="section-title" contenteditable="false">カリキュラム</h2>
     <div class="divider"></div>
@@ -175,12 +185,12 @@ footer{background:var(--green);color:rgba(255,255,255,0.7);text-align:center;pad
 </div>
 
 <div class="sec-wrap" data-sec="setsumeikai">
-  <button class="vis-toggle" onclick="toggleSec(this)">👁 表示中</button>
+  <div class="sec-controls"><span class="drag-handle">☰</span><button class="sec-btn" onclick="toggleSec(this)">👁 表示中</button></div>
   <section class="setsumeikai-bg">
-    <div class="setsumeikai-title-wrap">
-      <span style="font-family:'Shippori Mincho',serif;font-size:clamp(20px,4vw,28px);color:white;">第</span>
+    <div class="period-wrap">
+      <span class="period-label">第</span>
       <span class="period-num" contenteditable="false">4</span>
-      <span style="font-family:'Shippori Mincho',serif;font-size:clamp(20px,4vw,28px);color:white;">期 無料説明会</span>
+      <span class="period-label">期 無料説明会</span>
     </div>
     <div class="divider" style="background:rgba(255,255,255,0.4);"></div>
     <div class="schedule-grid" id="schedule-grid">
@@ -197,9 +207,9 @@ footer{background:var(--green);color:rgba(255,255,255,0.7);text-align:center;pad
 </div>
 
 <div class="sec-wrap" data-sec="price">
-  <button class="vis-toggle" onclick="toggleSec(this)">👁 表示中</button>
+  <div class="sec-controls"><span class="drag-handle">☰</span><button class="sec-btn" onclick="toggleSec(this)">👁 表示中</button></div>
   <section class="price-bg">
-    <h2 class="section-title">受講料</h2>
+    <h2 class="section-title" contenteditable="false">受講料</h2>
     <div class="divider" style="background:rgba(255,255,255,0.4);"></div>
     <div class="price-box">
       <div class="price-num">¥<span contenteditable="false">－－－</span>円</div>
@@ -210,7 +220,7 @@ footer{background:var(--green);color:rgba(255,255,255,0.7);text-align:center;pad
 </div>
 
 <div class="sec-wrap" data-sec="overview">
-  <button class="vis-toggle" onclick="toggleSec(this)">👁 表示中</button>
+  <div class="sec-controls"><span class="drag-handle">☰</span><button class="sec-btn" onclick="toggleSec(this)">👁 表示中</button></div>
   <section class="section">
     <h2 class="section-title" contenteditable="false">開催概要</h2>
     <div class="divider"></div>
@@ -224,7 +234,7 @@ footer{background:var(--green);color:rgba(255,255,255,0.7);text-align:center;pad
 </div>
 
 <div class="sec-wrap" data-sec="voice">
-  <button class="vis-toggle" onclick="toggleSec(this)">👁 表示中</button>
+  <div class="sec-controls"><span class="drag-handle">☰</span><button class="sec-btn" onclick="toggleSec(this)">👁 表示中</button></div>
   <section class="bg-purple-pale">
     <div style="max-width:720px;margin:0 auto;padding:60px 0;">
       <h2 class="section-title" contenteditable="false">受講生の声</h2>
@@ -237,7 +247,7 @@ footer{background:var(--green);color:rgba(255,255,255,0.7);text-align:center;pad
 </div>
 
 <div class="sec-wrap" data-sec="profile">
-  <button class="vis-toggle" onclick="toggleSec(this)">👁 表示中</button>
+  <div class="sec-controls"><span class="drag-handle">☰</span><button class="sec-btn" onclick="toggleSec(this)">👁 表示中</button></div>
   <section class="section">
     <h2 class="section-title" contenteditable="false">講師プロフィール</h2>
     <div class="divider"></div>
@@ -247,7 +257,8 @@ footer{background:var(--green);color:rgba(255,255,255,0.7);text-align:center;pad
       </div>
       <input type="file" class="img-upload-input" id="prof-img-input" accept="image/*" onchange="setImg(this,'prof-img','prof-img-ph','img3_prof')">
       <div class="profile-text">
-        <h3>尾崎 幸子</h3><p class="prof-label">おざきゆきこ / Re.funfun　経理歴38年</p>
+        <h3 contenteditable="false">尾崎 幸子</h3>
+        <p class="prof-label" contenteditable="false">おざきゆきこ / Re.funfun　経理歴38年</p>
         <p contenteditable="false">昼間はフルタイムで経理事務員として勤務。経理歴38年のリアルな現場経験をもとに、個人事業主・サロンオーナーが自分の数字を自分で管理できるよう、わかりやすく・丁寧に教えます。「できるかどうかではなく、必要かどうか」。本気で整えたいなら、私に任せてください。</p>
       </div>
     </div>
@@ -255,7 +266,7 @@ footer{background:var(--green);color:rgba(255,255,255,0.7);text-align:center;pad
 </div>
 
 <div class="sec-wrap" data-sec="closing">
-  <button class="vis-toggle" onclick="toggleSec(this)">👁 表示中</button>
+  <div class="sec-controls"><span class="drag-handle">☰</span><button class="sec-btn" onclick="toggleSec(this)">👁 表示中</button></div>
   <section class="section">
     <div class="closing-box"><p contenteditable="false">「本気で整えたいなら、私に任せてください。」</p></div>
     <div style="text-align:center;"><a href="https://lin.ee/Op7jMlR" class="btn-primary">📲 無料説明会に申し込む</a></div>
@@ -263,7 +274,7 @@ footer{background:var(--green);color:rgba(255,255,255,0.7);text-align:center;pad
 </div>
 
 <div class="sec-wrap" data-sec="cta">
-  <button class="vis-toggle" onclick="toggleSec(this)">👁 表示中</button>
+  <div class="sec-controls"><span class="drag-handle">☰</span><button class="sec-btn" onclick="toggleSec(this)">👁 表示中</button></div>
   <section class="cta-bg">
     <h2 class="section-title" contenteditable="false">まずはお気軽にお問い合わせください</h2>
     <div class="divider"></div>
@@ -296,72 +307,46 @@ footer{background:var(--green);color:rgba(255,255,255,0.7);text-align:center;pad
   </div>
 </div>
 <div id="toast">✅ 保存しました！</div>
-
 <script>
 const PASS='refunfun2026',KEY='lp3';
-let isEdit=false,voices=[];
 const MAX_SCHEDULE=6;
-
+let isEdit=false,voices=[],dragSrc=null;
 function showLogin(){document.getElementById('login-overlay').style.display='flex';setTimeout(()=>document.getElementById('login-pw').focus(),100);}
 function doLogin(){if(document.getElementById('login-pw').value===PASS){document.getElementById('login-overlay').style.display='none';enterEdit();}else{document.getElementById('login-error').style.display='block';}}
-function enterEdit(){isEdit=true;document.body.classList.add('edit-mode');document.getElementById('admin-trigger').style.display='none';document.getElementById('edit-toolbar').classList.add('show');const _avb=document.getElementById('add-voice-btn');if(_avb)_avb.style.display='block';document.querySelectorAll('[contenteditable]').forEach(el=>el.contentEditable='true');updateScheduleBtn();loadSaved();}
-function exitEdit(){isEdit=false;document.body.classList.remove('edit-mode');document.getElementById('admin-trigger').style.display='block';document.getElementById('edit-toolbar').classList.remove('show');const _avb2=document.getElementById('add-voice-btn');if(_avb2)_avb2.style.display='none';document.querySelectorAll('[contenteditable]').forEach(el=>el.contentEditable='false');}
+function enterEdit(){isEdit=true;document.body.classList.add('edit-mode');document.getElementById('admin-trigger').style.display='none';document.getElementById('edit-toolbar').classList.add('show');document.querySelectorAll('[contenteditable]').forEach(el=>el.contentEditable='true');const avb=document.getElementById('add-voice-btn');if(avb)avb.style.display='block';updateScheduleBtn();initDrag();loadSaved();}
+function exitEdit(){isEdit=false;document.body.classList.remove('edit-mode');document.getElementById('admin-trigger').style.display='block';document.getElementById('edit-toolbar').classList.remove('show');document.querySelectorAll('[contenteditable]').forEach(el=>el.contentEditable='false');const avb=document.getElementById('add-voice-btn');if(avb)avb.style.display='none';destroyDrag();}
 function toggleSec(btn){const w=btn.closest('.sec-wrap');const h=w.classList.toggle('hidden-sec');btn.textContent=h?'🚫 非表示中':'👁 表示中';btn.classList.toggle('is-hidden',h);}
 function triggerImg(id){if(isEdit)document.getElementById(id).click();}
 function setImg(input,imgId,phId,sk){const f=input.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{const img=document.getElementById(imgId);img.src=e.target.result;img.style.display='block';const ph=document.getElementById(phId);if(ph)ph.style.display='none';try{localStorage.setItem(sk,e.target.result);}catch(e){}};r.readAsDataURL(f);}
-
-function addItem(listId){const ul=document.getElementById(listId);const li=document.createElement('li');li.textContent='新しい項目';li.setAttribute('contenteditable','true');const btn=document.createElement('button');btn.className='del-item';btn.textContent='✕';btn.style.display='flex';btn.onclick=function(){delItem(this);};li.appendChild(btn);ul.appendChild(li);li.focus();}
+function initDrag(){document.querySelectorAll('.sec-wrap').forEach(wrap=>{const handle=wrap.querySelector('.drag-handle');if(!handle)return;handle.onmousedown=()=>{wrap.draggable=true;};wrap.ondragstart=e=>{dragSrc=wrap;wrap.classList.add('dragging');e.dataTransfer.effectAllowed='move';};wrap.ondragover=e=>{e.preventDefault();if(wrap===dragSrc)return;const r=wrap.getBoundingClientRect();const mid=r.top+r.height/2;wrap.classList.remove('drag-over-top','drag-over-bottom');if(e.clientY<mid)wrap.classList.add('drag-over-top');else wrap.classList.add('drag-over-bottom');};wrap.ondragleave=()=>wrap.classList.remove('drag-over-top','drag-over-bottom');wrap.ondrop=e=>{e.stopPropagation();if(wrap===dragSrc)return;const r=wrap.getBoundingClientRect();const mid=r.top+r.height/2;if(e.clientY<mid)wrap.parentNode.insertBefore(dragSrc,wrap);else wrap.parentNode.insertBefore(dragSrc,wrap.nextSibling);wrap.classList.remove('drag-over-top','drag-over-bottom');};wrap.ondragend=()=>{wrap.draggable=false;wrap.classList.remove('dragging');document.querySelectorAll('.sec-wrap').forEach(w=>w.classList.remove('drag-over-top','drag-over-bottom'));dragSrc=null;};});}
+function destroyDrag(){document.querySelectorAll('.sec-wrap').forEach(w=>{w.draggable=false;w.ondragstart=w.ondragover=w.ondragleave=w.ondrop=w.ondragend=null;});}
 function delItem(btn){btn.closest('li').remove();}
-
-function addStepCard(){
-  const grid=document.getElementById('step-grid');
-  const num=grid.querySelectorAll('.step-card').length+1;
-  const card=document.createElement('div');card.className='step-card';
-  card.innerHTML=`<button class="del-card" style="display:flex" onclick="this.closest('.step-card').remove()">✕</button><div class="step-num">${num}</div><div class="step-content"><h4 contenteditable="true">タイトル</h4><p contenteditable="true">説明を入力してください</p><span class="step-badge" contenteditable="true">全〇回</span></div>`;
-  grid.appendChild(card);
-}
-
-// 説明会（最大6個）
-function updateScheduleBtn(){
-  const count=document.getElementById('schedule-grid').querySelectorAll('.schedule-card').length;
-  const btn=document.getElementById('add-schedule-btn');
-  if(btn)btn.style.display=count>=MAX_SCHEDULE?'none':'block';
-}
-function addSchedule(){
-  const grid=document.getElementById('schedule-grid');
-  if(grid.querySelectorAll('.schedule-card').length>=MAX_SCHEDULE)return;
-  const card=document.createElement('div');card.className='schedule-card';
-  card.innerHTML=`<button class="del-card" style="display:flex" onclick="delSchedule(this)">✕</button><div class="date" contenteditable="true">〇月〇日（〇）</div><div class="time" contenteditable="true">21:00〜</div><div class="fmt">Zoom</div>`;
-  grid.appendChild(card);
-  // 新しいcontenteditable要素を編集可に
-  card.querySelectorAll('[contenteditable]').forEach(el=>el.contentEditable='true');
-  updateScheduleBtn();
-}
+function addItem(listId){const ul=document.getElementById(listId);const li=document.createElement('li');li.textContent='新しい項目';li.setAttribute('contenteditable','true');const btn=document.createElement('button');btn.className='del-item';btn.textContent='✕';btn.style.display='flex';btn.onclick=function(){delItem(this);};li.appendChild(btn);ul.appendChild(li);li.focus();}
+function addStepCard(){const grid=document.getElementById('step-grid');const num=grid.querySelectorAll('.step-card').length+1;const card=document.createElement('div');card.className='step-card';card.innerHTML=`<button class="del-card" style="display:flex" onclick="this.closest('.step-card').remove()">✕</button><div class="step-num">${num}</div><div class="step-content"><h4 contenteditable="true">タイトル</h4><p contenteditable="true">説明を入力してください</p><span class="step-badge" contenteditable="true">全〇回</span></div>`;grid.appendChild(card);}
+function updateScheduleBtn(){const count=document.getElementById('schedule-grid').querySelectorAll('.schedule-card').length;const btn=document.getElementById('add-schedule-btn');if(btn)btn.style.display=count>=MAX_SCHEDULE?'none':'block';}
+function addSchedule(){const grid=document.getElementById('schedule-grid');if(grid.querySelectorAll('.schedule-card').length>=MAX_SCHEDULE)return;const card=document.createElement('div');card.className='schedule-card';card.innerHTML=`<button class="del-card" style="display:flex" onclick="delSchedule(this)">✕</button><div class="date" contenteditable="true">〇月〇日（〇）</div><div class="time" contenteditable="true">21:00〜</div><div class="fmt">Zoom</div>`;grid.appendChild(card);updateScheduleBtn();}
 function delSchedule(btn){btn.closest('.schedule-card').remove();updateScheduleBtn();}
-
 function showVoicePanel(){document.getElementById('voice-add-panel').style.display='block';}
 function hideVoicePanel(){document.getElementById('voice-add-panel').style.display='none';}
 function addVoice(){const text=document.getElementById('voice-text').value.trim();const name=document.getElementById('voice-name').value.trim();if(!text)return;voices.push({text,name});renderVoices();document.getElementById('voice-text').value='';document.getElementById('voice-name').value='';hideVoicePanel();}
 function renderVoices(){const wrap=document.getElementById('voices-wrap');wrap.innerHTML='';document.getElementById('voice-ph').style.display=voices.length?'none':'block';voices.forEach((v,i)=>{const card=document.createElement('div');card.className='voice-card';card.innerHTML=`<button class="voice-del" style="${isEdit?'display:flex':''}" onclick="delVoice(${i})">✕</button><p contenteditable="${isEdit}">${v.text}</p><p class="voice-name" contenteditable="${isEdit}">── ${v.name}</p>`;wrap.appendChild(card);});}
 function delVoice(i){voices.splice(i,1);renderVoices();}
-
 function saveAll(){
+  const order=[...document.querySelectorAll('.sec-wrap')].map(w=>w.dataset.sec);
   const data={};document.querySelectorAll('[contenteditable]').forEach((el,i)=>{data['ce'+i]=el.innerHTML;});
-  // お悩みリスト
   const wList=[];document.querySelectorAll('#worries-list li').forEach(li=>{const t=li.cloneNode(true);t.querySelectorAll('button').forEach(b=>b.remove());wList.push(t.textContent.trim());});
-  // カリキュラム
   const steps=[];document.querySelectorAll('#step-grid .step-card').forEach((c,i)=>{steps.push({num:i+1,title:c.querySelector('h4').textContent,desc:c.querySelector('p').textContent,badge:c.querySelector('.step-badge').textContent});});
-  // 説明会
   const schedules=[];document.querySelectorAll('#schedule-grid .schedule-card').forEach(c=>{schedules.push({date:c.querySelector('.date').textContent,time:c.querySelector('.time').textContent});});
   const vis={};document.querySelectorAll('.sec-wrap').forEach(w=>{vis[w.dataset.sec]=w.classList.contains('hidden-sec');});
-  localStorage.setItem(KEY+'_content',JSON.stringify(data));localStorage.setItem(KEY+'_voices',JSON.stringify(voices));localStorage.setItem(KEY+'_vis',JSON.stringify(vis));localStorage.setItem(KEY+'_worries',JSON.stringify(wList));localStorage.setItem(KEY+'_steps',JSON.stringify(steps));localStorage.setItem(KEY+'_schedules',JSON.stringify(schedules));
+  localStorage.setItem(KEY+'_order',JSON.stringify(order));localStorage.setItem(KEY+'_content',JSON.stringify(data));localStorage.setItem(KEY+'_voices',JSON.stringify(voices));localStorage.setItem(KEY+'_vis',JSON.stringify(vis));localStorage.setItem(KEY+'_worries',JSON.stringify(wList));localStorage.setItem(KEY+'_steps',JSON.stringify(steps));localStorage.setItem(KEY+'_schedules',JSON.stringify(schedules));
   showToast();
 }
 function loadSaved(){
+  const oraw=localStorage.getItem(KEY+'_order');if(oraw){const order=JSON.parse(oraw);const footer=document.querySelector('footer');order.forEach(sec=>{const el=document.querySelector(`.sec-wrap[data-sec="${sec}"]`);if(el)footer.parentNode.insertBefore(el,footer);});}
   const raw=localStorage.getItem(KEY+'_content');if(raw){const d=JSON.parse(raw);document.querySelectorAll('[contenteditable]').forEach((el,i)=>{if(d['ce'+i]!==undefined)el.innerHTML=d['ce'+i];});}
   const vraw=localStorage.getItem(KEY+'_voices');if(vraw){voices=JSON.parse(vraw);renderVoices();}
-  const visraw=localStorage.getItem(KEY+'_vis');if(visraw){const vis=JSON.parse(visraw);document.querySelectorAll('.sec-wrap').forEach(w=>{if(vis[w.dataset.sec]){w.classList.add('hidden-sec');const btn=w.querySelector('.vis-toggle');if(btn){btn.textContent='🚫 非表示中';btn.classList.add('is-hidden');}}});}
-  const wraw=localStorage.getItem(KEY+'_worries');if(wraw){const wList=JSON.parse(wraw);const ul=document.getElementById('worries-list');ul.innerHTML='';wList.forEach(t=>{const li=document.createElement('li');li.textContent=t;if(isEdit)li.contentEditable='true';const btn=document.createElement('button');btn.className='del-item';btn.textContent='✕';btn.onclick=function(){delItem(this);};li.appendChild(btn);ul.appendChild(li);});}
+  const visraw=localStorage.getItem(KEY+'_vis');if(visraw){const vis=JSON.parse(visraw);document.querySelectorAll('.sec-wrap').forEach(w=>{if(vis[w.dataset.sec]){w.classList.add('hidden-sec');const btn=w.querySelector('.sec-btn');if(btn){btn.textContent='🚫 非表示中';btn.classList.add('is-hidden');}}});}
+  const wraw=localStorage.getItem(KEY+'_worries');if(wraw){const list=JSON.parse(wraw);const ul=document.getElementById('worries-list');ul.innerHTML='';list.forEach(t=>{const li=document.createElement('li');li.textContent=t;if(isEdit)li.contentEditable='true';const btn=document.createElement('button');btn.className='del-item';btn.textContent='✕';btn.onclick=function(){delItem(this);};li.appendChild(btn);ul.appendChild(li);});}
   const sraw=localStorage.getItem(KEY+'_steps');if(sraw){const steps=JSON.parse(sraw);const grid=document.getElementById('step-grid');grid.innerHTML='';steps.forEach((s,i)=>{const card=document.createElement('div');card.className='step-card';card.innerHTML=`<button class="del-card" onclick="this.closest('.step-card').remove()">✕</button><div class="step-num">${i+1}</div><div class="step-content"><h4 ${isEdit?'contenteditable="true"':''}>${s.title}</h4><p ${isEdit?'contenteditable="true"':''}>${s.desc}</p><span class="step-badge" ${isEdit?'contenteditable="true"':''}>${s.badge}</span></div>`;grid.appendChild(card);});}
   const scraw=localStorage.getItem(KEY+'_schedules');if(scraw){const schedules=JSON.parse(scraw);const grid=document.getElementById('schedule-grid');grid.innerHTML='';schedules.forEach(s=>{const card=document.createElement('div');card.className='schedule-card';card.innerHTML=`<button class="del-card" onclick="delSchedule(this)">✕</button><div class="date" ${isEdit?'contenteditable="true"':''}>${s.date}</div><div class="time" ${isEdit?'contenteditable="true"':''}>${s.time}</div><div class="fmt">Zoom</div>`;grid.appendChild(card);});updateScheduleBtn();}
   ['img3_hero','img3_prof'].forEach(k=>{const src=localStorage.getItem(k);if(!src)return;const id=k==='img3_hero'?'hero-img':'prof-img';const phId=k==='img3_hero'?'hero-img-ph':'prof-img-ph';const img=document.getElementById(id);img.src=src;img.style.display='block';const ph=document.getElementById(phId);if(ph)ph.style.display='none';});
@@ -371,6 +356,7 @@ window.onload=()=>{
   const visraw=localStorage.getItem(KEY+'_vis');if(visraw){const vis=JSON.parse(visraw);document.querySelectorAll('.sec-wrap').forEach(w=>{if(vis[w.dataset.sec])w.classList.add('hidden-sec');});}
   const raw=localStorage.getItem(KEY+'_content');if(raw){const d=JSON.parse(raw);document.querySelectorAll('[contenteditable]').forEach((el,i)=>{if(d['ce'+i]!==undefined)el.innerHTML=d['ce'+i];});}
   const vraw=localStorage.getItem(KEY+'_voices');if(vraw){voices=JSON.parse(vraw);renderVoices();}
+  const oraw=localStorage.getItem(KEY+'_order');if(oraw){const order=JSON.parse(oraw);const footer=document.querySelector('footer');order.forEach(sec=>{const el=document.querySelector(`.sec-wrap[data-sec="${sec}"]`);if(el)footer.parentNode.insertBefore(el,footer);});}
   ['img3_hero','img3_prof'].forEach(k=>{const src=localStorage.getItem(k);if(!src)return;const id=k==='img3_hero'?'hero-img':'prof-img';const phId=k==='img3_hero'?'hero-img-ph':'prof-img-ph';const img=document.getElementById(id);img.src=src;img.style.display='block';const ph=document.getElementById(phId);if(ph)ph.style.display='none';});
 };
 </script>

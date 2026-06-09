@@ -16,12 +16,23 @@ body.edit-mode .editable-img{outline:2px dashed var(--purple-light);cursor:point
 body.edit-mode .editable-img:hover{outline-color:var(--purple);}
 .edit-badge{display:none;position:fixed;top:12px;left:50%;transform:translateX(-50%);background:var(--purple);color:white;padding:6px 18px;border-radius:20px;font-size:12px;z-index:9999;box-shadow:0 4px 16px rgba(155,138,160,0.4);}
 body.edit-mode .edit-badge{display:block;}
-.sec-wrap{position:relative;}
-.vis-toggle{display:none;position:absolute;top:10px;right:12px;z-index:100;background:white;border:1.5px solid var(--purple-light);border-radius:20px;padding:4px 12px;font-size:11px;cursor:pointer;color:var(--purple);font-family:'Noto Sans JP',sans-serif;box-shadow:0 2px 8px rgba(0,0,0,0.08);white-space:nowrap;}
-body.edit-mode .vis-toggle{display:block;}
-.sec-wrap.hidden-sec>*:not(.vis-toggle){opacity:0.25;pointer-events:none;}
-.vis-toggle.is-hidden{background:var(--purple);color:white;border-color:var(--purple);}
+
+/* SEC WRAP */
+.sec-wrap{position:relative;transition:opacity .15s;}
+.sec-wrap.dragging{opacity:0.4;}
+.sec-wrap.drag-over-top{border-top:3px solid var(--purple);}
+.sec-wrap.drag-over-bottom{border-bottom:3px solid var(--purple);}
+
+/* コントロール */
+.sec-controls{display:none;position:absolute;top:10px;right:12px;z-index:100;align-items:center;gap:6px;}
+body.edit-mode .sec-controls{display:flex;}
+.sec-btn{background:white;border:1.5px solid var(--purple-light);border-radius:20px;padding:4px 10px;font-size:11px;cursor:pointer;color:var(--purple);font-family:'Noto Sans JP',sans-serif;box-shadow:0 2px 8px rgba(0,0,0,0.08);white-space:nowrap;}
+.sec-btn.is-hidden{background:var(--purple);color:white;border-color:var(--purple);}
+.drag-handle{font-size:15px;color:var(--purple-light);cursor:grab;padding:2px 6px;user-select:none;}
+.drag-handle:hover{color:var(--purple);}
+.sec-wrap.hidden-sec>*:not(.sec-controls){opacity:0.25;pointer-events:none;}
 body:not(.edit-mode) .sec-wrap.hidden-sec{display:none;}
+
 .site-header{background:var(--green);color:white;text-align:center;padding:12px 20px;font-family:'Shippori Mincho',serif;font-size:13px;letter-spacing:2px;}
 .section{padding:60px 20px;max-width:720px;margin:0 auto;}
 .section-title{font-family:'Shippori Mincho',serif;font-size:clamp(20px,4vw,28px);color:var(--green);text-align:center;margin-bottom:16px;}
@@ -29,6 +40,7 @@ body:not(.edit-mode) .sec-wrap.hidden-sec{display:none;}
 .hero{background:linear-gradient(160deg,var(--green-pale) 0%,var(--beige) 60%,var(--purple-pale) 100%);padding:60px 20px 80px;text-align:center;}
 .hero-label{display:inline-block;background:var(--green);color:white;font-size:12px;letter-spacing:3px;padding:6px 20px;border-radius:20px;margin-bottom:24px;}
 .hero-catch{font-family:'Shippori Mincho',serif;font-size:clamp(22px,5vw,36px);font-weight:700;color:var(--green);line-height:1.5;margin-bottom:16px;}
+.hero-catch-mid{font-family:'Shippori Mincho',serif;font-size:clamp(18px,3.5vw,26px);color:var(--green);margin-bottom:16px;font-weight:600;letter-spacing:1px;}
 .hero-sub{font-size:14px;color:var(--text-light);margin-bottom:32px;line-height:1.9;}
 .hero-img-wrap{width:100%;max-width:500px;height:280px;background:linear-gradient(135deg,var(--green-pale),var(--purple-pale));border-radius:16px;margin:0 auto 32px;display:flex;align-items:center;justify-content:center;color:var(--text-light);font-size:13px;border:2px dashed var(--purple-light);overflow:hidden;}
 .hero-img-wrap img{width:100%;height:100%;object-fit:cover;}
@@ -37,15 +49,6 @@ body:not(.edit-mode) .sec-wrap.hidden-sec{display:none;}
 .warning-wrap{max-width:720px;margin:0 auto;padding:0 20px;}
 .warning-box{background:#fff8e8;border-left:4px solid #e8a020;border-radius:8px;padding:16px 20px;margin:24px 0;font-size:13px;color:#7a5a10;line-height:1.8;}
 .bg-green-pale{background:var(--green-pale);padding:60px 20px;}
-/* リスト（追加削除対応） */
-.editable-list{list-style:none;max-width:600px;margin:0 auto;}
-.editable-list li{background:white;border-radius:12px;padding:14px 18px 14px 50px;margin-bottom:10px;position:relative;font-size:14px;box-shadow:0 2px 8px rgba(74,103,65,0.08);}
-.editable-list li::before{content:'✓';position:absolute;left:16px;top:14px;color:var(--green);font-weight:700;font-size:16px;}
-.editable-list li .del-item{display:none;position:absolute;right:10px;top:50%;transform:translateY(-50%);background:#fee2e2;border:none;color:#dc2626;width:26px;height:26px;border-radius:6px;cursor:pointer;font-size:14px;align-items:center;justify-content:center;}
-body.edit-mode .editable-list li .del-item{display:flex;}
-.add-item-btn{display:none;margin:12px auto 0;background:var(--green-pale);border:1.5px dashed var(--green);color:var(--green);padding:8px 20px;border-radius:8px;cursor:pointer;font-size:13px;font-family:'Noto Sans JP',sans-serif;font-weight:500;}
-body.edit-mode .add-item-btn{display:block;}
-/* スタイルグリッド */
 .style-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;}
 .style-card{background:white;border-radius:16px;padding:24px 16px;text-align:center;border:2px solid var(--green-pale);box-shadow:0 2px 12px rgba(74,103,65,0.06);position:relative;}
 .style-card .icon{font-size:28px;margin-bottom:10px;}
@@ -55,24 +58,20 @@ body.edit-mode .add-item-btn{display:block;}
 body.edit-mode .style-card .del-card{display:flex;}
 .add-card-btn{display:none;margin:16px auto 0;background:var(--green-pale);border:1.5px dashed var(--green);color:var(--green);padding:8px 20px;border-radius:8px;cursor:pointer;font-size:13px;font-family:'Noto Sans JP',sans-serif;}
 body.edit-mode .add-card-btn{display:block;}
-/* 料金 */
 .price-bg{background:linear-gradient(135deg,var(--green) 0%,var(--green-light) 100%);padding:60px 20px;text-align:center;color:white;}
 .price-bg .section-title{color:white;}
 .price-box{background:rgba(255,255,255,0.12);border:2px solid rgba(255,255,255,0.3);border-radius:20px;padding:32px;max-width:400px;margin:0 auto 24px;}
 .price-num{font-family:'Shippori Mincho',serif;font-size:48px;font-weight:700;color:white;}
-/* テーブル */
 .overview-table{width:100%;border-collapse:collapse;font-size:14px;}
 .overview-table tr{border-bottom:1px solid var(--green-pale);}
 .overview-table td{padding:14px 12px;vertical-align:top;}
 .overview-table td:first-child{width:110px;color:var(--green);font-weight:500;background:var(--green-pale);border-radius:6px 0 0 6px;padding-left:16px;white-space:nowrap;}
-/* 声 */
 .bg-purple-pale{background:var(--purple-pale);padding:60px 20px;}
 .voice-card{background:white;border-radius:16px;padding:28px;margin-bottom:16px;max-width:640px;margin-left:auto;margin-right:auto;box-shadow:0 2px 12px rgba(155,138,160,0.1);border-left:4px solid var(--purple-light);font-size:14px;color:var(--text-light);line-height:1.9;position:relative;}
 .voice-card::before{content:'"';font-family:'Shippori Mincho',serif;font-size:60px;color:var(--purple-pale);position:absolute;top:-10px;left:12px;line-height:1;}
 .voice-name{text-align:right;font-size:12px;color:var(--purple);margin-top:12px;}
 .voice-del{display:none;position:absolute;top:10px;right:10px;background:#fee2e2;border:none;color:#dc2626;width:26px;height:26px;border-radius:6px;cursor:pointer;font-size:14px;align-items:center;justify-content:center;}
 body.edit-mode .voice-del{display:flex;}
-/* プロフィール */
 .profile-box{background:white;border-radius:20px;padding:32px;box-shadow:0 4px 20px rgba(74,103,65,0.08);display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap;}
 .profile-img-wrap{width:120px;height:120px;border-radius:50%;background:linear-gradient(135deg,var(--green-pale),var(--purple-pale));border:3px solid var(--green-pale);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--text-light);text-align:center;overflow:hidden;}
 .profile-img-wrap img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
@@ -85,7 +84,7 @@ body.edit-mode .voice-del{display:flex;}
 .btn-insta:hover{transform:translateY(-2px);}
 footer{background:var(--green);color:rgba(255,255,255,0.7);text-align:center;padding:24px 20px;font-size:12px;}
 #admin-trigger{position:fixed;bottom:24px;right:24px;background:var(--purple);color:white;border:none;padding:12px 20px;border-radius:50px;font-size:13px;cursor:pointer;font-family:'Noto Sans JP',sans-serif;box-shadow:0 4px 16px rgba(155,138,160,0.4);z-index:999;}
-.edit-toolbar{display:none;position:fixed;bottom:24px;right:24px;background:white;border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,0.15);padding:14px 18px;z-index:999;align-items:center;gap:10px;flex-wrap:wrap;max-width:320px;}
+.edit-toolbar{display:none;position:fixed;bottom:24px;right:24px;background:white;border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,0.15);padding:14px 18px;z-index:999;align-items:center;gap:10px;}
 .edit-toolbar.show{display:flex;}
 .toolbar-btn{padding:8px 16px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-family:'Noto Sans JP',sans-serif;font-weight:500;}
 .toolbar-save{background:var(--green);color:white;}
@@ -108,79 +107,62 @@ footer{background:var(--green);color:rgba(255,255,255,0.7);text-align:center;pad
 .panel-btn-ok{background:var(--green);color:white;}
 .panel-btn-cancel{background:#f0f0f0;}
 #toast{position:fixed;bottom:80px;right:24px;background:var(--green);color:white;padding:12px 20px;border-radius:8px;font-size:13px;opacity:0;transition:opacity .3s;z-index:9999;}
+.editable-list{list-style:none;max-width:600px;margin:0 auto;}
+.editable-list li{background:white;border-radius:12px;padding:14px 18px 14px 50px;margin-bottom:10px;position:relative;font-size:14px;box-shadow:0 2px 8px rgba(74,103,65,0.08);}
+.editable-list li::before{content:'✓';position:absolute;left:16px;top:14px;color:var(--green);font-weight:700;font-size:16px;}
+.editable-list li .del-item{display:none;position:absolute;right:10px;top:50%;transform:translateY(-50%);background:#fee2e2;border:none;color:#dc2626;width:26px;height:26px;border-radius:6px;cursor:pointer;font-size:14px;align-items:center;justify-content:center;}
+body.edit-mode .editable-list li .del-item{display:flex;}
+.add-item-btn{display:none;margin:12px auto 0;background:var(--green-pale);border:1.5px dashed var(--green);color:var(--green);padding:8px 20px;border-radius:8px;cursor:pointer;font-size:13px;font-family:'Noto Sans JP',sans-serif;font-weight:500;}
+body.edit-mode .add-item-btn{display:block;}
 @media(max-width:600px){.profile-box{flex-direction:column;align-items:center;text-align:center;}.style-grid{grid-template-columns:repeat(2,1fr);}}
 </style>
 </head>
 <body>
-<div class="edit-badge">✏️ 編集モード中</div>
+<div class="edit-badge">✏️ 編集モード中 — ☰ でセクション並び替え可能</div>
 <div class="site-header">Re.funfun ／ り.ふぁんふぁん</div>
 
-<!-- HERO -->
 <div class="sec-wrap" data-sec="hero">
-  <button class="vis-toggle" onclick="toggleSec(this)">👁 表示中</button>
+  <div class="sec-controls"><span class="drag-handle">☰</span><button class="sec-btn" onclick="toggleSec(this)">👁 表示中</button></div>
   <section class="hero">
-    <div class="hero-label">よもぎ蒸し講座</div>
+    <div class="hero-label" contenteditable="false">よもぎ蒸し講座</div>
     <h1 class="hero-catch" contenteditable="false">ゼロからスタートした<br>ド田舎の還暦セラピスト講師が<br>あなたに伝えたいこと</h1>
-    <p class="hero-sub" contenteditable="false">学んで終わり、じゃない。<br>誰一人置いてきぼりにしない──<br>小さな島から、全国へ。</p>
+    <p class="hero-catch-mid" contenteditable="false">学んで終わり、じゃない。</p>
+    <p class="hero-sub" contenteditable="false">誰一人置いてきぼりにしない──小さな島から、全国へ。</p>
     <div class="hero-img-wrap editable-img" id="hero-img-wrap" onclick="triggerImg('hero-img-input')">
-      <span id="hero-img-ph">📸 クリックして画像を追加</span>
-      <img id="hero-img" style="display:none;">
+      <span id="hero-img-ph">📸 クリックして画像を追加</span><img id="hero-img" style="display:none;">
     </div>
     <input type="file" class="img-upload-input" id="hero-img-input" accept="image/*" onchange="setImg(this,'hero-img','hero-img-ph','img1_hero')">
     <a href="https://lin.ee/Op7jMlR" class="btn-primary">📲 公式LINEからお問い合わせ</a>
   </section>
 </div>
 
-<!-- 長崎 -->
 <div class="sec-wrap" data-sec="nagasaki">
-  <button class="vis-toggle" onclick="toggleSec(this)">👁 表示中</button>
+  <div class="sec-controls"><span class="drag-handle">☰</span><button class="sec-btn" onclick="toggleSec(this)">👁 表示中</button></div>
   <div class="warning-wrap">
     <div class="warning-box" contenteditable="false">⚠️ <strong>長崎県在住の方へ</strong>：長崎県ではよもぎ蒸しを提供するサロンに公衆浴場許可が必要です（約3年前からの法律変更）。そのため、長崎県在住の方は受講前に必ず<strong>無料説明会</strong>を実施しております。お気軽にご連絡ください。</div>
   </div>
 </div>
 
-<!-- お悩み -->
-<div class="sec-wrap" data-sec="worries">
-  <button class="vis-toggle" onclick="toggleSec(this)">👁 表示中</button>
-  <section class="bg-green-pale">
-    <div class="section">
-      <h2 class="section-title" contenteditable="false">こんなお悩みありませんか？</h2>
-      <div class="divider"></div>
-      <ul class="editable-list" id="worries-list">
-        <li>サロンのメニューによもぎ蒸しを取り入れたい<button class="del-item" onclick="delItem(this)">✕</button></li>
-        <li>今のメニューにプラスαで収入を増やしたい<button class="del-item" onclick="delItem(this)">✕</button></li>
-        <li>サロン運営に悩んでいる、先が見えない<button class="del-item" onclick="delItem(this)">✕</button></li>
-        <li>年齢に関係なく、新しいことに挑戦したい<button class="del-item" onclick="delItem(this)">✕</button></li>
-        <li>手に職をつけて、自立した働き方をしたい<button class="del-item" onclick="delItem(this)">✕</button></li>
-        <li>家族のために、安定した仕事を持ちたい<button class="del-item" onclick="delItem(this)">✕</button></li>
-      </ul>
-      <button class="add-item-btn" onclick="addItem('worries-list')">＋ 項目を追加</button>
-    </div>
-  </section>
-</div>
-
-<!-- 受講スタイル -->
 <div class="sec-wrap" data-sec="style">
-  <button class="vis-toggle" onclick="toggleSec(this)">👁 表示中</button>
+  <div class="sec-controls"><span class="drag-handle">☰</span><button class="sec-btn" onclick="toggleSec(this)">👁 表示中</button></div>
   <section class="section">
     <h2 class="section-title" contenteditable="false">受講スタイル</h2>
     <div class="divider"></div>
     <div class="style-grid" id="style-grid">
-      <div class="style-card"><button class="del-card" onclick="this.closest('.style-card').remove()">✕</button><div class="icon">☀️</div><div class="name" contenteditable="false">1日完結</div><div class="desc" contenteditable="false">しっかり学びたい方に。まとめて習得！</div></div>
-      <div class="style-card"><button class="del-card" onclick="this.closest('.style-card').remove()">✕</button><div class="icon">📅</div><div class="name" contenteditable="false">2回分割</div><div class="desc" contenteditable="false">じっくり復習しながら進めたい方に</div></div>
-      <div class="style-card"><button class="del-card" onclick="this.closest('.style-card').remove()">✕</button><div class="icon">🗓️</div><div class="name" contenteditable="false">3回分割</div><div class="desc" contenteditable="false">ゆっくり無理なく身につけたい方に</div></div>
-      <div class="style-card"><button class="del-card" onclick="this.closest('.style-card').remove()">✕</button><div class="icon">🌙</div><div class="name" contenteditable="false">ナイト受講</div><div class="desc" contenteditable="false">お仕事後・夜間でも受講OK</div></div>
+      <div class="style-card"><button class="del-card" onclick="this.closest('.style-card').remove()">✕</button><div class="icon" contenteditable="false">☀️</div><div class="name" contenteditable="false">1日完結</div><div class="desc" contenteditable="false">しっかり学びたい方に。まとめて習得！</div></div>
+      <div class="style-card"><button class="del-card" onclick="this.closest('.style-card').remove()">✕</button><div class="icon" contenteditable="false">📅</div><div class="name" contenteditable="false">2回分割</div><div class="desc" contenteditable="false">じっくり復習しながら進めたい方に</div></div>
+      <div class="style-card"><button class="del-card" onclick="this.closest('.style-card').remove()">✕</button><div class="icon" contenteditable="false">🗓️</div><div class="name" contenteditable="false">3回分割</div><div class="desc" contenteditable="false">ゆっくり無理なく身につけたい方に</div></div>
+      <div class="style-card"><button class="del-card" onclick="this.closest('.style-card').remove()">✕</button><div class="icon" contenteditable="false">🌙</div><div class="name" contenteditable="false">ナイト受講</div><div class="desc" contenteditable="false">お仕事後・夜間でも受講OK</div></div>
     </div>
     <button class="add-card-btn" onclick="addStyleCard()">＋ スタイルを追加</button>
     <p style="text-align:center;font-size:13px;color:var(--text-light);margin-top:20px;" contenteditable="false">希望曜日（平日・土日祝・夜間）はお問い合わせ時にご相談ください。<br>日程は問い合わせ後に調整いたします。</p>
   </section>
 </div>
 
-<!-- 料金 -->
 <div class="sec-wrap" data-sec="price">
-  <button class="vis-toggle" onclick="toggleSec(this)">👁 表示中</button>
+  <div class="sec-controls"><span class="drag-handle">☰</span><button class="sec-btn" onclick="toggleSec(this)">👁 表示中</button></div>
   <section class="price-bg">
-    <h2 class="section-title">受講料</h2>
+    <h2 class="section-title" contenteditable="false">受講料</h2>
     <div class="divider" style="background:rgba(255,255,255,0.4);"></div>
     <div class="price-box">
       <div class="price-num">¥<span contenteditable="false">33,000</span>円</div>
@@ -190,9 +172,8 @@ footer{background:var(--green);color:rgba(255,255,255,0.7);text-align:center;pad
   </section>
 </div>
 
-<!-- 概要 -->
 <div class="sec-wrap" data-sec="overview">
-  <button class="vis-toggle" onclick="toggleSec(this)">👁 表示中</button>
+  <div class="sec-controls"><span class="drag-handle">☰</span><button class="sec-btn" onclick="toggleSec(this)">👁 表示中</button></div>
   <section class="section">
     <h2 class="section-title" contenteditable="false">開催概要</h2>
     <div class="divider"></div>
@@ -207,23 +188,21 @@ footer{background:var(--green);color:rgba(255,255,255,0.7);text-align:center;pad
   </section>
 </div>
 
-<!-- 受講生の声 -->
 <div class="sec-wrap" data-sec="voice">
-  <button class="vis-toggle" onclick="toggleSec(this)">👁 表示中</button>
+  <div class="sec-controls"><span class="drag-handle">☰</span><button class="sec-btn" onclick="toggleSec(this)">👁 表示中</button></div>
   <section class="bg-purple-pale">
     <div style="max-width:720px;margin:0 auto;padding:60px 0;">
       <h2 class="section-title" contenteditable="false">受講生の声</h2>
       <div class="divider"></div>
       <div id="voice-ph" style="background:white;border:2px dashed var(--purple-light);border-radius:12px;padding:24px;text-align:center;color:var(--purple);font-size:13px;max-width:640px;margin:0 auto;"><p>📝 受講生の声はまだありません</p></div>
       <div id="voices-wrap"></div>
-      <button class="add-voice-btn" id="add-voice-btn" onclick="showVoicePanel()" style="display:none;margin:16px auto 0;background:var(--purple);color:white;border:none;padding:10px 24px;border-radius:8px;cursor:pointer;font-size:13px;font-family:'Noto Sans JP',sans-serif;">＋ 受講生の声を追加</button>
+      <button id="add-voice-btn" onclick="showVoicePanel()" style="display:none;margin:20px auto 0;background:var(--purple);color:white;border:none;padding:12px 28px;border-radius:50px;cursor:pointer;font-size:13px;font-family:'Noto Sans JP',sans-serif;box-shadow:0 4px 16px rgba(155,138,160,0.3);">＋ 受講生の声を追加</button>
     </div>
   </section>
 </div>
 
-<!-- プロフィール -->
 <div class="sec-wrap" data-sec="profile">
-  <button class="vis-toggle" onclick="toggleSec(this)">👁 表示中</button>
+  <div class="sec-controls"><span class="drag-handle">☰</span><button class="sec-btn" onclick="toggleSec(this)">👁 表示中</button></div>
   <section class="section">
     <h2 class="section-title" contenteditable="false">講師プロフィール</h2>
     <div class="divider"></div>
@@ -233,17 +212,16 @@ footer{background:var(--green);color:rgba(255,255,255,0.7);text-align:center;pad
       </div>
       <input type="file" class="img-upload-input" id="prof-img-input" accept="image/*" onchange="setImg(this,'prof-img','prof-img-ph','img1_prof')">
       <div class="profile-text">
-        <h3>尾崎 幸子</h3>
-        <p class="prof-label">おざきゆきこ / Re.funfun</p>
+        <h3 contenteditable="false">尾崎 幸子</h3>
+        <p class="prof-label" contenteditable="false">おざきゆきこ / Re.funfun</p>
         <p contenteditable="false">学んで終わりではなく、そこからどう続けていくかまで大切にしています。技術や知識だけを伝えるのではなく、導入後の運営や続け方、発信なども含め、一人ひとりに寄り添いながらサポートしています。フォロー体制の厚さも特徴のひとつで、"誰一人置いてきぼりにしない"を大切にしています。60歳。今がいちばん面白い！</p>
       </div>
     </div>
   </section>
 </div>
 
-<!-- CTA -->
 <div class="sec-wrap" data-sec="cta">
-  <button class="vis-toggle" onclick="toggleSec(this)">👁 表示中</button>
+  <div class="sec-controls"><span class="drag-handle">☰</span><button class="sec-btn" onclick="toggleSec(this)">👁 表示中</button></div>
   <section class="cta-bg">
     <h2 class="section-title" contenteditable="false">まずはお気軽にお問い合わせください</h2>
     <div class="divider"></div>
@@ -259,143 +237,100 @@ footer{background:var(--green);color:rgba(255,255,255,0.7);text-align:center;pad
 <button id="admin-trigger" onclick="showLogin()">🔐 管理者ログイン</button>
 <div class="edit-toolbar" id="edit-toolbar">
   <span style="font-size:12px;color:#999;">✏️ 編集中</span>
-  
   <button class="toolbar-btn toolbar-save" onclick="saveAll()">💾 保存</button>
   <button class="toolbar-btn toolbar-logout" onclick="exitEdit()">終了</button>
 </div>
 <div id="voice-add-panel">
   <h3>受講生の声を追加</h3>
   <textarea id="voice-text" placeholder="受講生のコメントを入力..."></textarea>
-  <input type="text" id="voice-name" placeholder="お名前・肩書き（例：サロンオーナー Nさん）">
-  <div class="panel-btns">
-    <button class="panel-btn-ok" onclick="addVoice()">追加する</button>
-    <button class="panel-btn-cancel" onclick="hideVoicePanel()">キャンセル</button>
-  </div>
+  <input type="text" id="voice-name" placeholder="お名前・肩書き">
+  <div class="panel-btns"><button class="panel-btn-ok" onclick="addVoice()">追加する</button><button class="panel-btn-cancel" onclick="hideVoicePanel()">キャンセル</button></div>
 </div>
 <div id="login-overlay" style="display:none;align-items:center;justify-content:center;">
   <div id="login-box">
     <h3>管理者ログイン</h3><p class="sub">パスワードを入力してください</p>
     <input type="password" id="login-pw" placeholder="••••••" onkeydown="if(event.key==='Enter')doLogin()">
-    <button onclick="doLogin()">ログイン</button>
-    <p id="login-error">パスワードが違います</p>
+    <button onclick="doLogin()">ログイン</button><p id="login-error">パスワードが違います</p>
   </div>
 </div>
 <div id="toast">✅ 保存しました！</div>
+
 <script>
 const PASS='refunfun2026',KEY='lp1';
-let isEdit=false,voices=[];
+let isEdit=false,voices=[],dragSrc=null;
 
 function showLogin(){document.getElementById('login-overlay').style.display='flex';setTimeout(()=>document.getElementById('login-pw').focus(),100);}
 function doLogin(){if(document.getElementById('login-pw').value===PASS){document.getElementById('login-overlay').style.display='none';enterEdit();}else{document.getElementById('login-error').style.display='block';}}
+
 function enterEdit(){
   isEdit=true;document.body.classList.add('edit-mode');
   document.getElementById('admin-trigger').style.display='none';
-  document.getElementById('edit-toolbar').classList.add('show');const _avb=document.getElementById('add-voice-btn');if(_avb)_avb.style.display='block';
+  document.getElementById('edit-toolbar').classList.add('show');
   document.querySelectorAll('[contenteditable]').forEach(el=>el.contentEditable='true');
-  // リスト項目を編集可能に
-  document.querySelectorAll('.editable-list li').forEach(li=>makeListItemEditable(li));
-  loadSaved();
+  const avb=document.getElementById('add-voice-btn');if(avb)avb.style.display='block';
+  initDrag();loadSaved();
 }
 function exitEdit(){
   isEdit=false;document.body.classList.remove('edit-mode');
   document.getElementById('admin-trigger').style.display='block';
-  document.getElementById('edit-toolbar').classList.remove('show');const _avb2=document.getElementById('add-voice-btn');if(_avb2)_avb2.style.display='none';
+  document.getElementById('edit-toolbar').classList.remove('show');
   document.querySelectorAll('[contenteditable]').forEach(el=>el.contentEditable='false');
+  const avb=document.getElementById('add-voice-btn');if(avb)avb.style.display='none';
+  destroyDrag();
 }
 function toggleSec(btn){const w=btn.closest('.sec-wrap');const h=w.classList.toggle('hidden-sec');btn.textContent=h?'🚫 非表示中':'👁 表示中';btn.classList.toggle('is-hidden',h);}
 function triggerImg(id){if(isEdit)document.getElementById(id).click();}
 function setImg(input,imgId,phId,sk){const f=input.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{const img=document.getElementById(imgId);img.src=e.target.result;img.style.display='block';const ph=document.getElementById(phId);if(ph)ph.style.display='none';try{localStorage.setItem(sk,e.target.result);}catch(e){}};r.readAsDataURL(f);}
 
-// リスト追加削除
-function makeListItemEditable(li){
-  // テキストノードを取得して編集可能に
-  li.setAttribute('contenteditable','true');
-  // ✕ボタンは消えないようにする
-}
-function addItem(listId){
-  const ul=document.getElementById(listId);
-  const li=document.createElement('li');
-  li.textContent='新しい項目';
-  li.setAttribute('contenteditable','true');
-  const btn=document.createElement('button');
-  btn.className='del-item';btn.textContent='✕';btn.style.display='flex';
-  btn.onclick=function(){delItem(this);};
-  li.appendChild(btn);
-  ul.appendChild(li);
-  li.focus();
-}
-function delItem(btn){btn.closest('li').remove();}
-
-// スタイルカード追加
-function addStyleCard(){
-  const grid=document.getElementById('style-grid');
-  const card=document.createElement('div');card.className='style-card';
-  card.innerHTML=`<button class="del-card" style="display:flex" onclick="this.closest('.style-card').remove()">✕</button><div class="icon" contenteditable="true">✨</div><div class="name" contenteditable="true">スタイル名</div><div class="desc" contenteditable="true">説明を入力してください</div>`;
-  grid.appendChild(card);
-}
-
-// 声
-function showVoicePanel(){document.getElementById('voice-add-panel').style.display='block';}
-function hideVoicePanel(){document.getElementById('voice-add-panel').style.display='none';}
-function addVoice(){
-  const text=document.getElementById('voice-text').value.trim();
-  const name=document.getElementById('voice-name').value.trim();
-  if(!text)return;
-  voices.push({text,name});renderVoices();
-  document.getElementById('voice-text').value='';document.getElementById('voice-name').value='';
-  hideVoicePanel();
-}
-function renderVoices(){
-  const wrap=document.getElementById('voices-wrap');wrap.innerHTML='';
-  document.getElementById('voice-ph').style.display=voices.length?'none':'block';
-  voices.forEach((v,i)=>{
-    const card=document.createElement('div');card.className='voice-card';
-    card.innerHTML=`<button class="voice-del" style="${isEdit?'display:flex':''}" onclick="delVoice(${i})">✕</button><p contenteditable="${isEdit}">${v.text}</p><p class="voice-name" contenteditable="${isEdit}">── ${v.name}</p>`;
-    wrap.appendChild(card);
+// ドラッグ&ドロップ
+function initDrag(){
+  document.querySelectorAll('.sec-wrap').forEach(wrap=>{
+    const handle=wrap.querySelector('.drag-handle');
+    if(!handle)return;
+    handle.onmousedown=()=>{wrap.draggable=true;};
+    wrap.ondragstart=e=>{dragSrc=wrap;wrap.classList.add('dragging');e.dataTransfer.effectAllowed='move';};
+    wrap.ondragover=e=>{e.preventDefault();if(wrap===dragSrc)return;const r=wrap.getBoundingClientRect();const mid=r.top+r.height/2;wrap.classList.remove('drag-over-top','drag-over-bottom');if(e.clientY<mid)wrap.classList.add('drag-over-top');else wrap.classList.add('drag-over-bottom');};
+    wrap.ondragleave=()=>wrap.classList.remove('drag-over-top','drag-over-bottom');
+    wrap.ondrop=e=>{e.stopPropagation();if(wrap===dragSrc)return;const r=wrap.getBoundingClientRect();const mid=r.top+r.height/2;if(e.clientY<mid)wrap.parentNode.insertBefore(dragSrc,wrap);else wrap.parentNode.insertBefore(dragSrc,wrap.nextSibling);wrap.classList.remove('drag-over-top','drag-over-bottom');};
+    wrap.ondragend=()=>{wrap.draggable=false;wrap.classList.remove('dragging');document.querySelectorAll('.sec-wrap').forEach(w=>w.classList.remove('drag-over-top','drag-over-bottom'));dragSrc=null;};
   });
 }
+function destroyDrag(){document.querySelectorAll('.sec-wrap').forEach(w=>{w.draggable=false;w.ondragstart=w.ondragover=w.ondragleave=w.ondrop=w.ondragend=null;});}
+
+function addStyleCard(){const grid=document.getElementById('style-grid');const card=document.createElement('div');card.className='style-card';card.innerHTML=`<button class="del-card" style="display:flex" onclick="this.closest('.style-card').remove()">✕</button><div class="icon" contenteditable="true">✨</div><div class="name" contenteditable="true">スタイル名</div><div class="desc" contenteditable="true">説明を入力してください</div>`;grid.appendChild(card);}
+function showVoicePanel(){document.getElementById('voice-add-panel').style.display='block';}
+function hideVoicePanel(){document.getElementById('voice-add-panel').style.display='none';}
+function addVoice(){const text=document.getElementById('voice-text').value.trim();const name=document.getElementById('voice-name').value.trim();if(!text)return;voices.push({text,name});renderVoices();document.getElementById('voice-text').value='';document.getElementById('voice-name').value='';hideVoicePanel();}
+function renderVoices(){const wrap=document.getElementById('voices-wrap');wrap.innerHTML='';document.getElementById('voice-ph').style.display=voices.length?'none':'block';voices.forEach((v,i)=>{const card=document.createElement('div');card.className='voice-card';card.innerHTML=`<button class="voice-del" style="${isEdit?'display:flex':''}" onclick="delVoice(${i})">✕</button><p contenteditable="${isEdit}">${v.text}</p><p class="voice-name" contenteditable="${isEdit}">── ${v.name}</p>`;wrap.appendChild(card);});}
 function delVoice(i){voices.splice(i,1);renderVoices();}
 
 function saveAll(){
-  const data={};
-  document.querySelectorAll('[contenteditable]').forEach((el,i)=>{data['ce'+i]=el.innerHTML;});
-  // リスト
-  const wList=[];document.querySelectorAll('#worries-list li').forEach(li=>{const t=li.cloneNode(true);t.querySelectorAll('button').forEach(b=>b.remove());wList.push(t.textContent.trim());});
-  // スタイルカード
-  const cards=[];document.querySelectorAll('#style-grid .style-card').forEach(c=>{cards.push({icon:c.querySelector('.icon').textContent,name:c.querySelector('.name').textContent,desc:c.querySelector('.desc').textContent});});
+  const order=[...document.querySelectorAll('.sec-wrap')].map(w=>w.dataset.sec);
+  const data={};document.querySelectorAll('[contenteditable]').forEach((el,i)=>{data['ce'+i]=el.innerHTML;});
+  const cards=[];document.querySelectorAll('#style-grid .style-card').forEach(c=>{cards.push({icon:c.querySelector('.icon').textContent,name:c.querySelector('.name').textContent,desc:c.querySelector('.desc').innerHTML});});
   const vis={};document.querySelectorAll('.sec-wrap').forEach(w=>{vis[w.dataset.sec]=w.classList.contains('hidden-sec');});
+  localStorage.setItem(KEY+'_order',JSON.stringify(order));
   localStorage.setItem(KEY+'_content',JSON.stringify(data));
   localStorage.setItem(KEY+'_voices',JSON.stringify(voices));
   localStorage.setItem(KEY+'_vis',JSON.stringify(vis));
-  localStorage.setItem(KEY+'_worries',JSON.stringify(wList));
   localStorage.setItem(KEY+'_cards',JSON.stringify(cards));
   showToast();
 }
 function loadSaved(){
-  const raw=localStorage.getItem(KEY+'_content');
-  if(raw){const d=JSON.parse(raw);document.querySelectorAll('[contenteditable]').forEach((el,i)=>{if(d['ce'+i]!==undefined)el.innerHTML=d['ce'+i];});}
+  const oraw=localStorage.getItem(KEY+'_order');
+  if(oraw){const order=JSON.parse(oraw);const footer=document.querySelector('footer');order.forEach(sec=>{const el=document.querySelector(`.sec-wrap[data-sec="${sec}"]`);if(el)footer.parentNode.insertBefore(el,footer);});}
+  const raw=localStorage.getItem(KEY+'_content');if(raw){const d=JSON.parse(raw);document.querySelectorAll('[contenteditable]').forEach((el,i)=>{if(d['ce'+i]!==undefined)el.innerHTML=d['ce'+i];});}
   const vraw=localStorage.getItem(KEY+'_voices');if(vraw){voices=JSON.parse(vraw);renderVoices();}
-  const visraw=localStorage.getItem(KEY+'_vis');
-  if(visraw){const vis=JSON.parse(visraw);document.querySelectorAll('.sec-wrap').forEach(w=>{if(vis[w.dataset.sec]){w.classList.add('hidden-sec');const btn=w.querySelector('.vis-toggle');if(btn){btn.textContent='🚫 非表示中';btn.classList.add('is-hidden');}}});}
-  const wraw=localStorage.getItem(KEY+'_worries');
-  if(wraw){
-    const wList=JSON.parse(wraw);const ul=document.getElementById('worries-list');ul.innerHTML='';
-    wList.forEach(t=>{const li=document.createElement('li');li.textContent=t;if(isEdit)li.contentEditable='true';const btn=document.createElement('button');btn.className='del-item';btn.textContent='✕';btn.onclick=function(){delItem(this);};li.appendChild(btn);ul.appendChild(li);});
-  }
-  const craw=localStorage.getItem(KEY+'_cards');
-  if(craw){
-    const cards=JSON.parse(craw);const grid=document.getElementById('style-grid');grid.innerHTML='';
-    cards.forEach(c=>{const card=document.createElement('div');card.className='style-card';card.innerHTML=`<button class="del-card" onclick="this.closest('.style-card').remove()">✕</button><div class="icon" ${isEdit?'contenteditable="true"':''}>${c.icon}</div><div class="name" ${isEdit?'contenteditable="true"':''}>${c.name}</div><div class="desc" ${isEdit?'contenteditable="true"':''}>${c.desc}</div>`;grid.appendChild(card);});
-  }
+  const visraw=localStorage.getItem(KEY+'_vis');if(visraw){const vis=JSON.parse(visraw);document.querySelectorAll('.sec-wrap').forEach(w=>{if(vis[w.dataset.sec]){w.classList.add('hidden-sec');const btn=w.querySelector('.sec-btn');if(btn){btn.textContent='🚫 非表示中';btn.classList.add('is-hidden');}}});}
+  const craw=localStorage.getItem(KEY+'_cards');if(craw){const cards=JSON.parse(craw);const grid=document.getElementById('style-grid');grid.innerHTML='';cards.forEach(c=>{const card=document.createElement('div');card.className='style-card';card.innerHTML=`<button class="del-card" onclick="this.closest('.style-card').remove()">✕</button><div class="icon" ${isEdit?'contenteditable="true"':''}>${c.icon}</div><div class="name" ${isEdit?'contenteditable="true"':''}>${c.name}</div><div class="desc" ${isEdit?'contenteditable="true"':''}>${c.desc}</div>`;grid.appendChild(card);});}
   ['img1_hero','img1_prof'].forEach(k=>{const src=localStorage.getItem(k);if(!src)return;const id=k==='img1_hero'?'hero-img':'prof-img';const phId=k==='img1_hero'?'hero-img-ph':'prof-img-ph';const img=document.getElementById(id);img.src=src;img.style.display='block';const ph=document.getElementById(phId);if(ph)ph.style.display='none';});
 }
 function showToast(){const t=document.getElementById('toast');t.style.opacity='1';setTimeout(()=>t.style.opacity='0',2500);}
 window.onload=()=>{
-  const visraw=localStorage.getItem(KEY+'_vis');
-  if(visraw){const vis=JSON.parse(visraw);document.querySelectorAll('.sec-wrap').forEach(w=>{if(vis[w.dataset.sec])w.classList.add('hidden-sec');});}
-  const raw=localStorage.getItem(KEY+'_content');
-  if(raw){const d=JSON.parse(raw);document.querySelectorAll('[contenteditable]').forEach((el,i)=>{if(d['ce'+i]!==undefined)el.innerHTML=d['ce'+i];});}
+  const visraw=localStorage.getItem(KEY+'_vis');if(visraw){const vis=JSON.parse(visraw);document.querySelectorAll('.sec-wrap').forEach(w=>{if(vis[w.dataset.sec])w.classList.add('hidden-sec');});}
+  const raw=localStorage.getItem(KEY+'_content');if(raw){const d=JSON.parse(raw);document.querySelectorAll('[contenteditable]').forEach((el,i)=>{if(d['ce'+i]!==undefined)el.innerHTML=d['ce'+i];});}
   const vraw=localStorage.getItem(KEY+'_voices');if(vraw){voices=JSON.parse(vraw);renderVoices();}
+  const oraw=localStorage.getItem(KEY+'_order');if(oraw){const order=JSON.parse(oraw);const footer=document.querySelector('footer');order.forEach(sec=>{const el=document.querySelector(`.sec-wrap[data-sec="${sec}"]`);if(el)footer.parentNode.insertBefore(el,footer);});}
   ['img1_hero','img1_prof'].forEach(k=>{const src=localStorage.getItem(k);if(!src)return;const id=k==='img1_hero'?'hero-img':'prof-img';const phId=k==='img1_hero'?'hero-img-ph':'prof-img-ph';const img=document.getElementById(id);img.src=src;img.style.display='block';const ph=document.getElementById(phId);if(ph)ph.style.display='none';});
 };
 </script>
