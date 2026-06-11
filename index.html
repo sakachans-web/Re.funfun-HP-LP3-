@@ -350,6 +350,30 @@ footer{background:var(--sage);color:rgba(255,255,255,0.8);padding:3rem 2rem;text
   .nav-links{display:none;}
   .hamburger{display:block;}
 }
+
+/* ===== SECTION CONTROLS ===== */
+.sec-hidden{display:none !important;}
+.edit-mode .sec-hidden{display:block !important;opacity:.25;pointer-events:none;}
+.edit-mode .sec-hidden .sec-ctrl{pointer-events:all;}
+.sec-ctrl{display:none;position:absolute;top:12px;right:12px;z-index:50;flex-direction:column;gap:4px;}
+.edit-mode .sec-manageable .sec-ctrl{display:flex;}
+.sc-btn{width:36px;height:36px;border-radius:8px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.9rem;transition:opacity .2s,transform .15s;box-shadow:0 2px 8px rgba(0,0,0,.2);}
+.sc-btn:hover{opacity:.85;transform:scale(1.08);}
+.sc-btn.bg{background:#fff;color:var(--sage);}
+.sc-btn.vis{background:#fff;color:var(--mauve);}
+.sc-btn.up,.sc-btn.dn{background:var(--sage);color:#fff;}
+.img-change-btn{display:none;position:absolute;bottom:10px;right:10px;z-index:30;background:rgba(44,37,32,.75);color:#fff;border:none;border-radius:8px;padding:6px 12px;font-size:.76rem;cursor:pointer;align-items:center;backdrop-filter:blur(4px);}
+.edit-mode .img-change-btn{display:flex;}
+/* ===== FMT BAR ===== */
+#fmtBar{display:none;position:fixed;z-index:9999;background:#2c2520;border-radius:10px;padding:6px 8px;gap:4px;box-shadow:0 4px 20px rgba(0,0,0,.4);align-items:center;flex-wrap:wrap;max-width:320px;}
+#fmtBar.show{display:flex;}
+.fb-btn{background:rgba(255,255,255,.12);color:#fff;border:none;border-radius:6px;padding:4px 9px;font-size:.75rem;cursor:pointer;transition:background .15s;white-space:nowrap;}
+.fb-btn:hover{background:rgba(255,255,255,.25);}
+.fb-btn.active{background:var(--sage);}
+.fb-divider{width:1px;height:18px;background:rgba(255,255,255,.2);}
+.fb-color{width:22px;height:22px;border-radius:50%;border:2px solid rgba(255,255,255,.3);cursor:pointer;flex-shrink:0;}
+/* bgImgMol active */
+.imol.active{display:flex !important;}
 </style>
 </head>
 <body>
@@ -377,7 +401,13 @@ footer{background:var(--sage);color:rgba(255,255,255,0.8);padding:3rem 2rem;text
 </nav>
 
 <!-- HERO -->
-<section class="hero" id="heroSec">
+<section class="hero sec-manageable" id="heroSec" data-sec-id="hero">
+  <div class="sec-ctrl">
+    <button class="sc-btn bg" onclick="openBgImg('heroBgImg')">📷</button>
+    <button class="sc-btn vis" onclick="toggleSecVis(this)">👁</button>
+    <button class="sc-btn up" onclick="moveSec(this,-1)">↑</button>
+    <button class="sc-btn dn" onclick="moveSec(this,1)">↓</button>
+  </div>
   <div class="hero-bg">
     <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1600&q=80" id="heroBgImg" alt="">
     <div class="hero-bg-overlay"></div>
@@ -403,13 +433,20 @@ footer{background:var(--sage);color:rgba(255,255,255,0.8);padding:3rem 2rem;text
           <span class="svc-icon">📸</span><span>メイン写真を追加</span>
         </div>
         <div class="edit-overlay" onclick="openImgModal('heroImg','heroImgPlaceholder')"><span class="edit-overlay-label">写真を変更</span></div>
+        <button class="img-change-btn" onclick="openImg('heroImg','heroImgPlaceholder')">📷 写真を変更</button>
       </div>
     </div>
   </div>
 </section>
 
 <!-- SERVICES -->
-<section class="services" id="services">
+<section class="services sec-manageable" id="services" data-sec-id="services">
+  <div class="sec-ctrl">
+    <button class="sc-btn bg" onclick="openBgImg('svcBgImg')">📷</button>
+    <button class="sc-btn vis" onclick="toggleSecVis(this)">👁</button>
+    <button class="sc-btn up" onclick="moveSec(this,-1)">↑</button>
+    <button class="sc-btn dn" onclick="moveSec(this,1)">↓</button>
+  </div>
   <div class="services-bg">
     <img src="https://images.unsplash.com/photo-1441829235189-89bb00a9ba36?w=1600&q=80" id="svcBgImg" alt="">
     <div class="edit-overlay" onclick="openImgModal('svcBgImg',null)"><span class="edit-overlay-label">背景画像を変更</span></div>
@@ -465,7 +502,13 @@ footer{background:var(--sage);color:rgba(255,255,255,0.8);padding:3rem 2rem;text
 </section>
 
 <!-- PROFILE -->
-<section class="profile" id="profile">
+<section class="profile sec-manageable" id="profile" data-sec-id="profile">
+  <div class="sec-ctrl">
+    <button class="sc-btn bg" onclick="openBgImg('profileBgImg')">📷</button>
+    <button class="sc-btn vis" onclick="toggleSecVis(this)">👁</button>
+    <button class="sc-btn up" onclick="moveSec(this,-1)">↑</button>
+    <button class="sc-btn dn" onclick="moveSec(this,1)">↓</button>
+  </div>
   <div class="profile-bg">
     <img src="https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=1600&q=80" id="profileBgImg" alt="">
     <div class="edit-overlay" onclick="openImgModal('profileBgImg',null)"><span class="edit-overlay-label">背景画像を変更</span></div>
@@ -500,7 +543,12 @@ footer{background:var(--sage);color:rgba(255,255,255,0.8);padding:3rem 2rem;text
 </section>
 
 <!-- INSTAGRAM -->
-<section class="instagram" id="instagram">
+<section class="instagram sec-manageable" id="instagram" data-sec-id="instagram">
+  <div class="sec-ctrl">
+    <button class="sc-btn vis" onclick="toggleSecVis(this)">👁</button>
+    <button class="sc-btn up" onclick="moveSec(this,-1)">↑</button>
+    <button class="sc-btn dn" onclick="moveSec(this,1)">↓</button>
+  </div>
   <div class="instagram-inner">
     <div class="insta-top reveal">
       <div>
@@ -523,7 +571,13 @@ footer{background:var(--sage);color:rgba(255,255,255,0.8);padding:3rem 2rem;text
 </section>
 
 <!-- CONTACT -->
-<section class="contact" id="contact">
+<section class="contact sec-manageable" id="contact" data-sec-id="contact">
+  <div class="sec-ctrl">
+    <button class="sc-btn bg" onclick="openBgImg('contactBgImg')">📷</button>
+    <button class="sc-btn vis" onclick="toggleSecVis(this)">👁</button>
+    <button class="sc-btn up" onclick="moveSec(this,-1)">↑</button>
+    <button class="sc-btn dn" onclick="moveSec(this,1)">↓</button>
+  </div>
   <div class="contact-bg">
     <img src="https://images.unsplash.com/photo-1470058869958-2a77ade41c02?w=1600&q=80" id="contactBgImg" alt="">
     <div class="edit-overlay" onclick="openImgModal('contactBgImg',null)"><span class="edit-overlay-label">背景画像を変更</span></div>
@@ -587,6 +641,8 @@ footer{background:var(--sage);color:rgba(255,255,255,0.8);padding:3rem 2rem;text
   <p class="footer-copy">© Re.funfun / り.ふぁんふぁん 長崎県西海市大島町</p>
 </footer>
 
+<div id="fmtBar"><button class="fb-btn" onclick="fmt('bold')" id="fb-bold"><b>B</b></button><button class="fb-btn" onclick="fmt('italic')" id="fb-italic"><i>I</i></button><div class="fb-divider"></div><button class="fb-btn" onclick="fmtSize('0.75em')">小</button><button class="fb-btn" onclick="fmtSize('1em')">中</button><button class="fb-btn" onclick="fmtSize('1.25em')">大</button><button class="fb-btn" onclick="fmtSize('1.6em')">特大</button><div class="fb-divider"></div><div class="fb-color" style="background:var(--sage)" onclick="fmtColor('#4a6741')"></div><div class="fb-color" style="background:var(--mauve)" onclick="fmtColor('#7d6b8a')"></div><div class="fb-color" style="background:#2c2520" onclick="fmtColor('#2c2520')"></div><div class="fb-color" style="background:#c0392b" onclick="fmtColor('#c0392b')"></div><div class="fb-divider"></div><button class="fb-btn" onclick="fmtReset()">リセット</button></div>
+<div class="imol" id="bgImgMol" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:2100;align-items:center;justify-content:center;"><div style="background:#fff;border-radius:14px;padding:1.8rem;width:min(420px,92vw);text-align:center;"><h4 style="font-family:'Noto Serif JP',serif;color:var(--sage);margin-bottom:1rem;">📷 背景画像を変更</h4><input type="file" accept="image/*" id="bgImgFileIn" onchange="handleBgImg()" style="margin-bottom:1.2rem;"><div style="display:flex;gap:.6rem;justify-content:center;"><button class="btn" onclick="applyBgImg()">適用</button><button class="btn btn-outline" onclick="document.getElementById('bgImgMol').classList.remove('active');document.getElementById('bgImgMol').style.display='none'">キャンセル</button></div></div></div>
 <!-- ADMIN BAR -->
 <div class="admin-bar" id="adminBar" style="display:none;">
   <div class="admin-bar-left">
@@ -631,17 +687,21 @@ footer{background:var(--sage);color:rgba(255,255,255,0.8);padding:3rem 2rem;text
 </div>
 
 <script>
-const ADMIN_PW='refunfun2026';
-const STORE_KEY='refunfun_hp_v2';
-let editMode=false,currentImgId=null,currentImgPlaceholderId=null,pendingImgData=null;
+const PW='refunfun2026', SK='refunfun_hp_v3';
+let em=false, cImg=null, cPh=null, pendImg=null, pendBgImg=null, cBgImgId=null;
 
 /* SCROLL REVEAL */
 const observer=new IntersectionObserver(entries=>{
   entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');}});
 },{threshold:0.12});
-document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+function reObserve(){document.querySelectorAll('.reveal').forEach(el=>{el.classList.remove('visible');observer.observe(el);});}
+reObserve();
 
 function toggleMenu(){document.getElementById('mobileMenu').classList.toggle('open');}
+
+/* MODAL */
+function openMol(id){document.getElementById(id).classList.add('on'||'active');}
+function closeMol(id){const el=document.getElementById(id);el.classList.remove('on');el.classList.remove('active');}
 
 /* LOGIN */
 function openLoginModal(){
@@ -652,90 +712,135 @@ function openLoginModal(){
 }
 function closeLoginModal(){document.getElementById('loginModal').classList.remove('active');}
 function doLogin(){
-  if(document.getElementById('pwInput').value===ADMIN_PW){
+  if(document.getElementById('pwInput').value===PW){
     closeLoginModal();
     document.getElementById('adminBar').style.display='flex';
     loadSaved();
-  } else {
-    document.getElementById('loginErr').style.display='block';
-  }
+  } else {document.getElementById('loginErr').style.display='block';}
 }
-function adminLogout(){
-  document.getElementById('adminBar').style.display='none';
-  if(editMode)toggleEditMode();
-}
+function adminLogout(){document.getElementById('adminBar').style.display='none';if(em)toggleEditMode();}
 
 /* EDIT MODE */
+const HP_EIDS=['heroTitle','heroSub','heroSub2','svcTitle',
+  'svc1Title','svc1Body','svc2Title','svc2Body','svc3Title','svc3Body','profileBody'];
 function toggleEditMode(){
-  editMode=!editMode;
-  document.body.classList.toggle('edit-mode',editMode);
-  document.getElementById('editBadge').textContent=editMode?'✏️ 編集中':'👁 表示中';
-  document.getElementById('modeLabel').textContent=editMode?'編集モード':'閲覧モード';
-  document.getElementById('editToggleBtn').textContent=editMode?'👁 閲覧に戻す':'✏️ 編集する';
-  document.getElementById('saveBtn').style.display=editMode?'inline-block':'none';
-  ['heroTitle','heroSub','heroSub2','svcTitle',
-   'svc1Title','svc1Body','svc2Title','svc2Body','svc3Title','svc3Body',
-   'profileBody'].forEach(id=>{
-    const el=document.getElementById(id);
-    if(el)el.contentEditable=editMode?'true':'false';
-  });
+  em=!em;
+  document.body.classList.toggle('edit-mode',em);
+  document.getElementById('editBadge').textContent=em?'✏️ 編集中':'👁 表示中';
+  document.getElementById('modeLabel').textContent=em?'編集モード':'閲覧モード';
+  document.getElementById('editToggleBtn').textContent=em?'👁 閲覧に戻す':'✏️ 編集する';
+  document.getElementById('saveBtn').style.display=em?'inline-block':'none';
+  HP_EIDS.forEach(id=>{const el=document.getElementById(id);if(el)el.contentEditable=em?'true':'false';});
+  if(!em)hideFmtBar();
+}
+
+/* SECTION VIS / MOVE */
+function toggleSecVis(btn){
+  const sec=btn.closest('.sec-manageable');
+  const hidden=sec.classList.toggle('sec-hidden');
+  btn.textContent=hidden?'🚫':'👁';
+  btn.title=hidden?'このセクションを表示':'このセクションを非表示';
+}
+function moveSec(btn,dir){
+  const sec=btn.closest('.sec-manageable');
+  const parent=sec.parentNode;
+  const secs=[...parent.querySelectorAll(':scope > .sec-manageable')];
+  const idx=secs.indexOf(sec);
+  const target=secs[idx+dir];
+  if(!target)return;
+  if(dir===-1)parent.insertBefore(sec,target);
+  else parent.insertBefore(target,sec);
 }
 
 /* SAVE/LOAD */
-function saveAll(){
-  const data={};
-  ['heroTitle','heroSub','heroSub2','svcTitle',
-   'svc1Title','svc1Body','svc2Title','svc2Body','svc3Title','svc3Body',
-   'profileBody'].forEach(id=>{
-    const el=document.getElementById(id);if(el)data[id]=el.innerHTML;
-  });
+function getState(){
+  const state={texts:{},imgs:{},sections:[]};
+  HP_EIDS.forEach(id=>{const el=document.getElementById(id);if(el)state.texts[id]=el.innerHTML;});
   ['heroImg','heroBgImg','svcBgImg','profileBgImg','contactBgImg',
    'svcImg1','svcImg2','svcImg3','profileImg'].forEach(id=>{
     const el=document.getElementById(id);
-    if(el&&el.src&&(el.src.startsWith('data:')||el.src.startsWith('blob:')))data[id]=el.src;
+    if(el&&el.src&&(el.src.startsWith('data:')||el.src.startsWith('blob:')))state.imgs[id]=el.src;
   });
-  localStorage.setItem(STORE_KEY,JSON.stringify(data));
-  showToast();
+  document.querySelectorAll('.sec-manageable').forEach(sec=>{
+    state.sections.push({id:sec.dataset.secId,hidden:sec.classList.contains('sec-hidden')});
+  });
+  return state;
 }
+function saveAll(){localStorage.setItem(SK,JSON.stringify(getState()));showToast();}
 function loadSaved(){
-  const raw=localStorage.getItem(STORE_KEY);if(!raw)return;
-  const data=JSON.parse(raw);
-  Object.keys(data).forEach(id=>{
+  const raw=localStorage.getItem(SK);if(!raw)return;
+  const d=JSON.parse(raw);
+  if(d.texts)Object.keys(d.texts).forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=d.texts[id];});
+  if(d.imgs)Object.keys(d.imgs).forEach(id=>{
     const el=document.getElementById(id);if(!el)return;
-    if(el.tagName==='IMG'){
-      el.src=data[id];el.style.display='block';
-      const ph=document.getElementById(id+'Placeholder');
-      if(ph)ph.style.display='none';
-    } else {el.innerHTML=data[id];}
+    el.src=d.imgs[id];el.style.display='block';
+    const ph=document.getElementById(id+'Placeholder');if(ph)ph.style.display='none';
   });
+  if(d.sections&&d.sections.length){
+    const parent=document.querySelector('nav').parentNode;
+    d.sections.forEach(({id,hidden})=>{
+      const sec=document.querySelector(`[data-sec-id="${id}"]`);if(!sec)return;
+      parent.appendChild(sec);
+      if(hidden){sec.classList.add('sec-hidden');const btn=sec.querySelector('.sc-btn.vis');if(btn){btn.textContent='🚫';}}
+      else{sec.classList.remove('sec-hidden');const btn=sec.querySelector('.sc-btn.vis');if(btn){btn.textContent='👁';}}
+    });
+    const footer=document.querySelector('footer');
+    const adminBar=document.getElementById('adminBar');
+    if(footer)parent.appendChild(footer);
+    if(adminBar)parent.appendChild(adminBar);
+    reObserve();
+  }
 }
-function showToast(){
-  const t=document.getElementById('toast');
-  t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);
-}
+function showToast(){const t=document.getElementById('toast');t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
 
 /* IMAGE */
-function openImgModal(imgId,phId){
-  if(!editMode)return;
-  currentImgId=imgId;currentImgPlaceholderId=phId;pendingImgData=null;
-  document.getElementById('imgFileInput').value='';
-  document.getElementById('imgModal').classList.add('active');
-}
+function openImgModal(imgId,phId){if(!em)return;openImg(imgId,phId);}
+function openImg(imgId,phId){if(!em)return;cImg=imgId;cPh=phId;pendImg=null;document.getElementById('imgFileInput').value='';document.getElementById('imgModal').classList.add('active');}
 function closeImgModal(){document.getElementById('imgModal').classList.remove('active');}
-function handleImgUpload(){
-  const file=document.getElementById('imgFileInput').files[0];if(!file)return;
-  const r=new FileReader();r.onload=e=>{pendingImgData=e.target.result;};r.readAsDataURL(file);
-}
+function handleImgUpload(){const f=document.getElementById('imgFileInput').files[0];if(!f)return;const r=new FileReader();r.onload=e=>{pendImg=e.target.result;};r.readAsDataURL(f);}
 function applyImg(){
-  if(!pendingImgData||!currentImgId){closeImgModal();return;}
-  const img=document.getElementById(currentImgId);
-  img.src=pendingImgData;img.style.display='block';
-  if(currentImgPlaceholderId){
-    const ph=document.getElementById(currentImgPlaceholderId);
-    if(ph)ph.style.display='none';
-  }
+  if(!pendImg||!cImg){closeImgModal();return;}
+  const img=document.getElementById(cImg);img.style.transition='none';img.src=pendImg;img.style.display='block';
+  if(cPh){const ph=document.getElementById(cPh);if(ph)ph.style.display='none';}
   closeImgModal();
 }
+
+/* BG IMAGE */
+function openBgImg(imgId){if(!em)return;cBgImgId=imgId;pendBgImg=null;document.getElementById('bgImgFileIn').value='';document.getElementById('bgImgMol').classList.add('active');}
+function handleBgImg(){const f=document.getElementById('bgImgFileIn').files[0];if(!f)return;const r=new FileReader();r.onload=e=>{pendBgImg=e.target.result;};r.readAsDataURL(f);}
+function applyBgImg(){
+  if(!pendBgImg||!cBgImgId){document.getElementById('bgImgMol').classList.remove('active');return;}
+  const img=document.getElementById(cBgImgId);img.style.transition='none';img.src=pendBgImg;
+  document.getElementById('bgImgMol').classList.remove('active');
+}
+
+/* TEXT FORMAT */
+let savedRange=null;
+function hideFmtBar(){document.getElementById('fmtBar').classList.remove('show');}
+document.addEventListener('selectionchange',()=>{
+  if(!em)return;
+  const sel=window.getSelection();
+  if(!sel||sel.isCollapsed||!sel.toString().trim()){hideFmtBar();return;}
+  const range=sel.getRangeAt(0);
+  let node=range.commonAncestorContainer;if(node.nodeType===3)node=node.parentNode;
+  let inEdit=false;while(node){if(node.contentEditable==='true'){inEdit=true;break;}node=node.parentNode;}
+  if(!inEdit){hideFmtBar();return;}
+  savedRange=range.cloneRange();
+  const rect=range.getBoundingClientRect();
+  const bar=document.getElementById('fmtBar');
+  bar.classList.add('show');
+  const bw=bar.offsetWidth||260;
+  let left=rect.left+rect.width/2-bw/2;
+  left=Math.max(8,Math.min(left,window.innerWidth-bw-8));
+  bar.style.left=left+'px';
+  bar.style.top=Math.max(60,rect.top+window.scrollY-50)+'px';
+  document.getElementById('fb-bold').classList.toggle('active',document.queryCommandState('bold'));
+  document.getElementById('fb-italic').classList.toggle('active',document.queryCommandState('italic'));
+});
+function fmt(cmd){document.execCommand(cmd,false,null);}
+function fmtSize(sz){if(!savedRange)return;const sel=window.getSelection();sel.removeAllRanges();sel.addRange(savedRange);document.execCommand('fontSize',false,'7');document.querySelectorAll('font[size="7"]').forEach(el=>{el.removeAttribute('size');el.style.fontSize=sz;});}
+function fmtColor(c){if(!savedRange)return;const sel=window.getSelection();sel.removeAllRanges();sel.addRange(savedRange);document.execCommand('foreColor',false,c);}
+function fmtReset(){if(!savedRange)return;const sel=window.getSelection();sel.removeAllRanges();sel.addRange(savedRange);document.execCommand('removeFormat',false,null);}
 
 loadSaved();
 </script>
