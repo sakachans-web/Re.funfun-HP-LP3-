@@ -4,339 +4,545 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Re.funfun | り.ふぁんふぁん</title>
-<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600;700&family=Noto+Sans+JP:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-:root{--green:#4a6741;--green-light:#6b8f62;--green-pale:#e8efe6;--purple:#9b8aa0;--purple-light:#c4b5c9;--purple-pale:#f0eaf2;--beige:#f5f0e8;--cream:#faf7f2;--text:#3a3230;--text-light:#6b5e57;}
+:root{
+  --sage:#4a6741;--sage-light:#6b8f5e;--sage-pale:#e8f0e5;
+  --mauve:#7d6b8a;--mauve-pale:#f0ecf4;
+  --cream:#f7f3ec;--beige:#ede7dc;
+  --text:#2c2520;--text-muted:#6b5f57;--white:#ffffff;
+  --radius:12px;
+}
 *{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:'Noto Sans JP',sans-serif;background:var(--cream);color:var(--text);line-height:1.8;}
+body{font-family:'Noto Sans JP',sans-serif;background:var(--cream);color:var(--text);line-height:1.8;overflow-x:hidden;}
+img{max-width:100%;display:block;}
+a{color:inherit;text-decoration:none;}
 
-/* EDIT MODE */
-body.edit-mode [contenteditable]{outline:2px dashed var(--purple-light);border-radius:4px;cursor:text;min-height:1em;}
-body.edit-mode [contenteditable]:hover{outline-color:var(--purple);background:rgba(155,138,160,0.04);}
-body.edit-mode [contenteditable]:focus{outline:2px solid var(--purple);}
-body.edit-mode .editable-img{outline:2px dashed var(--purple-light);cursor:pointer;}
-body.edit-mode .editable-img:hover{outline-color:var(--purple);}
-.edit-badge{display:none;position:fixed;top:12px;left:50%;transform:translateX(-50%);background:var(--purple);color:white;padding:6px 18px;border-radius:20px;font-size:12px;z-index:9999;box-shadow:0 4px 16px rgba(155,138,160,0.4);}
-body.edit-mode .edit-badge{display:block;}
-.sec-wrap{position:relative;transition:opacity .15s;}
-.sec-wrap.dragging{opacity:0.4;}
-.sec-wrap.drag-over-top{border-top:3px solid var(--purple);}
-.sec-wrap.drag-over-bottom{border-bottom:3px solid var(--purple);}
-.sec-controls{display:none;position:absolute;top:10px;right:12px;z-index:100;align-items:center;gap:6px;}
-body.edit-mode .sec-controls{display:flex;}
-.sec-btn{background:white;border:1.5px solid var(--purple-light);border-radius:20px;padding:4px 10px;font-size:11px;cursor:pointer;color:var(--purple);font-family:'Noto Sans JP',sans-serif;box-shadow:0 2px 8px rgba(0,0,0,0.08);white-space:nowrap;}
-.sec-btn.is-hidden{background:var(--purple);color:white;border-color:var(--purple);}
-.drag-handle{font-size:15px;color:var(--purple-light);cursor:grab;padding:2px 6px;user-select:none;}
-.drag-handle:hover{color:var(--purple);}
-.sec-wrap.hidden-sec>*:not(.sec-controls){opacity:0.25;pointer-events:none;}
-body:not(.edit-mode) .sec-wrap.hidden-sec{display:none;}
+/* ---- NAV ---- */
+nav{background:rgba(255,255,255,0.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--beige);position:sticky;top:0;z-index:200;padding:0 2rem;}
+.nav-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:62px;}
+.nav-logo{font-family:'Noto Serif JP',serif;font-size:1.15rem;color:var(--sage);letter-spacing:0.06em;}
+.nav-links{display:flex;gap:2rem;}
+.nav-links a{font-size:0.83rem;color:var(--text-muted);transition:color 0.2s;}
+.nav-links a:hover{color:var(--sage);}
+.hamburger{display:none;background:none;border:none;cursor:pointer;padding:4px;}
+.hamburger span{display:block;width:22px;height:2px;background:var(--text);margin:5px 0;border-radius:2px;transition:all 0.3s;}
+.mobile-menu{display:none;background:var(--white);border-top:1px solid var(--beige);}
+.mobile-menu a{display:block;padding:0.9rem 2rem;font-size:0.9rem;color:var(--text-muted);border-bottom:1px solid var(--beige);}
+.mobile-menu.open{display:block;}
 
-/* HEADER NAV */
-.site-header{background:var(--green);position:sticky;top:0;z-index:200;}
-.header-inner{max-width:900px;margin:0 auto;padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:56px;}
-.header-logo{font-family:'Shippori Mincho',serif;color:white;font-size:16px;letter-spacing:2px;text-decoration:none;}
-.header-nav{display:flex;gap:24px;}
-.header-nav a{color:rgba(255,255,255,0.85);font-size:13px;text-decoration:none;letter-spacing:1px;transition:color .2s;}
-.header-nav a:hover{color:white;}
-.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px;}
-.hamburger span{width:22px;height:2px;background:white;border-radius:2px;transition:.3s;}
-.sp-nav{display:none;background:var(--green);padding:16px 20px;flex-direction:column;gap:0;}
-.sp-nav a{color:rgba(255,255,255,0.85);font-size:14px;text-decoration:none;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.1);}
-.sp-nav a:last-child{border-bottom:none;}
+/* ---- HERO ---- */
+.hero{
+  position:relative;min-height:92vh;display:flex;align-items:center;
+  overflow:hidden;
+}
+.hero-bg{
+  position:absolute;inset:0;z-index:0;overflow:hidden;
+  background:#d6e4d0;
+}
+.hero-bg img{width:100%;height:100%;object-fit:cover;opacity:0.14;}
+.hero-bg-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(130deg,rgba(232,240,229,.99) 0%,rgba(232,240,229,.96) 50%,rgba(240,236,244,.82) 100%);
+}
+.hero-inner{
+  position:relative;z-index:1;
+  max-width:1100px;margin:0 auto;padding:6rem 2rem 5rem;
+  display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center;
+}
+.hero-text{}
+.hero-eyebrow{
+  font-size:0.75rem;color:var(--sage);letter-spacing:0.18em;
+  margin-bottom:1.4rem;display:flex;align-items:center;gap:0.6rem;
+}
+.hero-eyebrow::after{content:'';display:block;width:32px;height:1px;background:var(--sage-light);}
+.hero h1{
+  font-family:'Noto Serif JP',serif;
+  font-size:clamp(2rem,4.5vw,3.2rem);
+  line-height:1.55;color:var(--text);
+  margin-bottom:1.2rem;
+}
+.hero h1 em{font-style:normal;color:var(--sage);}
+.hero-sub{font-size:1rem;color:var(--text-muted);margin-bottom:0.4rem;}
+.hero-sub2{font-size:0.85rem;color:var(--text-muted);margin-bottom:2rem;line-height:1.9;}
+.hero-actions{display:flex;gap:1rem;flex-wrap:wrap;}
+.hero-img-col{position:relative;}
+.hero-img-frame{
+  position:relative;
+  border-radius:var(--radius) var(--radius) 60% 60% / var(--radius) var(--radius) 40% 40%;
+  overflow:hidden;
+  box-shadow:0 20px 60px rgba(74,103,65,0.18);
+}
+.hero-img-frame img{width:100%;aspect-ratio:3/4;object-fit:cover;background:var(--beige);}
+.hero-deco{
+  position:absolute;top:-24px;right:-24px;
+  width:120px;height:120px;border-radius:50%;
+  border:3px solid var(--sage-pale);opacity:0.6;
+}
+.hero-deco2{
+  position:absolute;bottom:-16px;left:-16px;
+  width:80px;height:80px;border-radius:50%;
+  background:var(--mauve-pale);opacity:0.5;
+}
 
-/* HERO */
-.hero{background:linear-gradient(160deg,var(--green-pale) 0%,var(--beige) 60%,var(--purple-pale) 100%);padding:80px 20px 100px;text-align:center;position:relative;overflow:hidden;}
-.hero-eyebrow{display:inline-block;background:white;border:1.5px solid var(--green-pale);color:var(--green);font-size:11px;letter-spacing:3px;padding:6px 20px;border-radius:20px;margin-bottom:24px;box-shadow:0 2px 12px rgba(74,103,65,0.1);}
-.hero-catch{font-family:'Shippori Mincho',serif;font-size:clamp(26px,5vw,44px);font-weight:700;color:var(--green);line-height:1.45;margin-bottom:12px;}
-.hero-catch-mid{font-family:'Shippori Mincho',serif;font-size:clamp(16px,3vw,22px);color:var(--green);margin-bottom:20px;font-weight:600;letter-spacing:1px;}
-.hero-sub{font-size:14px;color:var(--text-light);margin-bottom:40px;line-height:2;max-width:460px;margin-left:auto;margin-right:auto;}
-.hero-img-wrap{width:100%;max-width:540px;height:320px;background:linear-gradient(135deg,var(--green-pale),var(--purple-pale));border-radius:20px;margin:0 auto 40px;display:flex;align-items:center;justify-content:center;color:var(--text-light);font-size:13px;border:2px dashed var(--purple-light);overflow:hidden;box-shadow:0 8px 32px rgba(74,103,65,0.1);}
-.hero-img-wrap img{width:100%;height:100%;object-fit:cover;}
-.btn-line{display:inline-block;background:#06C755;color:white;padding:16px 40px;border-radius:50px;font-size:15px;font-weight:500;text-decoration:none;letter-spacing:1px;box-shadow:0 4px 20px rgba(6,199,85,0.3);transition:transform .2s;}
-.btn-line:hover{transform:translateY(-2px);}
+/* ---- BUTTONS ---- */
+.btn{
+  display:inline-block;background:var(--sage);color:var(--white);
+  padding:0.85rem 2rem;border-radius:99px;
+  font-size:0.9rem;font-weight:500;letter-spacing:0.04em;
+  transition:background 0.2s,transform 0.15s,box-shadow 0.2s;
+  border:none;cursor:pointer;
+  box-shadow:0 4px 16px rgba(74,103,65,0.25);
+}
+.btn:hover{background:var(--sage-light);transform:translateY(-2px);box-shadow:0 8px 24px rgba(74,103,65,0.3);}
+.btn:active{transform:scale(0.97);}
+.btn-outline{background:transparent;border:1.5px solid var(--sage);color:var(--sage);box-shadow:none;}
+.btn-outline:hover{background:var(--sage-pale);transform:translateY(-2px);}
+.btn-line{background:#06C755;color:#fff;box-shadow:0 4px 16px rgba(6,199,85,0.25);}
+.btn-line:hover{background:#05b04c;}
 
-/* SECTION COMMON */
-.section{padding:70px 20px;max-width:900px;margin:0 auto;}
-.section-title{font-family:'Shippori Mincho',serif;font-size:clamp(22px,4vw,32px);color:var(--green);text-align:center;margin-bottom:16px;}
-.divider{width:40px;height:2px;background:linear-gradient(to right,var(--green),var(--purple));margin:0 auto 48px;border-radius:2px;}
+/* ---- SCROLL ANIM ---- */
+.reveal{opacity:0;transform:translateY(32px);transition:opacity 0.7s ease,transform 0.7s ease;}
+.reveal.from-left{transform:translateX(-40px);}
+.reveal.from-right{transform:translateX(40px);}
+.reveal.visible{opacity:1;transform:translate(0);}
+.stagger .reveal:nth-child(1){transition-delay:0s;}
+.stagger .reveal:nth-child(2){transition-delay:0.1s;}
+.stagger .reveal:nth-child(3){transition-delay:0.2s;}
+.stagger .reveal:nth-child(4){transition-delay:0.3s;}
 
-/* SERVICE CARDS */
-.services-bg{background:var(--green-pale);padding:70px 20px;}
-.service-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px;max-width:900px;margin:0 auto;}
-.service-card{background:white;border-radius:20px;overflow:hidden;box-shadow:0 4px 24px rgba(74,103,65,0.08);transition:transform .2s,box-shadow .2s;}
-.service-card:hover{transform:translateY(-4px);box-shadow:0 8px 32px rgba(74,103,65,0.14);}
-.service-card-img{width:100%;height:180px;background:linear-gradient(135deg,var(--green-pale),var(--purple-pale));display:flex;align-items:center;justify-content:center;font-size:48px;position:relative;overflow:hidden;}
-.service-card-img img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;}
-.service-card-img .img-placeholder{position:relative;z-index:1;}
-.service-card-body{padding:24px;}
-.service-card-tag{display:inline-block;background:var(--green-pale);color:var(--green);font-size:11px;padding:3px 10px;border-radius:10px;margin-bottom:10px;font-weight:500;}
-.service-card-title{font-family:'Shippori Mincho',serif;font-size:20px;color:var(--green);margin-bottom:8px;line-height:1.4;}
-.service-card-desc{font-size:13px;color:var(--text-light);line-height:1.8;margin-bottom:20px;}
-.service-card-link{display:inline-flex;align-items:center;gap:6px;background:var(--green);color:white;padding:10px 22px;border-radius:30px;font-size:13px;font-weight:500;text-decoration:none;transition:background .2s;}
-.service-card-link:hover{background:var(--green-light);}
-/* 編集モード時のリンクURL変更 */
-.service-link-edit{display:none;margin-top:10px;}
-body.edit-mode .service-link-edit{display:flex;align-items:center;gap:8px;}
-.service-link-edit label{font-size:11px;color:var(--text-light);white-space:nowrap;}
-.service-link-edit input{flex:1;padding:6px 10px;border:1.5px solid #e0e0e0;border-radius:6px;font-size:12px;font-family:'Noto Sans JP',sans-serif;}
+/* ---- SERVICES ---- */
+.services{
+  position:relative;padding:7rem 2rem;background:var(--white);overflow:hidden;
+}
+.services-bg{position:absolute;inset:0;z-index:0;overflow:hidden;}
+.services-bg img{width:100%;height:100%;object-fit:cover;opacity:0.06;}
+.services-inner{position:relative;z-index:1;max-width:1100px;margin:0 auto;}
+.section-label{
+  font-size:0.72rem;letter-spacing:0.2em;color:var(--sage);
+  margin-bottom:0.6rem;display:block;
+}
+.section-title{
+  font-family:'Noto Serif JP',serif;
+  font-size:clamp(1.5rem,3vw,2rem);
+  color:var(--text);margin-bottom:3.5rem;
+}
+.services-header{margin-bottom:3rem;}
+.service-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;
+}
+.service-card{
+  background:var(--cream);border-radius:var(--radius);
+  overflow:hidden;border:1px solid var(--beige);
+  transition:transform 0.3s,box-shadow 0.3s;
+  display:flex;flex-direction:column;
+}
+.service-card:nth-child(2){margin-top:2.5rem;}
+.service-card:nth-child(3){margin-top:1.2rem;}
+.service-card:hover{transform:translateY(-6px);box-shadow:0 16px 48px rgba(74,103,65,0.12);}
+.svc-img-wrap{
+  position:relative;aspect-ratio:4/3;overflow:hidden;background:var(--beige);
+}
+.svc-img-wrap img{width:100%;height:100%;object-fit:cover;transition:transform 0.5s;}
+.service-card:hover .svc-img-wrap img{transform:scale(1.05);}
+.svc-tag{
+  position:absolute;top:12px;left:12px;
+  font-size:0.68rem;letter-spacing:0.1em;
+  color:var(--white);background:var(--sage);
+  padding:3px 10px;border-radius:99px;
+}
+.svc-body{padding:1.4rem 1.5rem;flex:1;display:flex;flex-direction:column;}
+.svc-body h3{font-family:'Noto Serif JP',serif;font-size:1.1rem;margin-bottom:0.6rem;color:var(--text);}
+.svc-body p{font-size:0.85rem;color:var(--text-muted);line-height:1.9;flex:1;}
+.svc-link{
+  font-size:0.82rem;color:var(--sage);font-weight:500;
+  margin-top:1rem;display:inline-flex;align-items:center;gap:0.3rem;
+  transition:gap 0.2s;
+}
+.service-card:hover .svc-link{gap:0.6rem;}
+.svc-img-placeholder{
+  width:100%;aspect-ratio:4/3;background:var(--beige);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  color:var(--text-muted);font-size:0.8rem;gap:0.4rem;cursor:pointer;
+}
+.svc-icon{font-size:2rem;}
 
-/* PROFILE */
-.profile-outer{background:white;border-radius:24px;padding:36px;box-shadow:0 4px 24px rgba(74,103,65,0.08);border:1px solid var(--green-pale);}
-.profile-inner{display:flex;gap:32px;align-items:flex-start;flex-wrap:wrap;}
-.profile-img-wrap{width:140px;height:140px;border-radius:50%;background:linear-gradient(135deg,var(--green-pale),var(--purple-pale));border:4px solid white;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--text-light);text-align:center;overflow:hidden;box-shadow:0 4px 16px rgba(74,103,65,0.15);}
-.profile-img-wrap img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
-.profile-text h3{font-family:'Shippori Mincho',serif;font-size:26px;color:var(--green);margin-bottom:4px;}
-.profile-text .prof-label{font-size:12px;color:var(--purple);margin-bottom:16px;letter-spacing:1px;}
-.profile-text p{font-size:14px;color:var(--text-light);line-height:2;}
-.profile-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;}
-.profile-tag{background:var(--green-pale);color:var(--green);font-size:11px;padding:4px 12px;border-radius:20px;font-weight:500;}
+/* ---- PROFILE ---- */
+.profile{
+  position:relative;padding:7rem 2rem;overflow:hidden;background:var(--cream);
+}
+.profile-bg{position:absolute;inset:0;z-index:0;overflow:hidden;}
+.profile-bg img{width:100%;height:100%;object-fit:cover;opacity:0.08;}
+.profile-inner{
+  position:relative;z-index:1;max-width:1100px;margin:0 auto;
+  display:grid;grid-template-columns:5fr 6fr;gap:5rem;align-items:center;
+}
+.profile-img-col{position:relative;}
+.profile-img-frame{
+  position:relative;
+  border-radius:40% 60% 55% 45% / 45% 45% 55% 55%;
+  overflow:hidden;
+  box-shadow:0 24px 60px rgba(74,103,65,0.16);
+  aspect-ratio:3/4;
+}
+.profile-img-frame img{width:100%;height:100%;object-fit:cover;background:var(--beige);}
+.profile-img-placeholder{
+  width:100%;height:100%;background:var(--beige);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  color:var(--text-muted);font-size:0.82rem;gap:0.5rem;cursor:pointer;
+}
+.profile-deco{
+  position:absolute;top:-20px;right:-20px;
+  width:100px;height:100px;border-radius:50%;
+  border:2px solid var(--sage-pale);
+}
+.profile-deco2{
+  position:absolute;bottom:-12px;left:-12px;
+  width:64px;height:64px;border-radius:50%;
+  background:var(--mauve-pale);opacity:0.7;
+}
+.profile-text{}
+.profile-text .section-label{margin-bottom:0.4rem;}
+.profile-text .section-title{margin-bottom:0.3rem;}
+.profile-name-yomi{font-size:0.82rem;color:var(--text-muted);margin-bottom:1.5rem;}
+.profile-body{font-size:0.9rem;color:var(--text-muted);line-height:2.1;margin-bottom:2rem;}
+.profile-stats{display:flex;gap:2rem;margin-bottom:2rem;flex-wrap:wrap;}
+.stat-item{text-align:left;}
+.stat-num{font-family:'Noto Serif JP',serif;font-size:1.5rem;color:var(--sage);font-weight:600;}
+.stat-label{font-size:0.7rem;color:var(--text-muted);}
 
-/* INSTAGRAM */
-.instagram-bg{background:var(--purple-pale);padding:70px 20px;text-align:center;}
-.instagram-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:600px;margin:0 auto 28px;}
-.instagram-placeholder{aspect-ratio:1;background:linear-gradient(135deg,var(--purple-pale),var(--beige));border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:28px;border:1px solid var(--purple-light);}
-.btn-insta{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);color:white;padding:14px 32px;border-radius:50px;font-size:14px;font-weight:500;text-decoration:none;box-shadow:0 4px 20px rgba(220,39,67,0.3);transition:transform .2s;}
-.btn-insta:hover{transform:translateY(-2px);}
+/* ---- INSTAGRAM ---- */
+.instagram{padding:7rem 2rem;background:var(--white);}
+.instagram-inner{max-width:1100px;margin:0 auto;}
+.insta-top{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:2rem;flex-wrap:wrap;gap:1rem;}
+.insta-grid{
+  display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-bottom:2rem;
+}
+.insta-cell{
+  aspect-ratio:1;background:var(--beige);border-radius:6px;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.4rem;transition:transform 0.3s;cursor:default;
+}
+.insta-cell:hover{transform:scale(1.04);}
 
-/* CONTACT FORM */
-.contact-bg{background:var(--cream);padding:70px 20px;}
-.form-box{background:white;border-radius:20px;padding:40px;box-shadow:0 4px 24px rgba(74,103,65,0.08);max-width:600px;margin:0 auto;}
-.form-group{margin-bottom:20px;}
-.form-group label{display:block;font-size:13px;color:var(--text-light);margin-bottom:6px;font-weight:500;}
-.form-group label span{color:#dc2626;margin-left:4px;}
-.form-group input,.form-group textarea,.form-group select{width:100%;padding:12px 16px;border:1.5px solid #e0e0e0;border-radius:10px;font-family:'Noto Sans JP',sans-serif;font-size:14px;color:var(--text);transition:border-color .2s;background:white;}
-.form-group input:focus,.form-group textarea:focus,.form-group select:focus{outline:none;border-color:var(--green);}
-.form-group textarea{min-height:120px;resize:vertical;}
-.form-submit{width:100%;background:var(--green);color:white;border:none;padding:16px;border-radius:10px;font-size:15px;font-weight:500;cursor:pointer;font-family:'Noto Sans JP',sans-serif;transition:background .2s;margin-top:8px;}
-.form-submit:hover{background:var(--green-light);}
-.form-note{font-size:12px;color:var(--text-light);text-align:center;margin-top:12px;line-height:1.8;}
+/* ---- CONTACT ---- */
+.contact{
+  position:relative;padding:7rem 2rem;overflow:hidden;
+  background:var(--cream);
+}
+.contact-bg{position:absolute;inset:0;z-index:0;overflow:hidden;}
+.contact-bg img{width:100%;height:100%;object-fit:cover;opacity:0.07;}
+.contact-inner{position:relative;z-index:1;max-width:1100px;margin:0 auto;}
+.contact-grid{display:grid;grid-template-columns:5fr 4fr;gap:4rem;align-items:start;}
+.contact-form input,.contact-form select,.contact-form textarea{
+  width:100%;padding:0.75rem 1rem;
+  border:1px solid var(--beige);border-radius:8px;
+  background:var(--white);font-family:inherit;font-size:0.88rem;
+  color:var(--text);margin-bottom:0.8rem;outline:none;
+  transition:border-color 0.2s;
+}
+.contact-form input:focus,.contact-form select:focus,.contact-form textarea:focus{border-color:var(--sage-light);}
+.contact-form label{font-size:0.78rem;color:var(--text-muted);display:block;margin-bottom:0.3rem;}
+.contact-form textarea{resize:vertical;min-height:100px;}
+.form-note{font-size:0.74rem;color:var(--text-muted);margin-top:0.5rem;}
+.sns-block{display:flex;flex-direction:column;gap:1rem;}
+.sns-card{
+  background:var(--white);border-radius:var(--radius);padding:1.5rem;
+  border:1px solid var(--beige);display:flex;flex-direction:column;gap:0.8rem;
+}
+.sns-card h4{font-size:0.95rem;color:var(--text);font-weight:500;}
+.sns-card p{font-size:0.82rem;color:var(--text-muted);}
 
-/* CTA */
-.cta-bg{background:linear-gradient(160deg,var(--beige),var(--purple-pale));padding:70px 20px;text-align:center;}
-.btn-group{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-top:24px;}
+/* ---- FOOTER ---- */
+footer{background:var(--sage);color:rgba(255,255,255,0.8);padding:3rem 2rem;text-align:center;}
+.footer-logo{font-family:'Noto Serif JP',serif;font-size:1.3rem;color:var(--white);margin-bottom:1.2rem;}
+.footer-links{display:flex;gap:2rem;justify-content:center;margin-bottom:1rem;flex-wrap:wrap;}
+.footer-links a{font-size:0.8rem;color:rgba(255,255,255,0.65);transition:color 0.2s;}
+.footer-links a:hover{color:var(--white);}
+.footer-copy{font-size:0.75rem;color:rgba(255,255,255,0.45);}
 
-/* FOOTER */
-footer{background:var(--green);color:rgba(255,255,255,0.7);text-align:center;padding:32px 20px;font-size:12px;}
-footer .footer-logo{font-family:'Shippori Mincho',serif;font-size:18px;color:white;margin-bottom:8px;letter-spacing:2px;}
-footer .footer-links{display:flex;gap:20px;justify-content:center;margin-bottom:12px;flex-wrap:wrap;}
-footer .footer-links a{color:rgba(255,255,255,0.6);text-decoration:none;font-size:12px;}
-footer .footer-links a:hover{color:white;}
+/* ---- BG IMAGE PLACEHOLDER ---- */
+.bg-img-placeholder{
+  width:100%;height:100%;background:var(--beige);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  color:var(--text-muted);font-size:0.75rem;gap:0.3rem;cursor:pointer;
+  opacity:0.5;
+}
 
-/* ADMIN */
-#admin-trigger{position:fixed;bottom:24px;right:24px;background:var(--purple);color:white;border:none;padding:12px 20px;border-radius:50px;font-size:13px;cursor:pointer;font-family:'Noto Sans JP',sans-serif;box-shadow:0 4px 16px rgba(155,138,160,0.4);z-index:999;}
-.edit-toolbar{display:none;position:fixed;bottom:24px;right:24px;background:white;border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,0.15);padding:14px 18px;z-index:999;align-items:center;gap:10px;}
-.edit-toolbar.show{display:flex;}
-.toolbar-btn{padding:8px 16px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-family:'Noto Sans JP',sans-serif;font-weight:500;}
-.toolbar-save{background:var(--green);color:white;}
-.toolbar-logout{background:#f0f0f0;color:var(--text);}
-#login-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:2000;align-items:center;justify-content:center;}
-#login-box{background:white;border-radius:16px;padding:36px;width:300px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.3);}
-#login-box h3{font-family:'Shippori Mincho',serif;color:var(--green);font-size:20px;margin-bottom:6px;}
-#login-box p.sub{font-size:12px;color:var(--text-light);margin-bottom:20px;}
-#login-box input{width:100%;padding:12px 16px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:14px;margin-bottom:14px;text-align:center;letter-spacing:3px;}
-#login-box input:focus{outline:none;border-color:var(--green);}
-#login-box button{width:100%;background:var(--green);color:white;border:none;padding:13px;border-radius:8px;font-size:14px;cursor:pointer;font-family:'Noto Sans JP',sans-serif;}
-#login-error{color:#dc2626;font-size:12px;margin-top:8px;display:none;}
-.img-upload-input{display:none;}
-#toast{position:fixed;bottom:80px;right:24px;background:var(--green);color:white;padding:12px 20px;border-radius:8px;font-size:13px;opacity:0;transition:opacity .3s;z-index:9999;}
+/* ---- EDIT OVERLAY ---- */
+.editable-wrap{position:relative;}
+.edit-overlay{
+  display:none;position:absolute;inset:0;
+  background:rgba(74,103,65,0.07);border:2px dashed var(--sage-light);
+  border-radius:8px;z-index:10;cursor:pointer;
+  align-items:center;justify-content:center;
+}
+.edit-mode .edit-overlay{display:flex;}
+.edit-overlay-label{
+  background:var(--sage);color:var(--white);
+  font-size:0.72rem;padding:4px 14px;border-radius:6px;
+}
+.edit-mode [contenteditable="true"]{
+  outline:2px dashed var(--sage-light);border-radius:4px;
+  padding:2px 4px;background:rgba(232,240,229,0.25);cursor:text;
+}
 
-@media(max-width:768px){
-  .header-nav{display:none;}
-  .hamburger{display:flex;}
-  .sp-nav.open{display:flex;}
+/* ---- ADMIN BAR ---- */
+.admin-bar{
+  position:fixed;bottom:0;left:0;right:0;
+  background:#2c2520;color:var(--white);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0.6rem 1.4rem;z-index:999;font-size:0.82rem;
+}
+.admin-bar-left{display:flex;align-items:center;gap:0.8rem;}
+.admin-bar button{
+  background:var(--sage);color:var(--white);
+  border:none;border-radius:6px;padding:0.4rem 1rem;cursor:pointer;font-size:0.8rem;
+}
+.admin-bar button.sec{background:rgba(255,255,255,0.15);}
+.admin-bar button:hover{opacity:0.85;}
+.edit-badge{background:var(--mauve);color:var(--white);font-size:0.7rem;padding:2px 8px;border-radius:99px;}
+
+/* ---- MODALS ---- */
+.modal-overlay{
+  display:none;position:fixed;inset:0;
+  background:rgba(0,0,0,0.45);z-index:2000;
+  align-items:center;justify-content:center;
+}
+.modal-overlay.active{display:flex;}
+.modal-box{
+  background:var(--white);border-radius:var(--radius);
+  padding:2rem 2.5rem;width:min(380px,90vw);text-align:center;
+}
+.modal-box h3{font-family:'Noto Serif JP',serif;color:var(--sage);margin-bottom:1rem;}
+.modal-box input{
+  width:100%;padding:0.7rem 1rem;border:1px solid var(--beige);border-radius:8px;
+  font-size:0.95rem;margin-bottom:0.8rem;outline:none;
+}
+.modal-box input:focus{border-color:var(--sage-light);}
+.modal-err{color:#c0392b;font-size:0.82rem;margin-bottom:0.5rem;display:none;}
+.modal-box .btn{width:100%;}
+.img-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:2000;align-items:center;justify-content:center;}
+.img-modal-overlay.active{display:flex;}
+.img-modal-box{background:var(--white);border-radius:var(--radius);padding:1.5rem;width:min(400px,90vw);text-align:center;}
+.img-modal-box h4{margin-bottom:1rem;color:var(--sage);font-family:'Noto Serif JP',serif;}
+.img-modal-box input[type="file"]{margin-bottom:1rem;}
+.img-modal-box .btn-row{display:flex;gap:0.6rem;justify-content:center;}
+.toast{
+  position:fixed;bottom:4rem;left:50%;transform:translateX(-50%) translateY(10px);
+  background:var(--sage);color:var(--white);
+  padding:0.6rem 1.5rem;border-radius:99px;font-size:0.85rem;
+  opacity:0;transition:opacity 0.3s,transform 0.3s;pointer-events:none;z-index:1500;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+@media(max-width:900px){
+  .hero-inner{grid-template-columns:1fr;gap:3rem;text-align:center;}
+  .hero-eyebrow{justify-content:center;}
+  .hero-actions{justify-content:center;}
+  .hero-img-col{max-width:300px;margin:0 auto;}
   .service-grid{grid-template-columns:1fr;}
-  .profile-inner{flex-direction:column;align-items:center;text-align:center;}
-  .profile-tags{justify-content:center;}
-  .instagram-grid{grid-template-columns:repeat(3,1fr);}
-  .btn-group{flex-direction:column;align-items:center;}
+  .service-card:nth-child(2),.service-card:nth-child(3){margin-top:0;}
+  .profile-inner{grid-template-columns:1fr;}
+  .profile-img-col{max-width:260px;margin:0 auto;}
+  .contact-grid{grid-template-columns:1fr;}
+  .insta-grid{grid-template-columns:repeat(3,1fr);}
+  .nav-links{display:none;}
+  .hamburger{display:block;}
 }
 </style>
 </head>
 <body>
 
-<div class="edit-badge">✏️ 編集モード中 — ☰ でセクション並び替え可能</div>
-
-<!-- HEADER -->
-<header class="site-header">
-  <div class="header-inner">
-    <a href="#" class="header-logo">Re.funfun</a>
-    <nav class="header-nav">
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">Re.funfun</a>
+    <div class="nav-links">
       <a href="#services">講座一覧</a>
       <a href="#profile">プロフィール</a>
       <a href="#instagram">Instagram</a>
       <a href="#contact">お問い合わせ</a>
-    </nav>
-    <div class="hamburger" onclick="toggleNav()" id="hamburger">
-      <span></span><span></span><span></span>
     </div>
+    <button class="hamburger" onclick="toggleMenu()" aria-label="メニュー">
+      <span></span><span></span><span></span>
+    </button>
   </div>
-  <nav class="sp-nav" id="sp-nav">
-    <a href="#services" onclick="toggleNav()">講座一覧</a>
-    <a href="#profile" onclick="toggleNav()">プロフィール</a>
-    <a href="#instagram" onclick="toggleNav()">Instagram</a>
-    <a href="#contact" onclick="toggleNav()">お問い合わせ</a>
-  </nav>
-</header>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#services" onclick="toggleMenu()">講座一覧</a>
+    <a href="#profile" onclick="toggleMenu()">プロフィール</a>
+    <a href="#instagram" onclick="toggleMenu()">Instagram</a>
+    <a href="#contact" onclick="toggleMenu()">お問い合わせ</a>
+  </div>
+</nav>
 
 <!-- HERO -->
-<div class="sec-wrap" data-sec="hero">
-  <div class="sec-controls"><span class="drag-handle">☰</span><button class="sec-btn" onclick="toggleSec(this)">👁 表示中</button></div>
-  <section class="hero">
-    <div class="hero-eyebrow" contenteditable="false">🌿 Re.funfun / り.ふぁんふぁん</div>
-    <h1 class="hero-catch" contenteditable="false">学んで終わり、じゃない。</h1>
-    <p class="hero-catch-mid" contenteditable="false">誰一人置いてきぼりにしない</p>
-    <p class="hero-sub" contenteditable="false">長崎県の小さな島から、全国へ。<br>60歳の今が、いちばん面白い。</p>
-    <div class="hero-img-wrap editable-img" id="hero-img-wrap" onclick="triggerImg('hero-img-input')">
-      <span id="hero-img-ph">📸 クリックして画像を追加</span>
-      <img id="hero-img" style="display:none;">
+<section class="hero" id="heroSec">
+  <div class="hero-bg">
+    <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1600&q=80" id="heroBgImg" alt="">
+    <div class="hero-bg-overlay"></div>
+    <div class="edit-overlay" onclick="openImgModal('heroBgImg',null)"><span class="edit-overlay-label">背景画像を変更</span></div>
+  </div>
+  <div class="hero-inner">
+    <div class="hero-text">
+      <p class="hero-eyebrow">Re.funfun ／ り.ふぁんふぁん</p>
+      <h1 id="heroTitle">学んで終わり、<br><em>じゃない。</em></h1>
+      <p class="hero-sub" id="heroSub">誰一人置いてきぼりにしない</p>
+      <p class="hero-sub2" id="heroSub2">長崎県の小さな島から、全国へ。<br>60歳の今が、いちばん面白い。</p>
+      <div class="hero-actions">
+        <a href="#contact" class="btn">お問い合わせはこちら</a>
+        <a href="#services" class="btn btn-outline">講座を見る</a>
+      </div>
     </div>
-    <input type="file" class="img-upload-input" id="hero-img-input" accept="image/*" onchange="setImg(this,'hero-img','hero-img-ph','hp_hero')">
-    <a href="#contact" class="btn-line">📲 お問い合わせはこちら</a>
-  </section>
-</div>
+    <div class="hero-img-col">
+      <div class="hero-deco"></div>
+      <div class="hero-deco2"></div>
+      <div class="hero-img-frame editable-wrap">
+        <img src="" id="heroImg" alt="尾崎幸子" style="display:none;">
+        <div class="svc-img-placeholder" id="heroImgPlaceholder" onclick="openImgModal('heroImg','heroImgPlaceholder')" style="aspect-ratio:3/4;">
+          <span class="svc-icon">📸</span><span>メイン写真を追加</span>
+        </div>
+        <div class="edit-overlay" onclick="openImgModal('heroImg','heroImgPlaceholder')"><span class="edit-overlay-label">写真を変更</span></div>
+      </div>
+    </div>
+  </div>
+</section>
 
 <!-- SERVICES -->
-<div class="sec-wrap" id="services" data-sec="services">
-  <div class="sec-controls"><span class="drag-handle">☰</span><button class="sec-btn" onclick="toggleSec(this)">👁 表示中</button></div>
-  <section class="services-bg">
-    <div style="max-width:900px;margin:0 auto;">
-      <h2 class="section-title" contenteditable="false">講座・サービス一覧</h2>
-      <div class="divider"></div>
-      <div class="service-grid">
-
-        <!-- LP1 よもぎ蒸し -->
-        <div class="service-card">
-          <div class="service-card-img editable-img" id="s1-img-wrap" onclick="triggerImg('s1-img-input')">
-            <span class="img-placeholder" id="s1-img-ph">🌿</span>
-            <img id="s1-img" style="display:none;position:absolute;inset:0;width:100%;height:100%;object-fit:cover;">
-          </div>
-          <input type="file" class="img-upload-input" id="s1-img-input" accept="image/*" onchange="setImg(this,'s1-img','s1-img-ph','hp_s1')">
-          <div class="service-card-body">
-            <span class="service-card-tag" contenteditable="false">よもぎ蒸し</span>
-            <h3 class="service-card-title" contenteditable="false">よもぎ蒸し講座</h3>
-            <p class="service-card-desc" contenteditable="false">ゼロからスタートした還暦セラピスト講師が伝える、1日でしっかり身につく実践型講座。学んで終わりではなく、導入後のサポートまで丁寧に。</p>
-            <a href="yomogi_lp.html" class="service-card-link" id="s1-link">詳しく見る →</a>
-            <div class="service-link-edit">
-              <label>リンクURL：</label>
-              <input type="text" id="s1-link-input" value="yomogi_lp.html" onchange="document.getElementById('s1-link').href=this.value">
-            </div>
-          </div>
-        </div>
-
-        <!-- LP2 あたまほぐし -->
-        <div class="service-card">
-          <div class="service-card-img editable-img" id="s2-img-wrap" onclick="triggerImg('s2-img-input')">
-            <span class="img-placeholder" id="s2-img-ph">👐</span>
-            <img id="s2-img" style="display:none;position:absolute;inset:0;width:100%;height:100%;object-fit:cover;">
-          </div>
-          <input type="file" class="img-upload-input" id="s2-img-input" accept="image/*" onchange="setImg(this,'s2-img','s2-img-ph','hp_s2')">
-          <div class="service-card-body">
-            <span class="service-card-tag" contenteditable="false">あたまほぐし</span>
-            <h3 class="service-card-title" contenteditable="false">あたまほぐし講座</h3>
-            <p class="service-card-desc" contenteditable="false">やってみたい！がカタチになる。少人数制・出張対応・受講後フォローも充実。57歳で学び60歳でデビューした講師だからこそ伝えられること。</p>
-            <a href="atama_lp.html" class="service-card-link" id="s2-link">詳しく見る →</a>
-            <div class="service-link-edit">
-              <label>リンクURL：</label>
-              <input type="text" id="s2-link-input" value="atama_lp.html" onchange="document.getElementById('s2-link').href=this.value">
-            </div>
-          </div>
-        </div>
-
-        <!-- LP3 経理のがっこう -->
-        <div class="service-card">
-          <div class="service-card-img editable-img" id="s3-img-wrap" onclick="triggerImg('s3-img-input')">
-            <span class="img-placeholder" id="s3-img-ph">📊</span>
-            <img id="s3-img" style="display:none;position:absolute;inset:0;width:100%;height:100%;object-fit:cover;">
-          </div>
-          <input type="file" class="img-upload-input" id="s3-img-input" accept="image/*" onchange="setImg(this,'s3-img','s3-img-ph','hp_s3')">
-          <div class="service-card-body">
-            <span class="service-card-tag" contenteditable="false">経理・お金</span>
-            <h3 class="service-card-title" contenteditable="false">経理のがっこう</h3>
-            <p class="service-card-desc" contenteditable="false">できるかどうかではなく、必要かどうか。経理歴38年のサロンオーナーが、確定申告・節税・利益戦略までをやさしく教えます。</p>
-            <a href="keiri_lp.html" class="service-card-link" id="s3-link">詳しく見る →</a>
-            <div class="service-link-edit">
-              <label>リンクURL：</label>
-              <input type="text" id="s3-link-input" value="keiri_lp.html" onchange="document.getElementById('s3-link').href=this.value">
-            </div>
-          </div>
-        </div>
-
-      </div>
+<section class="services" id="services">
+  <div class="services-bg">
+    <img src="https://images.unsplash.com/photo-1441829235189-89bb00a9ba36?w=1600&q=80" id="svcBgImg" alt="">
+    <div class="edit-overlay" onclick="openImgModal('svcBgImg',null)"><span class="edit-overlay-label">背景画像を変更</span></div>
+  </div>
+  <div class="services-inner">
+    <div class="services-header reveal">
+      <span class="section-label">COURSES</span>
+      <h2 class="section-title" id="svcTitle">講座・サービス一覧</h2>
     </div>
-  </section>
-</div>
+    <div class="service-grid stagger">
+
+      <div class="service-card reveal from-left">
+        <div class="svc-img-wrap editable-wrap">
+          <img src="https://images.unsplash.com/photo-1600334089648-b0d9d3028eb2?w=800&q=80" id="svcImg1" alt="よもぎ蒸し" style="display:block;">
+          <div class="svc-tag">よもぎ蒸し</div>
+          <div class="edit-overlay" onclick="openImgModal('svcImg1',null)"><span class="edit-overlay-label">画像を変更</span></div>
+        </div>
+        <div class="svc-body">
+          <h3 id="svc1Title">よもぎ蒸し講座</h3>
+          <p id="svc1Body">ゼロからスタートした還暦セラピスト講師が伝える、1日でしっかり身につく実践型講座。学んで終わりではなく、導入後のサポートまで丁寧に。</p>
+          <a href="yomogi_lp.html" class="svc-link" id="svc1Link">詳しく見る →</a>
+        </div>
+      </div>
+
+      <div class="service-card reveal">
+        <div class="svc-img-wrap editable-wrap">
+          <img src="https://images.unsplash.com/photo-1519823551278-64ac92734fb1?w=800&q=80" id="svcImg2" alt="あたまほぐし" style="display:block;">
+          <div class="svc-tag">あたまほぐし</div>
+          <div class="edit-overlay" onclick="openImgModal('svcImg2',null)"><span class="edit-overlay-label">画像を変更</span></div>
+        </div>
+        <div class="svc-body">
+          <h3 id="svc2Title">あたまほぐし講座</h3>
+          <p id="svc2Body">やってみたい！がカタチになる。少人数制・出張対応・受講後フォローも充実。57歳で学び60歳でデビューした講師だからこそ伝えられること。</p>
+          <a href="atama_lp.html" class="svc-link" id="svc2Link">詳しく見る →</a>
+        </div>
+      </div>
+
+      <div class="service-card reveal from-right">
+        <div class="svc-img-wrap editable-wrap">
+          <img src="https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=800&q=80" id="svcImg3" alt="経理のがっこう" style="display:block;">
+          <div class="svc-tag">経理のがっこう</div>
+          <div class="edit-overlay" onclick="openImgModal('svcImg3',null)"><span class="edit-overlay-label">画像を変更</span></div>
+        </div>
+        <div class="svc-body">
+          <h3 id="svc3Title">経理のがっこう</h3>
+          <p id="svc3Body">できるかどうかではなく、必要かどうか。経理歴38年のサロンオーナーが、確定申告・節税・利益戦略までをやさしく教えます。</p>
+          <a href="keiri_lp.html" class="svc-link" id="svc3Link">詳しく見る →</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
 
 <!-- PROFILE -->
-<div class="sec-wrap" id="profile" data-sec="profile">
-  <div class="sec-controls"><span class="drag-handle">☰</span><button class="sec-btn" onclick="toggleSec(this)">👁 表示中</button></div>
-  <section class="section">
-    <h2 class="section-title" contenteditable="false">プロフィール</h2>
-    <div class="divider"></div>
-    <div class="profile-outer">
-      <div class="profile-inner">
-        <div class="profile-img-wrap editable-img" id="prof-img-wrap" onclick="triggerImg('prof-img-input')">
-          <span id="prof-img-ph">👩<br>写真</span>
-          <img id="prof-img" style="display:none;">
+<section class="profile" id="profile">
+  <div class="profile-bg">
+    <img src="https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=1600&q=80" id="profileBgImg" alt="">
+    <div class="edit-overlay" onclick="openImgModal('profileBgImg',null)"><span class="edit-overlay-label">背景画像を変更</span></div>
+  </div>
+  <div class="profile-inner">
+    <div class="profile-img-col reveal from-left">
+      <div class="profile-deco"></div>
+      <div class="profile-deco2"></div>
+      <div class="profile-img-frame editable-wrap">
+        <img src="" id="profileImg" alt="尾崎幸子" style="display:none;">
+        <div class="profile-img-placeholder" id="profileImgPlaceholder" onclick="openImgModal('profileImg','profileImgPlaceholder')">
+          <span style="font-size:3rem;">👩</span><span>写真</span>
         </div>
-        <input type="file" class="img-upload-input" id="prof-img-input" accept="image/*" onchange="setImg(this,'prof-img','prof-img-ph','hp_prof')">
-        <div class="profile-text">
-          <h3 contenteditable="false">尾崎 幸子</h3>
-          <p class="prof-label" contenteditable="false">おざきゆきこ / Re.funfun（り.ふぁんふぁん）</p>
-          <p contenteditable="false">長崎県の西の端、人口5,000人ほどの小さな島に暮らしています。昼間はフルタイムで経理事務員として働きながら、時間限定で自宅サロンを運営。60歳の今、「長崎が生んだ奇跡の60歳」とおかまママに命名していただきました（笑）。<br><br>学んで終わりではなく、そこからどう続けていくかまで大切にしています。導入後の運営・発信・続け方まで、一人ひとりに寄り添いながらサポートします。"誰一人置いてきぼりにしない"が、私の一番大切にしている言葉です。</p>
-          <div class="profile-tags">
-            <span class="profile-tag" contenteditable="false">経理歴38年</span>
-            <span class="profile-tag" contenteditable="false">サロンリピーター約90%</span>
-            <span class="profile-tag" contenteditable="false">長崎県西海市在住</span>
-            <span class="profile-tag" contenteditable="false">Instagram 認証済み</span>
-          </div>
-        </div>
+        <div class="edit-overlay" onclick="openImgModal('profileImg','profileImgPlaceholder')"><span class="edit-overlay-label">写真を変更</span></div>
       </div>
     </div>
-  </section>
-</div>
+    <div class="profile-text reveal from-right">
+      <span class="section-label">PROFILE</span>
+      <h2 class="section-title" style="margin-bottom:0.3rem;">尾崎 幸子</h2>
+      <p class="profile-name-yomi">おざきゆきこ / Re.funfun（り.ふぁんふぁん）</p>
+      <p class="profile-body" id="profileBody">長崎県の西の端、人口5,000人ほどの小さな島に暮らしています。昼間はフルタイムで経理事務員として働きながら、時間限定で自宅サロンを運営。<br><br>学んで終わりではなく、そこからどう続けていくかまで大切にしています。導入後の運営・発信・続け方まで、一人ひとりに寄り添いながらサポートします。<em style="font-style:normal;color:var(--sage);">"誰一人置いてきぼりにしない"</em>が、私の一番大切にしている言葉です。</p>
+      <div class="profile-stats">
+        <div class="stat-item"><div class="stat-num">38年</div><div class="stat-label">経理歴</div></div>
+        <div class="stat-item"><div class="stat-num">約90%</div><div class="stat-label">サロンリピーター</div></div>
+        <div class="stat-item"><div class="stat-num">60歳</div><div class="stat-label">今がいちばん面白い</div></div>
+      </div>
+      <div class="hero-actions">
+        <a href="https://www.instagram.com/re_fun_fun/" target="_blank" class="btn btn-outline" style="font-size:0.85rem;">Instagram を見る</a>
+      </div>
+    </div>
+  </div>
+</section>
 
 <!-- INSTAGRAM -->
-<div class="sec-wrap" id="instagram" data-sec="instagram">
-  <div class="sec-controls"><span class="drag-handle">☰</span><button class="sec-btn" onclick="toggleSec(this)">👁 表示中</button></div>
-  <section class="instagram-bg">
-    <h2 class="section-title" contenteditable="false">Instagram</h2>
-    <div class="divider"></div>
-    <p style="font-size:13px;color:var(--text-light);margin-bottom:28px;" contenteditable="false">@re_fun_fun ／ 認証バッジあり・約1,900人フォロワー</p>
-    <div class="instagram-grid">
-      <div class="instagram-placeholder">🌿</div>
-      <div class="instagram-placeholder">👐</div>
-      <div class="instagram-placeholder">📊</div>
-      <div class="instagram-placeholder">🌸</div>
-      <div class="instagram-placeholder">✨</div>
-      <div class="instagram-placeholder">💚</div>
+<section class="instagram" id="instagram">
+  <div class="instagram-inner">
+    <div class="insta-top reveal">
+      <div>
+        <span class="section-label">INSTAGRAM</span>
+        <h2 class="section-title" style="margin-bottom:0;">@re_fun_fun</h2>
+        <p style="font-size:0.82rem;color:var(--text-muted);margin-top:0.3rem;">認証バッジあり・約1,900人フォロワー</p>
+      </div>
+      <a href="https://www.instagram.com/re_fun_fun/" target="_blank" class="btn btn-outline" style="font-size:0.82rem;">フォローする</a>
     </div>
-    <a href="https://www.instagram.com/re_fun_fun/" target="_blank" class="btn-insta">📸 Instagramをフォローする</a>
-    <p style="font-size:12px;color:var(--text-light);margin-top:14px;" contenteditable="false">※ WordPress実装時はInstagram埋め込みウィジェットに差し替えます</p>
-  </section>
-</div>
+    <div class="insta-grid reveal">
+      <div class="insta-cell">🌿</div>
+      <div class="insta-cell">👐</div>
+      <div class="insta-cell">📊</div>
+      <div class="insta-cell">🌸</div>
+      <div class="insta-cell">✨</div>
+      <div class="insta-cell">💚</div>
+    </div>
+    <p style="font-size:0.76rem;color:var(--text-muted);margin-top:0.5rem;">※ WordPress実装時はInstagram埋め込みウィジェットに差し替えます</p>
+  </div>
+</section>
 
 <!-- CONTACT -->
-<div class="sec-wrap" id="contact" data-sec="contact">
-  <div class="sec-controls"><span class="drag-handle">☰</span><button class="sec-btn" onclick="toggleSec(this)">👁 表示中</button></div>
-  <section class="contact-bg">
-    <div style="max-width:900px;margin:0 auto;">
-      <h2 class="section-title" contenteditable="false">お問い合わせ</h2>
-      <div class="divider"></div>
-      <div class="form-box">
-        <div class="form-group">
-          <label>お名前<span>*</span></label>
+<section class="contact" id="contact">
+  <div class="contact-bg">
+    <img src="https://images.unsplash.com/photo-1470058869958-2a77ade41c02?w=1600&q=80" id="contactBgImg" alt="">
+    <div class="edit-overlay" onclick="openImgModal('contactBgImg',null)"><span class="edit-overlay-label">背景画像を変更</span></div>
+  </div>
+  <div class="contact-inner">
+    <div class="reveal" style="margin-bottom:3rem;">
+      <span class="section-label">CONTACT</span>
+      <h2 class="section-title">お問い合わせ</h2>
+    </div>
+    <div class="contact-grid">
+      <div class="reveal from-left">
+        <form class="contact-form" onsubmit="return false;">
+          <label>お名前 <span style="color:#c0392b">*</span></label>
           <input type="text" placeholder="山田 花子">
-        </div>
-        <div class="form-group">
-          <label>メールアドレス<span>*</span></label>
-          <input type="email" placeholder="example@email.com">
-        </div>
-        <div class="form-group">
+          <label>メールアドレス <span style="color:#c0392b">*</span></label>
+          <input type="email" placeholder="example@mail.com">
           <label>電話番号</label>
           <input type="tel" placeholder="090-0000-0000">
-        </div>
-        <div class="form-group">
-          <label>希望の講座<span>*</span></label>
+          <label>希望の講座 <span style="color:#c0392b">*</span></label>
           <select>
             <option value="">選択してください</option>
             <option>よもぎ蒸し講座</option>
@@ -344,138 +550,194 @@ footer .footer-links a:hover{color:white;}
             <option>経理のがっこう</option>
             <option>その他</option>
           </select>
-        </div>
-        <div class="form-group">
           <label>希望日時・受講スタイル</label>
-          <input type="text" placeholder="例：土日希望・1日完結">
+          <input type="text" placeholder="例：土日希望、夜間可">
+          <label>お問い合わせ内容 <span style="color:#c0392b">*</span></label>
+          <textarea placeholder="ご質問やご要望をどうぞ"></textarea>
+          <button type="submit" class="btn" style="width:100%;">送信する</button>
+          <p class="form-note">※ WordPress実装時はContact Form 7等に差し替えます</p>
+        </form>
+      </div>
+      <div class="sns-block reveal from-right">
+        <p style="font-size:0.88rem;color:var(--text-muted);margin-bottom:1rem;line-height:1.9;">フォームのほか、Instagram DM・公式LINEからもお気軽にご連絡ください。</p>
+        <div class="sns-card">
+          <h4>📲 公式LINE</h4>
+          <p>お気軽にメッセージください。</p>
+          <a href="https://lin.ee/Op7jMlR" target="_blank" class="btn btn-line" style="display:block;text-align:center;">公式LINEへ</a>
         </div>
-        <div class="form-group">
-          <label>お問い合わせ内容<span>*</span></label>
-          <textarea placeholder="ご質問・ご相談などお気軽にどうぞ"></textarea>
+        <div class="sns-card">
+          <h4>📸 Instagram DM</h4>
+          <p>@re_fun_fun へDMをどうぞ。</p>
+          <a href="https://www.instagram.com/re_fun_fun/" target="_blank" class="btn btn-outline" style="display:block;text-align:center;">Instagram DMへ</a>
         </div>
-        <button class="form-submit" onclick="submitForm()">送信する</button>
-        <p class="form-note" contenteditable="false">※ WordPress実装時はContact Form 7等に差し替えます<br>Instagram DM または 公式LINEからもお気軽にどうぞ</p>
       </div>
     </div>
-  </section>
-</div>
+  </div>
+</section>
 
-<!-- CTA -->
-<div class="sec-wrap" data-sec="cta">
-  <div class="sec-controls"><span class="drag-handle">☰</span><button class="sec-btn" onclick="toggleSec(this)">👁 表示中</button></div>
-  <section class="cta-bg">
-    <h2 class="section-title" contenteditable="false">まずはお気軽に</h2>
-    <div class="divider"></div>
-    <p style="font-size:14px;color:var(--text-light);" contenteditable="false">Instagram DM または 公式LINEからもお問い合わせいただけます</p>
-    <div class="btn-group">
-      <a href="https://lin.ee/Op7jMlR" class="btn-line">📲 公式LINEから連絡する</a>
-      <a href="https://www.instagram.com/re_fun_fun/" class="btn-insta">📸 Instagram DMから連絡する</a>
-    </div>
-  </section>
-</div>
-
+<!-- FOOTER -->
 <footer>
-  <div class="footer-logo">Re.funfun</div>
+  <p class="footer-logo">Re.funfun</p>
   <div class="footer-links">
     <a href="#services">講座一覧</a>
     <a href="#profile">プロフィール</a>
     <a href="#instagram">Instagram</a>
     <a href="#contact">お問い合わせ</a>
   </div>
-  <p contenteditable="false">© Re.funfun / り.ふぁんふぁん　長崎県西海市大島町</p>
+  <p class="footer-copy">© Re.funfun / り.ふぁんふぁん 長崎県西海市大島町</p>
 </footer>
 
-<button id="admin-trigger" onclick="showLogin()">🔐 管理者ログイン</button>
-<div class="edit-toolbar" id="edit-toolbar">
-  <span style="font-size:12px;color:#999;">✏️ 編集中</span>
-  <button class="toolbar-btn toolbar-save" onclick="saveAll()">💾 保存</button>
-  <button class="toolbar-btn toolbar-logout" onclick="exitEdit()">終了</button>
-</div>
-<div id="login-overlay" style="display:none;align-items:center;justify-content:center;">
-  <div id="login-box">
-    <h3>管理者ログイン</h3><p class="sub">パスワードを入力してください</p>
-    <input type="password" id="login-pw" placeholder="••••••" onkeydown="if(event.key==='Enter')doLogin()">
-    <button onclick="doLogin()">ログイン</button><p id="login-error">パスワードが違います</p>
+<!-- ADMIN BAR -->
+<div class="admin-bar" id="adminBar" style="display:none;">
+  <div class="admin-bar-left">
+    <span class="edit-badge" id="editBadge">👁 表示中</span>
+    <span style="color:rgba(255,255,255,0.55);font-size:0.76rem;" id="modeLabel">閲覧モード</span>
+  </div>
+  <div style="display:flex;gap:0.5rem;">
+    <button onclick="toggleEditMode()" id="editToggleBtn">✏️ 編集する</button>
+    <button onclick="saveAll()" class="sec" id="saveBtn" style="display:none;">💾 保存</button>
+    <button onclick="adminLogout()" class="sec">終了</button>
   </div>
 </div>
-<div id="toast">✅ 保存しました！</div>
+
+<!-- LOGIN MODAL -->
+<div class="modal-overlay" id="loginModal">
+  <div class="modal-box">
+    <h3>🔐 管理者ログイン</h3>
+    <p style="font-size:0.83rem;color:var(--text-muted);margin-bottom:1.2rem;">パスワードを入力してください</p>
+    <input type="password" id="pwInput" placeholder="パスワード" onkeydown="if(event.key==='Enter')doLogin()">
+    <p class="modal-err" id="loginErr">パスワードが違います</p>
+    <button class="btn" onclick="doLogin()">ログイン</button>
+    <p style="font-size:0.76rem;color:var(--text-muted);margin-top:1rem;cursor:pointer;" onclick="closeLoginModal()">キャンセル</p>
+  </div>
+</div>
+
+<!-- IMAGE MODAL -->
+<div class="img-modal-overlay" id="imgModal">
+  <div class="img-modal-box">
+    <h4>画像を変更</h4>
+    <input type="file" accept="image/*" id="imgFileInput" onchange="handleImgUpload()">
+    <div class="btn-row">
+      <button class="btn" onclick="applyImg()">適用</button>
+      <button class="btn btn-outline" onclick="closeImgModal()">キャンセル</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">✅ 保存しました！</div>
+
+<div style="text-align:center;padding:0.8rem;background:var(--sage);">
+  <a href="#" onclick="openLoginModal();return false;" style="font-size:0.73rem;color:rgba(255,255,255,0.38);">🔐 管理者ログイン</a>
+</div>
 
 <script>
-const PASS='refunfun2026',KEY='hp';
-let isEdit=false,dragSrc=null;
+const ADMIN_PW='refunfun2026';
+const STORE_KEY='refunfun_hp_v2';
+let editMode=false,currentImgId=null,currentImgPlaceholderId=null,pendingImgData=null;
 
-function toggleNav(){
-  const nav=document.getElementById('sp-nav');
-  nav.classList.toggle('open');
+/* SCROLL REVEAL */
+const observer=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');}});
+},{threshold:0.12});
+document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+
+function toggleMenu(){document.getElementById('mobileMenu').classList.toggle('open');}
+
+/* LOGIN */
+function openLoginModal(){
+  document.getElementById('loginModal').classList.add('active');
+  document.getElementById('pwInput').value='';
+  document.getElementById('loginErr').style.display='none';
+  setTimeout(()=>document.getElementById('pwInput').focus(),100);
+}
+function closeLoginModal(){document.getElementById('loginModal').classList.remove('active');}
+function doLogin(){
+  if(document.getElementById('pwInput').value===ADMIN_PW){
+    closeLoginModal();
+    document.getElementById('adminBar').style.display='flex';
+    loadSaved();
+  } else {
+    document.getElementById('loginErr').style.display='block';
+  }
+}
+function adminLogout(){
+  document.getElementById('adminBar').style.display='none';
+  if(editMode)toggleEditMode();
 }
 
-function showLogin(){document.getElementById('login-overlay').style.display='flex';setTimeout(()=>document.getElementById('login-pw').focus(),100);}
-function doLogin(){if(document.getElementById('login-pw').value===PASS){document.getElementById('login-overlay').style.display='none';enterEdit();}else{document.getElementById('login-error').style.display='block';}}
-
-function enterEdit(){
-  isEdit=true;document.body.classList.add('edit-mode');
-  document.getElementById('admin-trigger').style.display='none';
-  document.getElementById('edit-toolbar').classList.add('show');
-  document.querySelectorAll('[contenteditable]').forEach(el=>el.contentEditable='true');
-  initDrag();loadSaved();
-}
-function exitEdit(){
-  isEdit=false;document.body.classList.remove('edit-mode');
-  document.getElementById('admin-trigger').style.display='block';
-  document.getElementById('edit-toolbar').classList.remove('show');
-  document.querySelectorAll('[contenteditable]').forEach(el=>el.contentEditable='false');
-  destroyDrag();
-}
-function toggleSec(btn){const w=btn.closest('.sec-wrap');const h=w.classList.toggle('hidden-sec');btn.textContent=h?'🚫 非表示中':'👁 表示中';btn.classList.toggle('is-hidden',h);}
-function triggerImg(id){if(isEdit)document.getElementById(id).click();}
-function setImg(input,imgId,phId,sk){
-  const f=input.files[0];if(!f)return;
-  const r=new FileReader();
-  r.onload=e=>{
-    const img=document.getElementById(imgId);
-    img.src=e.target.result;img.style.display='block';
-    const ph=document.getElementById(phId);if(ph)ph.style.display='none';
-    try{localStorage.setItem(sk,e.target.result);}catch(e){}
-  };r.readAsDataURL(f);
+/* EDIT MODE */
+function toggleEditMode(){
+  editMode=!editMode;
+  document.body.classList.toggle('edit-mode',editMode);
+  document.getElementById('editBadge').textContent=editMode?'✏️ 編集中':'👁 表示中';
+  document.getElementById('modeLabel').textContent=editMode?'編集モード':'閲覧モード';
+  document.getElementById('editToggleBtn').textContent=editMode?'👁 閲覧に戻す':'✏️ 編集する';
+  document.getElementById('saveBtn').style.display=editMode?'inline-block':'none';
+  ['heroTitle','heroSub','heroSub2','svcTitle',
+   'svc1Title','svc1Body','svc2Title','svc2Body','svc3Title','svc3Body',
+   'profileBody'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el)el.contentEditable=editMode?'true':'false';
+  });
 }
 
-function initDrag(){document.querySelectorAll('.sec-wrap').forEach(wrap=>{const handle=wrap.querySelector('.drag-handle');if(!handle)return;handle.onmousedown=()=>{wrap.draggable=true;};wrap.ondragstart=e=>{dragSrc=wrap;wrap.classList.add('dragging');e.dataTransfer.effectAllowed='move';};wrap.ondragover=e=>{e.preventDefault();if(wrap===dragSrc)return;const r=wrap.getBoundingClientRect();const mid=r.top+r.height/2;wrap.classList.remove('drag-over-top','drag-over-bottom');if(e.clientY<mid)wrap.classList.add('drag-over-top');else wrap.classList.add('drag-over-bottom');};wrap.ondragleave=()=>wrap.classList.remove('drag-over-top','drag-over-bottom');wrap.ondrop=e=>{e.stopPropagation();if(wrap===dragSrc)return;const r=wrap.getBoundingClientRect();const mid=r.top+r.height/2;if(e.clientY<mid)wrap.parentNode.insertBefore(dragSrc,wrap);else wrap.parentNode.insertBefore(dragSrc,wrap.nextSibling);wrap.classList.remove('drag-over-top','drag-over-bottom');};wrap.ondragend=()=>{wrap.draggable=false;wrap.classList.remove('dragging');document.querySelectorAll('.sec-wrap').forEach(w=>w.classList.remove('drag-over-top','drag-over-bottom'));dragSrc=null;};});}
-function destroyDrag(){document.querySelectorAll('.sec-wrap').forEach(w=>{w.draggable=false;w.ondragstart=w.ondragover=w.ondragleave=w.ondrop=w.ondragend=null;});}
-
-function submitForm(){
-  alert('WordPress実装時にお問い合わせフォームが機能します。\n現在はInstagram DM または 公式LINEをご利用ください。');
-}
-
+/* SAVE/LOAD */
 function saveAll(){
-  const order=[...document.querySelectorAll('.sec-wrap')].map(w=>w.dataset.sec);
-  const data={};document.querySelectorAll('[contenteditable]').forEach((el,i)=>{data['ce'+i]=el.innerHTML;});
-  const vis={};document.querySelectorAll('.sec-wrap').forEach(w=>{vis[w.dataset.sec]=w.classList.contains('hidden-sec');});
-  // LPリンクURL保存
-  const links={s1:document.getElementById('s1-link-input')?.value,s2:document.getElementById('s2-link-input')?.value,s3:document.getElementById('s3-link-input')?.value};
-  localStorage.setItem(KEY+'_order',JSON.stringify(order));
-  localStorage.setItem(KEY+'_content',JSON.stringify(data));
-  localStorage.setItem(KEY+'_vis',JSON.stringify(vis));
-  localStorage.setItem(KEY+'_links',JSON.stringify(links));
+  const data={};
+  ['heroTitle','heroSub','heroSub2','svcTitle',
+   'svc1Title','svc1Body','svc2Title','svc2Body','svc3Title','svc3Body',
+   'profileBody'].forEach(id=>{
+    const el=document.getElementById(id);if(el)data[id]=el.innerHTML;
+  });
+  ['heroImg','heroBgImg','svcBgImg','profileBgImg','contactBgImg',
+   'svcImg1','svcImg2','svcImg3','profileImg'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el&&el.src&&(el.src.startsWith('data:')||el.src.startsWith('blob:')))data[id]=el.src;
+  });
+  localStorage.setItem(STORE_KEY,JSON.stringify(data));
   showToast();
 }
-
 function loadSaved(){
-  const oraw=localStorage.getItem(KEY+'_order');if(oraw){const order=JSON.parse(oraw);const footer=document.querySelector('footer');order.forEach(sec=>{const el=document.querySelector(`.sec-wrap[data-sec="${sec}"]`);if(el)footer.parentNode.insertBefore(el,footer);});}
-  const raw=localStorage.getItem(KEY+'_content');if(raw){const d=JSON.parse(raw);document.querySelectorAll('[contenteditable]').forEach((el,i)=>{if(d['ce'+i]!==undefined)el.innerHTML=d['ce'+i];});}
-  const visraw=localStorage.getItem(KEY+'_vis');if(visraw){const vis=JSON.parse(visraw);document.querySelectorAll('.sec-wrap').forEach(w=>{if(vis[w.dataset.sec]){w.classList.add('hidden-sec');const btn=w.querySelector('.sec-btn');if(btn){btn.textContent='🚫 非表示中';btn.classList.add('is-hidden');}}});}
-  const lraw=localStorage.getItem(KEY+'_links');if(lraw){const links=JSON.parse(lraw);if(links.s1){document.getElementById('s1-link').href=links.s1;if(document.getElementById('s1-link-input'))document.getElementById('s1-link-input').value=links.s1;}if(links.s2){document.getElementById('s2-link').href=links.s2;if(document.getElementById('s2-link-input'))document.getElementById('s2-link-input').value=links.s2;}if(links.s3){document.getElementById('s3-link').href=links.s3;if(document.getElementById('s3-link-input'))document.getElementById('s3-link-input').value=links.s3;}}
-  // 画像復元
-  [{sk:'hp_hero',img:'hero-img',ph:'hero-img-ph'},{sk:'hp_prof',img:'prof-img',ph:'prof-img-ph'},{sk:'hp_s1',img:'s1-img',ph:'s1-img-ph'},{sk:'hp_s2',img:'s2-img',ph:'s2-img-ph'},{sk:'hp_s3',img:'s3-img',ph:'s3-img-ph'}].forEach(({sk,img,ph})=>{const src=localStorage.getItem(sk);if(!src)return;const i=document.getElementById(img);i.src=src;i.style.display='block';const p=document.getElementById(ph);if(p)p.style.display='none';});
+  const raw=localStorage.getItem(STORE_KEY);if(!raw)return;
+  const data=JSON.parse(raw);
+  Object.keys(data).forEach(id=>{
+    const el=document.getElementById(id);if(!el)return;
+    if(el.tagName==='IMG'){
+      el.src=data[id];el.style.display='block';
+      const ph=document.getElementById(id+'Placeholder');
+      if(ph)ph.style.display='none';
+    } else {el.innerHTML=data[id];}
+  });
 }
-function showToast(){const t=document.getElementById('toast');t.style.opacity='1';setTimeout(()=>t.style.opacity='0',2500);}
+function showToast(){
+  const t=document.getElementById('toast');
+  t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);
+}
 
-window.onload=()=>{
-  const visraw=localStorage.getItem(KEY+'_vis');if(visraw){const vis=JSON.parse(visraw);document.querySelectorAll('.sec-wrap').forEach(w=>{if(vis[w.dataset.sec])w.classList.add('hidden-sec');});}
-  const raw=localStorage.getItem(KEY+'_content');if(raw){const d=JSON.parse(raw);document.querySelectorAll('[contenteditable]').forEach((el,i)=>{if(d['ce'+i]!==undefined)el.innerHTML=d['ce'+i];});}
-  const lraw=localStorage.getItem(KEY+'_links');if(lraw){const links=JSON.parse(lraw);if(links.s1)document.getElementById('s1-link').href=links.s1;if(links.s2)document.getElementById('s2-link').href=links.s2;if(links.s3)document.getElementById('s3-link').href=links.s3;}
-  const oraw=localStorage.getItem(KEY+'_order');if(oraw){const order=JSON.parse(oraw);const footer=document.querySelector('footer');order.forEach(sec=>{const el=document.querySelector(`.sec-wrap[data-sec="${sec}"]`);if(el)footer.parentNode.insertBefore(el,footer);});}
-  [{sk:'hp_hero',img:'hero-img',ph:'hero-img-ph'},{sk:'hp_prof',img:'prof-img',ph:'prof-img-ph'},{sk:'hp_s1',img:'s1-img',ph:'s1-img-ph'},{sk:'hp_s2',img:'s2-img',ph:'s2-img-ph'},{sk:'hp_s3',img:'s3-img',ph:'s3-img-ph'}].forEach(({sk,img,ph})=>{const src=localStorage.getItem(sk);if(!src)return;const i=document.getElementById(img);i.src=src;i.style.display='block';const p=document.getElementById(ph);if(p)p.style.display='none';});
-};
+/* IMAGE */
+function openImgModal(imgId,phId){
+  if(!editMode)return;
+  currentImgId=imgId;currentImgPlaceholderId=phId;pendingImgData=null;
+  document.getElementById('imgFileInput').value='';
+  document.getElementById('imgModal').classList.add('active');
+}
+function closeImgModal(){document.getElementById('imgModal').classList.remove('active');}
+function handleImgUpload(){
+  const file=document.getElementById('imgFileInput').files[0];if(!file)return;
+  const r=new FileReader();r.onload=e=>{pendingImgData=e.target.result;};r.readAsDataURL(file);
+}
+function applyImg(){
+  if(!pendingImgData||!currentImgId){closeImgModal();return;}
+  const img=document.getElementById(currentImgId);
+  img.src=pendingImgData;img.style.display='block';
+  if(currentImgPlaceholderId){
+    const ph=document.getElementById(currentImgPlaceholderId);
+    if(ph)ph.style.display='none';
+  }
+  closeImgModal();
+}
+
+loadSaved();
 </script>
 </body>
 </html>
