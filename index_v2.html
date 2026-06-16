@@ -26,7 +26,7 @@ window.addEventListener('pageshow',function(){
   --mauve:#7d6b8a;--mauve-p:#f0ecf4;
   --cream:#f7f3ec;--beige:#ede7dc;--beige2:#e2d9cc;
   --text:#2c2520;--muted:#6b5f57;--white:#fff;
-  --r:14px;
+  --r:16px;--r-lg:20px;--r-btn:10px;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 html,body{overflow-anchor:none;}
@@ -187,7 +187,7 @@ a{color:inherit;text-decoration:none;}
 .hero-img-col{position:relative;}
 .hero-img-frame{
   position:relative;
-  border-radius:var(--r) var(--r) 60% 60% / var(--r) var(--r) 40% 40%;
+  border-radius:var(--r-lg);
   overflow:hidden;
   box-shadow:0 20px 60px rgba(74,103,65,0.18);
 }
@@ -257,7 +257,7 @@ a{color:inherit;text-decoration:none;}
 .profile-img-col{position:relative;}
 .profile-img-frame{
   position:relative;
-  border-radius:40% 60% 55% 45% / 45% 45% 55% 55%;
+  border-radius:var(--r-lg);
   overflow:hidden;
   box-shadow:0 24px 60px rgba(74,103,65,0.16);
   aspect-ratio:3/4;
@@ -339,8 +339,8 @@ footer{background:#2c2520;color:rgba(255,255,255,.55);padding:3rem 2rem;text-ali
 .footer-nav a{font-size:.76rem;color:rgba(255,255,255,.5);transition:color .2s;}
 .footer-nav a:hover,.footer-nav a.current{color:#fff;}
 .footer-sns{display:flex;gap:1rem;justify-content:center;margin-bottom:1.4rem;}
-.footer-sns a{font-size:.78rem;color:rgba(255,255,255,.55);padding:.4rem 1.1rem;border:1px solid rgba(255,255,255,.18);border-radius:99px;transition:background .2s,border-color .2s,color .2s;}
-.footer-sns a:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.4);color:#fff;}
+.footer-sns a{font-size:.78rem;color:rgba(255,255,255,.55);text-decoration:underline;text-underline-offset:3px;transition:color .2s;}
+.footer-sns a:hover{color:#fff;}
 .footer-copy{font-size:.7rem;color:rgba(255,255,255,.3);}
 
 /* ===== BG IMAGE PLACEHOLDER ===== */
@@ -553,7 +553,7 @@ body.edit-mode .hero-img-col{opacity:1 !important;transform:none !important;clip
   .profile{padding:2rem 0;}
   .profile-inner{grid-template-columns:1fr;padding:1.2rem 1.4rem;}
   .profile-img-col{width:100%;max-width:170px;margin:0 auto;}
-  .profile-img-frame{border-radius:50%;}
+  .profile-img-frame{border-radius:var(--r);}
   .profile-name{font-size:1.5rem !important;}
   .profile-text{padding:0 !important;}
   .profile-text p,.profile-body{font-size:0.8rem;line-height:1.6;margin-bottom:0.5rem;}
@@ -654,11 +654,10 @@ body.edit-mode .hero-img-col{opacity:1 !important;transform:none !important;clip
   .contact-inner > .reveal:first-child{display:none;}
   .contact{
     scroll-snap-align:start;
-    min-height:100svh;
-    max-height:100svh;
-    overflow-y:auto;
+    min-height:auto;
     box-sizing:border-box;
     padding-top:64px;
+    padding-bottom:2.5rem;
   }
 
   /* フッター */
@@ -739,7 +738,7 @@ body.edit-mode .hero-img-col{opacity:1 !important;transform:none !important;clip
         <p class="hero-eyebrow">Re.funfun ／ り.ふぁんふぁん</p>
         <h1 id="heroTitle">学んで終わり、<br><em>じゃない。</em></h1>
         <p class="hero-sub" id="heroSub">誰一人置いてきぼりにしない</p>
-        <p class="hero-sub2" id="heroSub2">長崎県の小さな島から、全国へ。<br>60歳の今が、いちばん面白い。</p>
+        <p class="hero-sub2" id="heroSub2">長崎県の小さな島から、全国へ。<br>61歳の今が、いちばん面白い。</p>
       </div>
       <!-- スクロール促しインジケーター (モバイルのみ表示) -->
       <div class="hero-scroll-hint">
@@ -753,7 +752,7 @@ body.edit-mode .hero-img-col{opacity:1 !important;transform:none !important;clip
         <div class="hero-deco"></div>
         <div class="hero-deco2"></div>
         <div class="hero-img-frame cf-img-wrap editable-wrap">
-          <img src="" id="heroImg" alt="尾崎幸子" style="display:none;">
+          <img src="" id="heroImg" alt="尾﨑幸子" style="display:none;">
           <div class="img-ph" id="heroImgPlaceholder" onclick="openImgModal('heroImg','heroImgPlaceholder')" style="aspect-ratio:4/3;">
             <span>📸</span><span>メイン写真を追加</span>
           </div>
@@ -889,7 +888,7 @@ body.edit-mode .hero-img-col{opacity:1 !important;transform:none !important;clip
       <div class="profile-deco"></div>
       <div class="profile-deco2"></div>
       <div class="profile-img-frame cf-img-wrap editable-wrap">
-        <img src="" id="profileImg" alt="尾崎幸子" style="display:none;">
+        <img src="" id="profileImg" alt="尾﨑幸子" style="display:none;">
         <div class="profile-img-placeholder img-ph" id="profileImgPlaceholder" onclick="openImgModal('profileImg','profileImgPlaceholder')">
           <span>📷</span><span>写真を追加</span>
         </div>
@@ -897,13 +896,13 @@ body.edit-mode .hero-img-col{opacity:1 !important;transform:none !important;clip
       </div>
     </div>
     <div class="profile-text reveal from-right">
-      <h2 class="section-title" style="margin-bottom:0.3rem;">尾崎 幸子</h2>
+      <h2 class="section-title" style="margin-bottom:0.3rem;">尾﨑 幸子</h2>
       <p class="profile-name-yomi">おざきゆきこ / Re.funfun（り.ふぁんふぁん）</p>
-      <p class="profile-body" id="profileBody">学んで終わりではなく、そこからどう続けていくかまで大切にしています。技術や知識だけを伝えるのではなく、導入後の運営や続け方、発信なども含め、一人ひとりに寄り添いながらサポートしています。フォロー体制の厚さも特徴のひとつで、<em style="font-style:normal;color:var(--sage);">"誰一人置いてきぼりにしない"</em>を大切にしています。60歳。今がいちばん面白い！そんな想いを込めながら、小さな島から全国へ発信しています。</p>
+      <p class="profile-body" id="profileBody">学んで終わりではなく、そこからどう続けていくかまで大切にしています。技術や知識だけを伝えるのではなく、導入後の運営や続け方、発信なども含め、一人ひとりに寄り添いながらサポートしています。フォロー体制の厚さも特徴のひとつで、<em style="font-style:normal;color:var(--sage);">"誰一人置いてきぼりにしない"</em>を大切にしています。61歳。今がいちばん面白い！そんな想いを込めながら、小さな島から全国へ発信しています。</p>
       <div class="profile-stats">
         <div class="stat-item"><div class="stat-num">38年</div><div class="stat-label">経理歴</div></div>
         <div class="stat-item"><div class="stat-num">約90%</div><div class="stat-label">サロンリピーター</div></div>
-        <div class="stat-item"><div class="stat-num">60歳</div><div class="stat-label">今がいちばん面白い</div></div>
+        <div class="stat-item"><div class="stat-num">61歳</div><div class="stat-label">今がいちばん面白い</div></div>
       </div>
       <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-top:1rem;">
         <a href="https://lin.ee/Op7jMlR" target="_blank" class="btn btn-line" style="font-size:0.85rem;min-width:190px;justify-content:center;">公式LINEへ</a>
@@ -958,7 +957,7 @@ body.edit-mode .hero-img-col{opacity:1 !important;transform:none !important;clip
       <h2 class="section-title">お問い合わせ</h2>
     </div>
     <div class="contact-grid">
-      <div class="reveal from-left">
+      <div>
         <form class="contact-form" onsubmit="return false;">
           <label>お名前 <span style="color:#c0392b">*</span></label>
           <input type="text" placeholder="山田 花子">
@@ -982,17 +981,14 @@ body.edit-mode .hero-img-col{opacity:1 !important;transform:none !important;clip
           <p class="form-note">※ WordPress実装時はContact Form 7等に差し替えます</p>
         </form>
       </div>
-      <div class="sns-block reveal from-right">
-        <p style="font-size:0.88rem;color:var(--muted);margin-bottom:1rem;line-height:1.9;">フォームのほか、Instagram DM・公式LINEからもお気軽にご連絡ください。</p>
+      <div class="sns-block">
         <div class="sns-card">
-          <h4>公式LINE</h4>
-          <p>お気軽にメッセージください。</p>
-          <a href="https://lin.ee/Op7jMlR" target="_blank" class="btn btn-line" style="justify-content:center;">公式LINEへ</a>
-        </div>
-        <div class="sns-card">
-          <h4>Instagram DM</h4>
-          <p>@re_fun_fun へDMをどうぞ。</p>
-          <a href="https://www.instagram.com/re_fun_fun/" target="_blank" class="btn btn-outline" style="justify-content:center;">Instagram DMへ</a>
+          <p style="font-size:0.9rem;color:var(--muted);line-height:1.95;margin:0;">フォームのほかに、こちらからもお気軽にどうぞ。</p>
+          <p style="font-size:0.9rem;line-height:1.95;margin:.6rem 0 0;">
+            <a href="https://lin.ee/Op7jMlR" target="_blank" style="color:#06C755;text-decoration:underline;text-underline-offset:3px;">公式LINE</a>
+            <span style="color:var(--muted);margin:0 .5rem;">/</span>
+            <a href="https://www.instagram.com/re_fun_fun/" target="_blank" style="color:#7d6b8a;text-decoration:underline;text-underline-offset:3px;">Instagram DM（@re_fun_fun）</a>
+          </p>
         </div>
       </div>
     </div>
@@ -1232,21 +1228,7 @@ function cfInit(){
     scrollTrigger: { trigger: '.insta-grid', start: 'top 88%' }
   });
 
-  /* --- contact フォーム/SNS カード --- */
-  gsap.from('.contact-form', {
-    opacity: 0, x: -30, duration: .9, ease: EASE_OUT,
-    scrollTrigger: { trigger: '.contact-form', start: 'top 86%' }
-  });
-  gsap.from('.sns-block', {
-    opacity: 0, x: 30, duration: .9, ease: EASE_OUT,
-    scrollTrigger: { trigger: '.sns-block', start: 'top 86%' }
-  });
-
-  /* --- フッター --- */
-  gsap.from('.footer-logo, .footer-nav, .footer-sns, .footer-copy', {
-    opacity: 0, y: 14, stagger: .1, duration: .6, ease: EASE_OUT,
-    scrollTrigger: { trigger: 'footer', start: 'top 92%' }
-  });
+  /* --- お問い合わせ〜フッターは意図的にアニメーションなし（間延び防止・仕様§9-5） --- */
 }
 
 // 編集モード切替時に再初期化
