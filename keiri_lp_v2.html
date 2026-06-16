@@ -26,6 +26,7 @@ a{color:inherit;text-decoration:none;}
 [data-anim="left"]{transform:translateX(-26px);}
 [data-anim="right"]{transform:translateX(26px);}
 [data-anim].visible{opacity:1;transform:none;}
+@media(max-width:600px){[data-anim="left"],[data-anim="right"]{transform:translateY(28px);}}
 [data-delay="1"]{transition-delay:.08s;}[data-delay="2"]{transition-delay:.16s;}
 [data-delay="3"]{transition-delay:.24s;}[data-delay="4"]{transition-delay:.32s;}
 [data-delay="5"]{transition-delay:.40s;}[data-delay="6"]{transition-delay:.48s;}
@@ -42,11 +43,45 @@ a{color:inherit;text-decoration:none;}
 .btn-outline:hover{background:var(--sage-p);transform:translateY(-3px);}
 .btn-sm{padding:.6rem 1.4rem;font-size:.82rem;}
 
+/* ===== NAV DROPDOWN ===== */
+.nd-overlay{display:none;position:fixed;inset:0;z-index:298;cursor:default;}
+.nd-overlay.open{display:block;}
+.nav-dropdown{position:fixed;top:60px;right:0;width:min(280px,100vw);background:#fff;z-index:299;transform:translateY(-8px);opacity:0;pointer-events:none;transition:transform .26s cubic-bezier(.25,.46,.45,.94),opacity .26s ease;box-shadow:0 8px 32px rgba(0,0,0,.14);border-left:1px solid #ede7dc;border-bottom:1px solid #ede7dc;max-height:calc(100vh - 60px);overflow-y:auto;display:flex;flex-direction:column;}
+.nav-dropdown.open{transform:translateY(0);opacity:1;pointer-events:auto;}
+.nd-nav{flex:1;padding:.5rem 0;}
+.nd-group{margin-bottom:.3rem;}
+.nd-glabel{font-size:.57rem;letter-spacing:.24em;color:#aaa;padding:.7rem 1.4rem .2rem;display:block;}
+.nd-nav a{display:flex;align-items:center;gap:.7rem;padding:.68rem 1.4rem;font-size:.83rem;color:#333;transition:background .2s,color .2s,border-color .2s;border-left:3px solid transparent;text-decoration:none;}
+.nd-nav a:hover,.nd-nav a.current{background:#e8f0e5;color:#4a6741;border-left-color:#4a6741;}
+.nd-nav a.nd-mauve:hover,.nd-nav a.nd-mauve.current{background:#f0ecf4;color:#7d6b8a;border-left-color:#7d6b8a;}
+.nd-icon{display:none;}
+.nd-foot{padding:.9rem 1.4rem;border-top:1px solid #ede7dc;}
+.nd-sns{display:flex;gap:.5rem;margin-bottom:.7rem;}
+.nd-sns a{flex:1;text-align:center;padding:.48rem;border-radius:8px;font-size:.72rem;font-weight:500;transition:opacity .2s;text-decoration:none;}
+.nd-sns-line{background:#06C755;color:#fff;}
+.nd-sns-insta{background:linear-gradient(135deg,#e1306c,#833ab4);color:#fff;}
+.nd-sns a:hover{opacity:.82;}
+.nd-copy{font-size:.57rem;color:#bbb;line-height:1.8;}
+
 /* ===== HEADER ===== */
-.site-header{background:rgba(255,255,255,.95);backdrop-filter:blur(10px);border-bottom:1px solid var(--beige);padding:0 2.5rem;height:60px;display:flex;align-items:center;gap:1.5rem;position:sticky;top:0;z-index:300;}
-.hlogo{font-family:'Noto Serif JP',serif;color:var(--sage);font-size:1rem;margin-right:auto;}
+.site-header{background:rgba(255,255,255,.95);backdrop-filter:blur(10px);border-bottom:1px solid var(--beige);padding:0 1.6rem;height:60px;display:flex;align-items:center;gap:1rem;position:sticky;top:0;z-index:300;}
+.hlogo{font-family:'Noto Serif JP',serif;color:var(--sage);font-size:1rem;white-space:nowrap;}
 .hlogo small{font-size:.75rem;opacity:.55;margin-left:.4rem;}
 .h-cta{animation:pulse-ring 2.5s infinite;}
+.site-nav{display:none;}
+.site-nav a{font-size:.78rem;color:var(--muted);white-space:nowrap;padding:.3rem 0;border-bottom:2px solid transparent;transition:color .2s,border-color .2s;}
+.site-nav a:hover,.site-nav a.current{color:var(--sage);border-bottom-color:var(--sage);}
+.hbg-btn{background:none;border:none;cursor:pointer;padding:6px 4px;display:flex;flex-direction:column;gap:5px;flex-shrink:0;margin-left:auto;}
+.hbg-btn span{display:block;width:22px;height:2px;background:var(--text);border-radius:2px;transition:all .3s;}
+.hbg-btn:hover span{background:var(--sage);}
+
+/* ===== BREADCRUMB ===== */
+.breadcrumb{background:var(--cream);border-bottom:1px solid var(--beige);padding:.45rem 1.6rem;font-size:.7rem;color:var(--muted);display:flex;align-items:center;gap:.4rem;}
+.breadcrumb a{color:var(--sage);text-decoration:none;transition:opacity .2s;}
+.breadcrumb a:hover{opacity:.7;}
+.bc-sep{opacity:.4;font-size:.8rem;}
+.bc-cur{color:var(--text);font-weight:500;}
+
 @keyframes pulse-ring{0%,100%{box-shadow:0 6px 20px rgba(6,199,85,.35);}50%{box-shadow:0 6px 20px rgba(6,199,85,.55),0 0 0 6px rgba(6,199,85,.12);}}
 
 /* ===== HERO ===== */
@@ -117,7 +152,12 @@ a{color:inherit;text-decoration:none;}
 .sec-bg img{width:100%;height:100%;object-fit:cover;opacity:.07;}
 .sec-inner{position:relative;z-index:1;max-width:1140px;margin:0 auto;}
 .sec-label{font-size:.68rem;letter-spacing:.24em;color:var(--sage);display:block;margin-bottom:.5rem;}
+.sec-label.ml{color:var(--mauve);}
 .sec-title{font-family:'Noto Serif JP',serif;font-size:clamp(1.6rem,3vw,2.2rem);color:var(--text);line-height:1.4;margin-bottom:2.8rem;}
+.target-sec{background:var(--sage-p);}
+.price-sec{background:var(--mauve-p);}
+.voice-sec{background:var(--white);}
+.notice-sec{background:var(--white);}
 
 /* ===== CATCH ===== */
 .catch-sec{background:var(--sage-d);padding:5rem 2.5rem;overflow:hidden;position:relative;}
@@ -194,9 +234,12 @@ a{color:inherit;text-decoration:none;}
 .v-card:hover{transform:translateY(-4px);}
 .v-card:nth-child(2){margin-top:2rem;}
 .v-mark{font-family:'Noto Serif JP',serif;font-size:5rem;color:var(--sage-p);line-height:1;position:absolute;top:.2rem;left:.8rem;}
-.v-body{padding-top:2rem;font-size:.88rem;color:var(--text);line-height:2;margin-bottom:.9rem;}
-.v-meta{font-size:.74rem;color:var(--muted);display:flex;align-items:center;gap:.5rem;}
-.v-meta::before{content:'';display:block;width:16px;height:1px;background:var(--muted);}
+.v-body{padding-top:2rem;font-size:.88rem;color:var(--text);line-height:2;margin-bottom:1.1rem;}
+.v-footer{display:flex;align-items:center;gap:.8rem;}
+.v-avatar{width:52px;height:52px;border-radius:50%;overflow:hidden;background:var(--beige);border:2px solid var(--sage-p);flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.v-avatar img{width:100%;height:100%;object-fit:cover;display:block;}
+.v-avatar-ph{display:flex;align-items:center;justify-content:center;width:100%;height:100%;}
+.v-meta{font-size:.74rem;color:var(--muted);}
 .add-voice-btn{display:none;width:100%;background:none;border:1.5px dashed var(--sage-l);border-radius:var(--r);padding:1.4rem;color:var(--sage);font-size:.85rem;cursor:pointer;margin-top:1.5rem;transition:background .2s;}
 .add-voice-btn:hover{background:var(--sage-p);}
 .edit-mode .add-voice-btn{display:block;}
@@ -239,9 +282,16 @@ a{color:inherit;text-decoration:none;}
 .cta-btns{display:flex;gap:1.2rem;justify-content:center;flex-wrap:wrap;}
 
 /* ===== FOOTER ===== */
-footer{background:#2c2520;color:rgba(255,255,255,.55);padding:2.8rem 2.5rem;text-align:center;}
-footer p{font-size:.78rem;margin-bottom:.4rem;}
-footer a{color:rgba(255,255,255,.45);transition:color .2s;}footer a:hover{color:#fff;}
+footer{background:#2c2520;color:rgba(255,255,255,.55);padding:3rem 2.5rem;text-align:center;}
+.footer-inner{max-width:1140px;margin:0 auto;}
+.footer-logo{font-family:'Noto Serif JP',serif;font-size:1.1rem;color:#fff;margin-bottom:1.4rem;}
+.footer-nav{display:flex;gap:2rem;justify-content:center;flex-wrap:wrap;margin-bottom:1.4rem;}
+.footer-nav a{font-size:.76rem;color:rgba(255,255,255,.5);transition:color .2s;}
+.footer-nav a:hover,.footer-nav a.current{color:#fff;}
+.footer-sns{display:flex;gap:1rem;justify-content:center;margin-bottom:1.4rem;}
+.footer-sns a{font-size:.78rem;color:rgba(255,255,255,.55);padding:.4rem 1.1rem;border:1px solid rgba(255,255,255,.18);border-radius:99px;transition:background .2s,border-color .2s,color .2s;}
+.footer-sns a:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.4);color:#fff;}
+.footer-copy{font-size:.7rem;color:rgba(255,255,255,.3);}
 
 /* ===== SECTION HIDDEN ===== */
 .sec-hidden{display:none !important;}
@@ -343,8 +393,13 @@ footer a{color:rgba(255,255,255,.45);transition:color .2s;}footer a:hover{color:
   .cta-btns{flex-direction:column;align-items:center;}
   .v-card:nth-child(2){margin-top:0;}
 }
+@media(max-width:768px){
+  .site-nav{display:none;}
+  .footer-nav{gap:1.2rem;}
+}
 @media(max-width:600px){
   .target-grid,.voice-grid{grid-template-columns:1fr;}
+  .footer-sns{flex-wrap:wrap;}
 }
 
 /* STEPS - 縦タイムライン */
@@ -405,15 +460,60 @@ footer a{color:rgba(255,255,255,.45);transition:color .2s;}footer a:hover{color:
   .story-img-wrap{max-width:260px;margin:0 auto;}
   .cta-btns{flex-direction:column;align-items:center;}
 }
-@media(max-width:600px){.target-grid{grid-template-columns:1fr;}}
+@media(max-width:600px){
+  .target-grid{grid-template-columns:1fr;}
+  .hero-eyebrow{display:none;}
+  .hero-btns{flex-direction:column;}
+  .hero-btns .btn{width:100%;justify-content:center;text-align:center;}
+  .sec-inner{padding-left:1.2rem;padding-right:1.2rem;}
+}
 </style>
 </head>
 <body>
 
+<!-- NAV DROPDOWN -->
+<div class="nd-overlay" id="ndOverlay" onclick="closeDropdown()"></div>
+<div class="nav-dropdown" id="navDropdown">
+
+  <nav class="nd-nav">
+    <div class="nd-group">
+      <span class="nd-glabel">PAGES</span>
+      <a href="index_v2.html"><span class="nd-icon">🏠</span>トップページ</a>
+      <a href="yomogi_lp_v2.html"><span class="nd-icon">🌿</span>よもぎ蒸し講座</a>
+      <a href="atama_lp_v2.html"><span class="nd-icon">✋</span>あたまほぐし講座</a>
+      <a href="keiri_lp_v2.html" class="nd-mauve current"><span class="nd-icon">📊</span>経理のがっこう</a>
+    </div>
+    <div class="nd-group">
+      <span class="nd-glabel">CONTACT</span>
+      <a href="https://lin.ee/Op7jMlR" target="_blank"><span class="nd-icon">💬</span>公式LINE</a>
+      <a href="https://www.instagram.com/re_fun_fun/" target="_blank" class="nd-mauve"><span class="nd-icon">📸</span>Instagram</a>
+    </div>
+  </nav>
+  <div class="nd-foot">
+    <div class="nd-sns">
+      <a href="https://lin.ee/Op7jMlR" target="_blank" class="nd-sns-line"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="#fff" style="vertical-align:middle;margin-right:4px"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>LINE</a>
+      <a href="https://www.instagram.com/re_fun_fun/" target="_blank" class="nd-sns-insta"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="#fff" style="vertical-align:middle;margin-right:4px"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.791-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>Instagram</a>
+    </div>
+    <p class="nd-copy">© Re.funfun / り.ふぁんふぁん　長崎県西海市大島町</p>
+  </div>
+</div>
+
 <header class="site-header">
-  <a href="index_v2.html" class="hlogo">← Re.funfun<small>り.ふぁんふぁん</small></a>
-  <a href="https://lin.ee/Op7jMlR" target="_blank" class="btn btn-line btn-sm h-cta">📲 公式LINEで相談</a>
+  <a href="index_v2.html" class="hlogo">Re.funfun<small>り.ふぁんふぁん</small></a>
+  <nav class="site-nav">
+    <a href="yomogi_lp_v2.html">よもぎ蒸し講座</a>
+    <a href="atama_lp_v2.html">あたまほぐし講座</a>
+    <a href="keiri_lp_v2.html" class="current">経理のがっこう</a>
+  </nav>
+  <button class="hbg-btn" onclick="toggleDropdown()" aria-label="メニュー">
+    <span></span><span></span><span></span>
+  </button>
 </header>
+<nav class="breadcrumb">
+  <a href="index_v2.html">トップ</a>
+  <span class="bc-sep">›</span>
+  <span class="bc-cur">経理のがっこう</span>
+</nav>
 
 <!-- HERO -->
 <section class="hero sec-manageable" data-sec-id="hero">
@@ -430,8 +530,8 @@ footer a{color:rgba(255,255,255,.45);transition:color .2s;}footer a:hover{color:
       <p class="hero-catch" id="heroCatch">本気で整えたいなら、私に任せてください。</p>
       <p class="hero-sub" id="heroSub">経理歴38年のサロンオーナーが、お金の基礎から節税・利益戦略まで伝えます</p>
       <div class="hero-btns">
-        <a href="https://lin.ee/Op7jMlR" target="_blank" class="btn btn-line">📲 無料説明会に申し込む</a>
-        <a href="https://www.instagram.com/re_fun_fun/" target="_blank" class="btn btn-outline">📸 Instagram</a>
+        <a href="https://lin.ee/Op7jMlR" target="_blank" class="btn btn-line"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="currentColor" style="vertical-align:middle;margin-right:5px"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>無料説明会に申し込む</a>
+        <a href="https://www.instagram.com/re_fun_fun/" target="_blank" class="btn btn-outline"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" style="vertical-align:middle;margin-right:5px"><defs><linearGradient id="ig-g" x1="0%" y1="100%" x2="100%" y2="0%"><stop offset="0%" stop-color="#f09433"/><stop offset="25%" stop-color="#e6683c"/><stop offset="50%" stop-color="#dc2743"/><stop offset="75%" stop-color="#cc2366"/><stop offset="100%" stop-color="#bc1888"/></linearGradient></defs><path fill="url(#ig-g)" d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.791-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>Instagram</a>
       </div>
     </div>
     <div class="hero-num-col">
@@ -561,7 +661,7 @@ footer a{color:rgba(255,255,255,.45);transition:color .2s;}footer a:hover{color:
           <div class="date-row"><div class="date-icon"><svg class="date-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg></div><div class="date-info"><div class="date-main" id="d3">7月22日（水）21:00〜</div><div class="date-sub">Zoom・所要30分〜1時間</div></div><span class="date-tag">Zoom</span></div>
           <div class="date-row"><div class="date-icon"><svg class="date-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg></div><div class="date-info"><div class="date-main" id="d4">7月25日（土）21:00〜</div><div class="date-sub">Zoom・所要30分〜1時間</div></div><span class="date-tag">Zoom</span></div>
         </div>
-        <div style="margin-top:1.6rem;"><a href="https://lin.ee/Op7jMlR" target="_blank" class="btn btn-line btn-sm">📲 LINEで参加申し込み</a></div>
+        <div style="margin-top:1.6rem;"><a href="https://lin.ee/Op7jMlR" target="_blank" class="btn btn-line btn-sm"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="currentColor" style="vertical-align:middle;margin-right:5px"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>LINEで参加申し込み</a></div>
       </div>
     </div>
   </div>
@@ -619,13 +719,28 @@ footer a{color:rgba(255,255,255,.45);transition:color .2s;}footer a:hover{color:
     <h2 class="cta-title" id="ctaTitle">まずは無料説明会へ</h2>
     <p class="cta-body" id="ctaBody">フルネーム＋「経理のがっこう無料説明会参加希望」を<br>Instagram または 公式LINE DM へ送ってください。</p>
     <div class="cta-btns">
-      <a href="https://lin.ee/Op7jMlR" target="_blank" class="btn btn-line">📲 LINEで申し込む</a>
-      <a href="https://www.instagram.com/re_fun_fun/" target="_blank" class="btn btn-white">📸 Instagram</a>
+      <a href="https://lin.ee/Op7jMlR" target="_blank" class="btn btn-line"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="currentColor" style="vertical-align:middle;margin-right:5px"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>LINEで申し込む</a>
+      <a href="https://www.instagram.com/re_fun_fun/" target="_blank" class="btn btn-white"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" style="vertical-align:middle;margin-right:5px"><defs><linearGradient id="ig-g" x1="0%" y1="100%" x2="100%" y2="0%"><stop offset="0%" stop-color="#f09433"/><stop offset="25%" stop-color="#e6683c"/><stop offset="50%" stop-color="#dc2743"/><stop offset="75%" stop-color="#cc2366"/><stop offset="100%" stop-color="#bc1888"/></linearGradient></defs><path fill="url(#ig-g)" d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.791-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>Instagram</a>
     </div>
   </div>
 </section>
 
-<footer><p>Re.funfun / り.ふぁんふぁん</p><p style="margin-bottom:.6rem;"><a href="index_v2.html">← トップページへ戻る</a></p><p>© Re.funfun 長崎県西海市大島町</p></footer>
+<footer>
+  <div class="footer-inner">
+    <p class="footer-logo">Re.funfun</p>
+    <nav class="footer-nav">
+      <a href="index_v2.html">トップページ</a>
+      <a href="yomogi_lp_v2.html">よもぎ蒸し講座</a>
+      <a href="atama_lp_v2.html">あたまほぐし講座</a>
+      <a href="keiri_lp_v2.html" class="current">経理のがっこう</a>
+    </nav>
+    <div class="footer-sns">
+      <a href="https://lin.ee/Op7jMlR" target="_blank"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="currentColor" style="vertical-align:middle;margin-right:5px"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>公式LINE</a>
+      <a href="https://www.instagram.com/re_fun_fun/" target="_blank"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" style="vertical-align:middle;margin-right:5px"><defs><linearGradient id="ig-g" x1="0%" y1="100%" x2="100%" y2="0%"><stop offset="0%" stop-color="#f09433"/><stop offset="25%" stop-color="#e6683c"/><stop offset="50%" stop-color="#dc2743"/><stop offset="75%" stop-color="#cc2366"/><stop offset="100%" stop-color="#bc1888"/></linearGradient></defs><path fill="url(#ig-g)" d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.791-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>Instagram</a>
+    </div>
+    <p class="footer-copy">© Re.funfun / り.ふぁんふぁん 長崎県西海市大島町</p>
+  </div>
+</footer>
 
 <div class="admin-bar" id="adminBar" style="display:none;">
   <div class="abar-l"><span class="ebadge" id="eBadge">👁 表示中</span><span style="color:rgba(255,255,255,.45);font-size:.75rem;" id="eLabel">閲覧モード</span></div>
@@ -639,7 +754,6 @@ footer a{color:rgba(255,255,255,.45);transition:color .2s;}footer a:hover{color:
 <div class="imol" id="bgImgMol"><div class="imbox"><h4>📷 背景画像を変更</h4><input type="file" accept="image/*" id="bgImgFileIn" onchange="handleBgImg()"><div class="mbrow"><button class="btn" onclick="applyBgImg()">適用</button><button class="btn btn-outline" onclick="closeMol('bgImgMol')">キャンセル</button></div></div></div>
 <div class="mol" id="seminarEditMol"><div class="mbox"><h3>説明会日程を編集</h3><label>日程1</label><input type="text" id="sd1"><label>日程2</label><input type="text" id="sd2"><label>日程3</label><input type="text" id="sd3"><label>日程4</label><input type="text" id="sd4"><div class="mbrow"><button class="btn" onclick="applySeminar()">適用</button><button class="btn btn-outline" onclick="closeMol('seminarEditMol')">キャンセル</button></div></div></div>
 <div class="toast" id="toast">✅ 保存しました！</div>
-<div style="text-align:center;padding:.9rem;background:#2c2520;"><a href="admin_v2.html" style="font-size:.7rem;color:rgba(255,255,255,.28);">🔐 管理者ログイン</a></div>
 
 <script>
 const PW=localStorage.getItem('rf_admin_pw')||'refunfun2026', SK='rfkeiri_v3';
@@ -862,6 +976,17 @@ window.addEventListener('message', (ev) => {
 /* admin.html内のiframeとして表示されている場合、自身のadminBarは常に非表示 */
 if(window.parent !== window){
   document.getElementById('adminBar').style.display='none';
+}
+
+function toggleDropdown(){
+  const d=document.getElementById('navDropdown'),o=document.getElementById('ndOverlay');
+  const isOpen=d.classList.contains('open');
+  d.classList.toggle('open',!isOpen);
+  o.classList.toggle('open',!isOpen);
+}
+function closeDropdown(){
+  document.getElementById('navDropdown').classList.remove('open');
+  document.getElementById('ndOverlay').classList.remove('open');
 }
 
 loadSaved();

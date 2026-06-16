@@ -101,6 +101,18 @@ body{font-family:'Noto Sans JP',sans-serif;background:var(--cream);color:var(--t
 .login-box input:focus{border-color:var(--sage-l);}
 .login-err{color:#c0392b;font-size:.8rem;margin-bottom:.8rem;display:none;}
 
+/* LOGOUT CONFIRM MODAL */
+.logout-mol{position:fixed;inset:0;background:rgba(44,37,32,.55);z-index:2000;display:none;align-items:center;justify-content:center;}
+.logout-mol.show{display:flex;}
+.logout-box{background:#fff;border-radius:14px;padding:2rem 2.2rem;width:min(400px,92vw);text-align:center;}
+.logout-box h3{font-family:'Noto Serif JP',serif;color:#2c2520;font-size:1.05rem;margin-bottom:.6rem;}
+.logout-box p{font-size:.84rem;color:#6b5f57;line-height:1.8;margin-bottom:1.4rem;}
+.logout-btns{display:flex;flex-direction:column;gap:.6rem;}
+.logout-btns .btn-save{background:var(--sage);color:#fff;border:none;border-radius:8px;padding:.75rem 1rem;font-size:.88rem;cursor:pointer;font-weight:500;}
+.logout-btns .btn-nosave{background:#f5f0eb;color:#2c2520;border:none;border-radius:8px;padding:.75rem 1rem;font-size:.88rem;cursor:pointer;}
+.logout-btns .btn-cancel{background:none;color:var(--muted);border:none;font-size:.82rem;cursor:pointer;padding:.4rem;}
+.logout-btns button:hover{opacity:.85;}
+
 @media(max-width:720px){
   .admin-header h1 small{display:none;}
   .tabs{padding:0 .8rem;}
@@ -139,10 +151,10 @@ body{font-family:'Noto Sans JP',sans-serif;background:var(--cream);color:var(--t
 </nav>
 
 <div class="main-area">
-  <iframe class="page-frame active" data-page="index_v2.html" src="index_v2.html"></iframe>
-  <iframe class="page-frame" data-page="yomogi_lp_v2.html" src="yomogi_lp_v2.html"></iframe>
-  <iframe class="page-frame" data-page="atama_lp_v2.html" src="atama_lp_v2.html"></iframe>
-  <iframe class="page-frame" data-page="keiri_lp_v3.html" src="keiri_lp_v3.html"></iframe>
+  <iframe class="page-frame active" data-page="index_v2.html" id="frame-index"></iframe>
+  <iframe class="page-frame" data-page="yomogi_lp_v2.html" id="frame-yomogi"></iframe>
+  <iframe class="page-frame" data-page="atama_lp_v2.html" id="frame-atama"></iframe>
+  <iframe class="page-frame" data-page="keiri_lp_v3.html" id="frame-keiri"></iframe>
 
   <div class="settings-panel" id="settingsPanel">
     <div class="settings-card">
@@ -155,18 +167,32 @@ body{font-family:'Noto Sans JP',sans-serif;background:var(--cream);color:var(--t
     </div>
     <div class="settings-card">
       <h3>管理ページ一覧</h3>
-      <p class="desc">編集データはブラウザのLocalStorageに保存されます（このブラウザ・この端末のみ）。</p>
+      <p class="desc">「編集モード」をオンにして各ページのテキスト・画像を直接クリックして編集できます。「保存」ボタンを押すと全ページのデータがGoogleスプレッドシートにクラウド保存されます。公開ページを更新するには、編集後に保存し、HTMLファイルをサーバーにアップロードしてください。</p>
       <div class="pages-list">
         <div class="page-row"><span class="pname">ホームページ</span><span class="pmeta">index_v2.html</span></div>
         <div class="page-row"><span class="pname">よもぎ蒸し講座</span><span class="pmeta">yomogi_lp_v2.html</span></div>
         <div class="page-row"><span class="pname">あたまほぐし講座</span><span class="pmeta">atama_lp_v2.html</span></div>
         <div class="page-row"><span class="pname">経理のがっこう</span><span class="pmeta">keiri_lp_v3.html</span></div>
       </div>
+      <p class="desc" style="margin-top:1rem;font-size:.75rem;">※ 編集データはGoogleスプレッドシートに自動保存されます（最終保存分のみ保持）。ログは最大100件まで記録されます。</p>
     </div>
   </div>
 </div>
 
 <div id="adminToast" style="display:none;position:fixed;bottom:1.6rem;left:50%;transform:translateX(-50%);background:var(--sage);color:#fff;padding:.65rem 1.6rem;border-radius:99px;font-size:.84rem;z-index:2000;"></div>
+
+<!-- LOGOUT CONFIRM MODAL -->
+<div class="logout-mol" id="logoutMol">
+  <div class="logout-box">
+    <h3>ログアウトしますか？</h3>
+    <p>保存していない編集内容は失われます。<br>ログアウト後は公開HPに移動します。</p>
+    <div class="logout-btns">
+      <button class="btn-save" onclick="doLogoutWithSave()">💾 保存してからログアウト</button>
+      <button class="btn-nosave" onclick="doLogoutNow()">保存せずにログアウト</button>
+      <button class="btn-cancel" onclick="closeLogoutMol()">キャンセル</button>
+    </div>
+  </div>
+</div>
 
 <script>
 const ADMIN_PW_KEY='rf_admin_pw';
@@ -186,16 +212,34 @@ function doLogin(){
   }
 }
 function doLogout(){
-  if(editMode)toggleAllEdit();
+  if(editMode){
+    document.getElementById('logoutMol').classList.add('show');
+  } else {
+    doLogoutNow();
+  }
+}
+function closeLogoutMol(){
+  document.getElementById('logoutMol').classList.remove('show');
+}
+async function doLogoutWithSave(){
+  await saveAllPages();
+  setTimeout(doLogoutNow, 1600);
+}
+function doLogoutNow(){
+  if(editMode) toggleAllEdit();
   loggedIn=false;
-  document.getElementById('loginOverlay').classList.remove('hide');
-  document.getElementById('pwInput').value='';
-  document.getElementById('loginErr').style.display='none';
+  closeLogoutMol();
+  window.location.href='index_v2.html';
 }
 
 /* TABS */
 document.querySelectorAll('.tab').forEach(tab=>{
   tab.addEventListener('click',()=>{
+    // 離れるiframeを直接保存（表示中なので確実に動く）
+    if(editMode){
+      const leaving=document.querySelector('.page-frame.active');
+      if(leaving) callFrame(leaving,'rfSave');
+    }
     document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
     tab.classList.add('active');
     const page=tab.dataset.page;
@@ -207,16 +251,14 @@ document.querySelectorAll('.tab').forEach(tab=>{
       document.querySelectorAll('.page-frame').forEach(f=>{
         f.classList.toggle('active', f.dataset.page===page);
       });
-      // 編集モード中なら新しく表示されたiframeにも編集モードを伝える
-      if(editMode){
-        const frame=document.querySelector(`.page-frame[data-page="${page}"]`);
-        if(frame)sendToFrame(frame,{type:'rf_admin_login'});
-      }
     }
   });
 });
 
-/* EDIT MODE TOGGLE - 全ページに送信 */
+/* 同一オリジン直接呼び出し（postMessageより確実） */
+function callFrame(frame, fn, ...args){
+  try{ frame.contentWindow[fn]?.(...args); }catch(e){}
+}
 function sendToFrame(frame,msg){
   try{ frame.contentWindow.postMessage(msg,'*'); }catch(e){}
 }
@@ -226,17 +268,57 @@ function toggleAllEdit(){
   document.getElementById('editLabel').textContent=editMode?'編集モード':'閲覧モード';
   document.getElementById('editToggleBtn').textContent=editMode?'👁 閲覧に戻す':'✏️ 編集する';
   document.getElementById('saveAllBtn').style.display=editMode?'inline-block':'none';
-  const msg={type: editMode?'rf_admin_login':'rf_admin_logout'};
-  document.querySelectorAll('.page-frame').forEach(frame=>sendToFrame(frame,msg));
+  document.querySelectorAll('.page-frame').forEach(frame=>{
+    callFrame(frame,'rfAdminMode',editMode);
+  });
 }
 
-/* SAVE ALL */
-function saveAllPages(){
-  document.querySelectorAll('.page-frame').forEach(frame=>sendToFrame(frame,{type:'rf_admin_save'}));
+const GAS_URL='https://script.google.com/macros/s/AKfycbz2BwKycPzj8mpU-OhjkjYmWvXvoS9eCVrWriNgxaqxQwXLgIBx2rpk-FSStJRXDSEs/exec';
+
+// localStorageキーとpage_idの対応表（同一オリジンで共有される）
+const LS_PAGES=[
+  {key:'refunfun_hp_v4', page_id:'index'},
+  {key:'rfyomogi_v6',    page_id:'yomogi'},
+  {key:'rfatama_v3',     page_id:'atama'},
+  {key:'rfkeiri_v3',     page_id:'keiri'},
+];
+
+async function saveAllPages(){
+  // 全iframeのrfSave()を直接呼びlocalStorageに書かせる
+  document.querySelectorAll('.page-frame').forEach(f=>callFrame(f,'rfSave'));
+  showAdminToast('☁️ 保存中...');
+  await new Promise(r=>setTimeout(r,300));
+
+  let ok=0, total=0;
+  for(const {key,page_id} of LS_PAGES){
+    const raw=localStorage.getItem(key);
+    if(!raw) continue;
+    try{
+      const state=JSON.parse(raw);
+      total++;
+      const payload={
+        page_id,
+        data_json:    state.texts||{},
+        images_json:  state.imgs||{},
+        sections_json:state.sections||state.sections_json||[],
+        sem_dates_json:[],
+        user_agent:navigator.userAgent
+      };
+      const d=JSON.stringify(payload);
+      const res=await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:d});
+      const json=await res.json();
+      if(json.ok) ok++;
+    }catch(e){console.warn('save error',page_id,e);}
+  }
+  showAdminToast(total===0
+    ?'まだ保存データがありません（各ページで一度編集して保存してください）'
+    :`💾 ${ok}/${total}ページ保存しました`);
+}
+function showAdminToast(msg){
   const t=document.getElementById('adminToast');
-  t.textContent='💾 全ページを保存しました';
-  t.style.display='block';
-  setTimeout(()=>{t.style.display='none';},2200);
+  t.textContent=msg;t.style.display='block';
+  clearTimeout(t._tid);
+  t._tid=setTimeout(()=>{t.style.display='none';},3000);
 }
 
 /* 各iframeのロード時に下部admin-barを隠すCSSを注入 */
@@ -254,7 +336,8 @@ function hideInnerAdminBar(frame){
 document.querySelectorAll('.page-frame').forEach(frame=>{
   frame.addEventListener('load',()=>{
     hideInnerAdminBar(frame);
-    if(editMode)sendToFrame(frame,{type:'rf_admin_login'});
+    // loadイベント後にスクリプトが確実に実行済みなのでここで直接呼ぶ
+    if(editMode) callFrame(frame,'rfAdminMode',true);
   });
 });
 
@@ -278,6 +361,14 @@ function changePassword(){
   document.getElementById('newPwInput2').value='';
 }
 
+// キャッシュバスターでiframeを強制リロード
+(function(){
+  const v='?v='+Date.now();
+  document.getElementById('frame-index').src='index_v2.html'+v;
+  document.getElementById('frame-yomogi').src='yomogi_lp_v2.html'+v;
+  document.getElementById('frame-atama').src='atama_lp_v2.html'+v;
+  document.getElementById('frame-keiri').src='keiri_lp_v3.html'+v;
+})();
 setTimeout(()=>document.getElementById('pwInput').focus(),150);
 </script>
 </body>
