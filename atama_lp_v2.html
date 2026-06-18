@@ -12,7 +12,8 @@
   --mauve:#7d6b8a;--mauve-p:#f0ecf4;
   --cream:#f7f3ec;--beige:#ede7dc;--beige2:#e2d9cc;
   --text:#2c2520;--muted:#6b5f57;--white:#fff;
-  --r:14px;
+  --r:16px;--r-lg:20px;--r-btn:10px;
+  --pad-x:clamp(1.25rem,4vw,2.5rem);
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;}
@@ -86,14 +87,30 @@ a{color:inherit;text-decoration:none;}
 
 @keyframes pulse-ring{0%,100%{box-shadow:0 6px 20px rgba(6,199,85,.35);}50%{box-shadow:0 6px 20px rgba(6,199,85,.55),0 0 0 6px rgba(6,199,85,.12);}}
 
+/* ===== MOBILE FIXED SUBHEADER ===== */
+.mobile-fixed-subheader{display:none;}
+@media(max-width:900px){
+  .mobile-fixed-subheader{position:fixed;top:60px;left:0;right:0;height:64px;z-index:250;background:var(--cream);padding:.7rem var(--pad-x) .5rem;box-sizing:border-box;border-bottom:1px solid var(--beige);display:flex;flex-direction:column;justify-content:center;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .3s ease;}
+  .mobile-fixed-subheader.show{opacity:1;visibility:visible;}
+  .mobile-fixed-subheader .sub-label{font-size:.65rem;letter-spacing:.15em;color:var(--sage);display:block;margin-bottom:.2rem;}
+  .mobile-fixed-subheader h2{font-family:'Noto Serif JP',serif;font-size:1.15rem;color:var(--text);margin:0;line-height:1.2;}
+}
+
 /* ===== HERO ===== */
 /* ===== HERO（あたま：フルブリード写真＋テキストカード） ===== */
 .hero{position:relative;min-height:88vh;display:flex;align-items:flex-end;overflow:hidden;}
 .hero-bg{position:absolute;inset:0;z-index:0;overflow:hidden;}
+.hero-bg{background:var(--sage-d);}
 .hero-bg img{width:100%;height:100%;object-fit:cover;opacity:1;}
+.hero-slide{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;animation:heroSlide 21s infinite;}
+.hero-slide:nth-child(1){animation-delay:0s;}
+.hero-slide:nth-child(2){animation-delay:7s;}
+.hero-slide:nth-child(3){animation-delay:14s;}
+@keyframes heroSlide{0%{opacity:0;}3%{opacity:1;}30%{opacity:1;}34%{opacity:0;}100%{opacity:0;}}
+@media(prefers-reduced-motion:reduce){.hero-slide{animation:none;}.hero-slide:nth-child(1){opacity:1;}}
 .hero-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(46,66,40,0) 0%,rgba(46,66,40,.04) 50%,rgba(46,66,40,.3) 100%);}
 .hdc{display:none;}
-.hero-inner{position:relative;z-index:1;max-width:1140px;margin:0 auto;padding:0 2.5rem 3.5rem;width:100%;}
+.hero-inner{position:relative;z-index:1;max-width:1140px;margin:0 auto;padding:0 var(--pad-x) 3.5rem;width:100%;}
 .hero-card{
   background:linear-gradient(135deg,rgba(255,255,255,.78) 0%,rgba(255,255,255,.6) 60%,rgba(255,255,255,.25) 100%);
   backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
@@ -121,7 +138,7 @@ a{color:inherit;text-decoration:none;}
 .notice-bar strong{color:var(--mauve);}
 
 /* ===== SECTION BASE ===== */
-.sec{position:relative;padding:7rem 2.5rem;overflow:hidden;}
+.sec{position:relative;padding:7rem var(--pad-x);overflow:hidden;}
 .sec-bg{position:absolute;inset:0;z-index:0;overflow:hidden;}
 .sec-bg img{width:100%;height:100%;object-fit:cover;opacity:.07;}
 .sec-inner{position:relative;z-index:1;max-width:1140px;margin:0 auto;}
@@ -222,10 +239,10 @@ a{color:inherit;text-decoration:none;}
 .story-sec{background:var(--cream);}
 .story-layout{display:grid;grid-template-columns:400px 1fr;gap:6rem;align-items:center;}
 .story-img-wrap{position:relative;}
-.story-img-blob{border-radius:38% 62% 52% 48% / 48% 50% 50% 52%;overflow:hidden;aspect-ratio:3/4;box-shadow:0 24px 72px rgba(74,103,65,.18);position:relative;z-index:1;}
+.story-img-blob{border-radius:var(--r-lg);overflow:hidden;aspect-ratio:3/4;box-shadow:0 24px 72px rgba(74,103,65,.18);position:relative;z-index:1;}
 .story-img-blob img{width:100%;height:100%;object-fit:cover;background:var(--beige);}
 .story-img-placeholder{width:100%;height:100%;background:var(--beige);display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--muted);font-size:.82rem;gap:.5rem;cursor:pointer;}
-.story-ring{position:absolute;inset:-12px;z-index:0;border-radius:38% 62% 52% 48% / 48% 50% 50% 52%;border:2px dashed rgba(74,103,65,.18);}
+.story-ring{position:absolute;inset:-12px;z-index:0;border-radius:var(--r-lg);border:2px dashed rgba(74,103,65,.18);}
 .story-dot1{position:absolute;width:90px;height:90px;border-radius:50%;border:2px solid var(--sage-p);top:-24px;right:-24px;z-index:2;}
 .story-dot2{position:absolute;width:60px;height:60px;border-radius:50%;background:var(--mauve-p);bottom:-16px;left:-16px;z-index:2;opacity:.7;}
 .p-name-ja{font-family:'Noto Serif JP',serif;font-size:1.9rem;margin-bottom:.2rem;}
@@ -255,8 +272,17 @@ a{color:inherit;text-decoration:none;}
 .cta-body{font-size:.92rem;color:#fff;margin-bottom:2.8rem;line-height:2;text-shadow:0 1px 8px rgba(0,0,0,.35);}
 .cta-btns{display:flex;gap:1.2rem;justify-content:center;flex-wrap:wrap;}
 
+/* ===== GALLERY（yomogi LP 準拠） ===== */
+.gallery-sec{background:var(--white);}
+.gallery-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-top:2.5rem;}
+.gallery-item{position:relative;border-radius:var(--r);overflow:hidden;aspect-ratio:3/4;box-shadow:0 8px 28px rgba(74,103,65,.12);background:var(--beige);}
+.gallery-item img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s;}
+.gallery-item:hover img{transform:scale(1.05);}
+.gallery-cap{position:absolute;left:0;right:0;bottom:0;padding:1.6rem .9rem .7rem;background:linear-gradient(to top,rgba(0,0,0,.62),transparent);color:#fff;font-size:.82rem;font-weight:500;letter-spacing:.04em;}
+@media(max-width:900px){.gallery-grid{grid-template-columns:1fr 1fr;gap:.7rem;}}
+
 /* ===== FOOTER ===== */
-footer{background:#2c2520;color:rgba(255,255,255,.55);padding:3rem 2.5rem;text-align:center;}
+footer{background:#2c2520;color:rgba(255,255,255,.55);padding:3rem var(--pad-x);text-align:center;}
 .footer-inner{max-width:1140px;margin:0 auto;}
 .footer-logo{font-family:'Noto Serif JP',serif;font-size:1.1rem;color:#fff;margin-bottom:1.4rem;}
 .footer-nav{display:flex;gap:2rem;justify-content:center;flex-wrap:wrap;margin-bottom:1.4rem;}
@@ -361,7 +387,7 @@ footer{background:#2c2520;color:rgba(255,255,255,.55);padding:3rem 2.5rem;text-a
 .edit-mode [contenteditable="true"]:focus{outline:2px solid var(--sage);background:rgba(107,143,94,.08);}
 
 @media(max-width:960px){
-  .hero-inner{padding:0 1.4rem 2.5rem;}
+  .hero-inner{padding:0 var(--pad-x) 2.5rem;}
   .hero-card{padding:1.8rem 1.6rem;max-width:100%;}
   .catch-inner{grid-template-columns:1fr;gap:0;}
   .catch-card{border-right:none;border-bottom:1px solid rgba(255,255,255,.08);padding:2.5rem 2rem;}
@@ -420,7 +446,7 @@ footer{background:#2c2520;color:rgba(255,255,255,.55);padding:3rem 2.5rem;text-a
 .price-edit-btn{display:none;background:none;border:1px solid var(--sage-l);border-radius:6px;padding:.3rem .8rem;color:var(--sage);font-size:.74rem;cursor:pointer;margin-top:1.2rem;}
 .edit-mode .price-edit-btn{display:inline-block;}
 @media(max-width:960px){
-  .hero-inner{padding:0 1.4rem 2.5rem;}
+  .hero-inner{padding:0 var(--pad-x) 2.5rem;}
   .hero-card{padding:1.8rem 1.6rem;max-width:100%;}
   .catch-inner{grid-template-columns:1fr;gap:0;}
   .catch-card{border-right:none;border-bottom:1px solid rgba(255,255,255,.08);padding:2.5rem 2rem;}
@@ -458,6 +484,7 @@ body.edit-mode .scroll-ind,
 body.edit-mode .hdc1,
 body.edit-mode .hdc2,
 body.edit-mode .hdc3{opacity:1 !important;transform:none !important;}
+body.edit-mode .hero-slide:nth-child(1){opacity:1 !important;}
 </style>
 </head>
 <body>
@@ -472,7 +499,7 @@ body.edit-mode .hdc3{opacity:1 !important;transform:none !important;}
       <a href="index_v2.html"><span class="nd-icon">🏠</span>トップページ</a>
       <a href="yomogi_lp_v2.html"><span class="nd-icon">🌿</span>よもぎ蒸し講座</a>
       <a href="atama_lp_v2.html" class="current"><span class="nd-icon">✋</span>あたまほぐし講座</a>
-      <a href="keiri_lp_v2.html" class="nd-mauve"><span class="nd-icon">📊</span>経理のがっこう</a>
+      <a href="keiri_lp_v3.html" class="nd-mauve"><span class="nd-icon">📊</span>経理のがっこう</a>
     </div>
     <div class="nd-group">
       <span class="nd-glabel">CONTACT</span>
@@ -494,12 +521,17 @@ body.edit-mode .hdc3{opacity:1 !important;transform:none !important;}
   <nav class="site-nav">
     <a href="yomogi_lp_v2.html">よもぎ蒸し講座</a>
     <a href="atama_lp_v2.html" class="current">あたまほぐし講座</a>
-    <a href="keiri_lp_v2.html">経理のがっこう</a>
+    <a href="keiri_lp_v3.html">経理のがっこう</a>
   </nav>
   <button class="hbg-btn" onclick="toggleDropdown()" aria-label="メニュー">
     <span></span><span></span><span></span>
   </button>
 </header>
+
+<div class="mobile-fixed-subheader" id="mobileFixedSubheader">
+  <span class="sub-label" id="subheaderLabel">FOR WHOM</span>
+  <h2 id="subheaderTitle">こんな方へ</h2>
+</div>
 <nav class="breadcrumb">
   <a href="index_v2.html">トップ</a>
   <span class="bc-sep">›</span>
@@ -514,7 +546,12 @@ body.edit-mode .hdc3{opacity:1 !important;transform:none !important;}
     <button class="sc-btn up" onclick="moveSec(this,-1)">↑</button>
     <button class="sc-btn dn" onclick="moveSec(this,1)">↓</button>
   </div>
-  <div class="hero-bg"><img src="https://images.unsplash.com/photo-1519823551278-64ac92734fb1?w=1600&q=80" id="heroBgImg" alt=""><div class="hero-overlay"></div></div>
+  <div class="hero-bg">
+    <div class="hero-slide" style="background-image:url('images/atama-1.jpg');"></div>
+    <div class="hero-slide" style="background-image:url('images/atama-2.jpg');"></div>
+    <div class="hero-slide" style="background-image:url('images/atama-3.jpg');"></div>
+    <div class="hero-overlay"></div>
+  </div>
   <div class="hero-inner">
     <div class="hero-card">
       <p class="hero-eyebrow">Re.funfun ／ あたまほぐし講座</p>
@@ -523,8 +560,6 @@ body.edit-mode .hdc3{opacity:1 !important;transform:none !important;}
       <p class="hero-catch" id="heroCatch">AIにはできない、AIより先にこの手が気づく。</p>
       <p class="hero-sub" id="heroSub">技術も、自信も、ゼロから育てていける</p>
       <div class="hero-btns">
-        <a href="https://lin.ee/Op7jMlR" target="_blank" class="btn btn-line"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="currentColor" style="vertical-align:middle;margin-right:5px"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>公式LINEで問い合わせ</a>
-        <a href="https://www.instagram.com/re_fun_fun/" target="_blank" class="btn btn-outline"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" style="vertical-align:middle;margin-right:5px"><defs><linearGradient id="ig-g" x1="0%" y1="100%" x2="100%" y2="0%"><stop offset="0%" stop-color="#f09433"/><stop offset="25%" stop-color="#e6683c"/><stop offset="50%" stop-color="#dc2743"/><stop offset="75%" stop-color="#cc2366"/><stop offset="100%" stop-color="#bc1888"/></linearGradient></defs><path fill="url(#ig-g)" d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.791-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>Instagram</a>
       </div>
     </div>
   </div>
@@ -574,7 +609,7 @@ body.edit-mode .hdc3{opacity:1 !important;transform:none !important;}
     <button class="sc-btn up" onclick="moveSec(this,-1)">↑</button>
     <button class="sc-btn dn" onclick="moveSec(this,1)">↓</button>
   </div>
-  <div class="sec-bg"><img src="https://images.unsplash.com/photo-1600334089648-b0d9d3028eb2?w=1600&q=80" id="courseBgImg" alt=""></div>
+  <div class="sec-bg"><img src="images/atama-bg-course.jpg" id="courseBgImg" alt=""></div>
   <div class="sec-inner">
     <div class="course-intro">
       <div data-anim="left">
@@ -610,7 +645,6 @@ body.edit-mode .hdc3{opacity:1 !important;transform:none !important;}
         <h2 class="sec-title">受講料</h2>
         <div class="price-copy"><blockquote id="priceCopy">技術も、自信も、<br>ゼロから育てていける。</blockquote></div>
         <p class="price-body" id="priceBody">学んで終わりではなく、デビューまで一緒に歩みます。フォロー体制が充実しているから、未経験でも安心です。</p>
-        <a href="https://lin.ee/Op7jMlR" target="_blank" class="btn btn-line btn-sm"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="currentColor" style="vertical-align:middle;margin-right:5px"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>料金の詳細を相談する</a>
       </div>
       <div data-anim="right">
         <div class="price-box">
@@ -635,14 +669,19 @@ body.edit-mode .hdc3{opacity:1 !important;transform:none !important;}
     <button class="sc-btn up" onclick="moveSec(this,-1)">↑</button>
     <button class="sc-btn dn" onclick="moveSec(this,1)">↓</button>
   </div>
-  <div class="sec-bg"><img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1600&q=80" id="schedBgImg" alt=""></div>
+  <div class="sec-bg"><img src="images/atama-bg-sched.jpg" id="schedBgImg" alt=""></div>
   <div class="sec-inner">
     <div class="sched-layout">
       <div data-anim="left">
         <span class="sec-label">OVERVIEW</span>
         <h2 class="sec-title">開催概要</h2>
         <p class="sched-desc" id="schedDesc">申込後に開始希望月で日程調整します。まずはお気軽にご連絡ください。</p>
-        <a href="https://lin.ee/Op7jMlR" target="_blank" class="btn btn-line btn-sm"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="currentColor" style="vertical-align:middle;margin-right:5px"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>LINEで問い合わせ</a>
+        <a href="https://lin.ee/Op7jMlR" target="_blank" class="btn btn-line" style="margin-top:1.6rem;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:middle;margin-right:5px">
+            <path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/>
+          </svg>
+          公式LINEで問い合わせ
+        </a>
       </div>
       <div data-anim="right">
         <button class="sched-edit-btn" onclick="openScheduleEdit()">✏️ 開催概要を編集</button>
@@ -655,6 +694,25 @@ body.edit-mode .hdc3{opacity:1 !important;transform:none !important;}
           <tr><th>特典</th><td id="sch6">オンライン座学動画付き・受講後フォロー・練習会無料</td></tr>
         </table></div>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<section class="sec gallery-sec sec-manageable" data-sec-id="gallery" style="position:relative;">
+  <div class="sec-ctrl">
+    <button class="sc-btn vis" title="このセクションを非表示" onclick="toggleSecVis(this)">👁</button>
+    <button class="sc-btn up" title="上へ移動" onclick="moveSec(this,-1)">↑</button>
+    <button class="sc-btn dn" title="下へ移動" onclick="moveSec(this,1)">↓</button>
+  </div>
+  <div class="sec-inner">
+    <span class="sec-label">GALLERY</span>
+    <h2 class="sec-title">講座の様子</h2>
+    <div class="gallery-grid">
+      <div class="gallery-item"><img src="images/atama-g1.jpg" alt="あたまほぐしの施術風景"><div class="gallery-cap">頭をほぐす施術</div></div>
+      <div class="gallery-item"><img src="images/atama-g2.jpg" alt="ていねいな手技"><div class="gallery-cap">ていねいな手技</div></div>
+      <div class="gallery-item"><img src="images/atama-g3.jpg" alt="少人数で学ぶ様子"><div class="gallery-cap">少人数で学ぶ</div></div>
+      <div class="gallery-item"><img src="images/atama-g4.jpg" alt="実践で身につける"><div class="gallery-cap">実践で身につける</div></div>
     </div>
   </div>
 </section>
@@ -692,22 +750,22 @@ body.edit-mode .hdc3{opacity:1 !important;transform:none !important;}
     <button class="sc-btn up" onclick="moveSec(this,-1)">↑</button>
     <button class="sc-btn dn" onclick="moveSec(this,1)">↓</button>
   </div>
-  <div class="sec-bg"><img src="https://images.unsplash.com/photo-1470058869958-2a77ade41c02?w=1600&q=80" id="storyBgImg" alt=""></div>
+  <div class="sec-bg"><img src="images/atama-bg-story.jpg" id="storyBgImg" alt=""></div>
   <div class="sec-inner">
     <div class="story-layout">
       <div class="story-img-wrap" data-anim="left">
         <div class="story-ring"></div><div class="story-dot1"></div><div class="story-dot2"></div>
         <div style="position:relative;">
           <div class="story-img-blob">
-            <img src="" id="profileImg" alt="尾崎幸子" style="display:none;">
-            <div class="story-img-placeholder img-ph" id="profileImgPh" onclick="if(em)openImg('profileImg','profileImgPh')"><span>👩</span><span>写真を追加</span></div>
+            <img src="images/profile-atama.jpg" id="profileImg" alt="尾﨑幸子">
+            <div class="story-img-placeholder img-ph" id="profileImgPh" onclick="if(em)openImg('profileImg','profileImgPh')" style="display:none;"><span>👩</span><span>写真を追加</span></div>
           </div>
           <button class="img-change-btn" onclick="openImg('profileImg','profileImgPh')">📷 写真を変更</button>
         </div>
       </div>
       <div data-anim="right">
         <span class="sec-label">STORY &amp; PROFILE</span>
-        <p class="p-name-ja" id="pName">尾崎 幸子</p>
+        <p class="p-name-ja" id="pName">尾﨑 幸子</p>
         <p class="p-yomi">おざきゆきこ / Re.funfun（り.ふぁんふぁん）</p>
         <p class="p-body" id="pBody">学んで終わりではなく、そこからどう続けていくかまで大切にしています。技術や知識だけを伝えるのではなく、導入後の運営や続け方、発信なども含め、一人ひとりに寄り添いながらサポートしています。<br><br><strong style="color:var(--sage);font-weight:500;">"誰一人置いてきぼりにしない"</strong></p>
         <div class="p-quote" id="pQuote">あたまほぐしを学んだのは<strong>57歳</strong>・デビューは<strong>60歳</strong>・手技ほぼ未経験からのスタート。<br>「何もなかったところからスタートした私だからこそ、次は皆さんに届ける番」</div>
@@ -730,15 +788,11 @@ body.edit-mode .hdc3{opacity:1 !important;transform:none !important;}
     <button class="sc-btn dn" onclick="moveSec(this,1)">↓</button>
   </div>
   <div class="ripple-wrap"><div class="ripple"></div><div class="ripple"></div><div class="ripple"></div></div>
-  <div class="cta-bg"><img src="https://images.unsplash.com/photo-1523438885200-e635ba2c2a22?w=1600&q=80" id="ctaBgImg" alt=""><div class="cta-overlay"></div></div>
+  <div class="cta-bg"><img src="images/atama-bg-cta.jpg" id="ctaBgImg" alt=""><div class="cta-overlay"></div></div>
   <div class="cta-inner" data-anim="up">
     <p class="cta-eyebrow">CONTACT</p>
     <h2 class="cta-title" id="ctaTitle">まずはお気軽にご連絡ください</h2>
     <p class="cta-body" id="ctaBody">Instagram DM または 公式LINEからどうぞ。<br>日程・料金など、なんでもご相談ください。</p>
-    <div class="cta-btns">
-      <a href="https://lin.ee/Op7jMlR" target="_blank" class="btn btn-line"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="currentColor" style="vertical-align:middle;margin-right:5px"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>公式LINEから申し込む</a>
-      <a href="https://www.instagram.com/re_fun_fun/" target="_blank" class="btn btn-white"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" style="vertical-align:middle;margin-right:5px"><defs><linearGradient id="ig-g" x1="0%" y1="100%" x2="100%" y2="0%"><stop offset="0%" stop-color="#f09433"/><stop offset="25%" stop-color="#e6683c"/><stop offset="50%" stop-color="#dc2743"/><stop offset="75%" stop-color="#cc2366"/><stop offset="100%" stop-color="#bc1888"/></linearGradient></defs><path fill="url(#ig-g)" d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.791-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>Instagram</a>
-    </div>
   </div>
 </section>
 
@@ -749,7 +803,7 @@ body.edit-mode .hdc3{opacity:1 !important;transform:none !important;}
       <a href="index_v2.html">トップページ</a>
       <a href="yomogi_lp_v2.html">よもぎ蒸し講座</a>
       <a href="atama_lp_v2.html" class="current">あたまほぐし講座</a>
-      <a href="keiri_lp_v2.html">経理のがっこう</a>
+      <a href="keiri_lp_v3.html">経理のがっこう</a>
     </nav>
     <div class="footer-sns">
       <a href="https://lin.ee/Op7jMlR" target="_blank"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="currentColor" style="vertical-align:middle;margin-right:5px"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>公式LINE</a>
@@ -791,6 +845,34 @@ const obs=new IntersectionObserver(en=>{en.forEach(e=>{if(e.isIntersecting){e.ta
 function reObserve(){document.querySelectorAll('[data-anim]').forEach(el=>{el.classList.remove('visible');obs.observe(el);});}
 reObserve();
 function startCount(el){if(el.dataset.counted)return;el.dataset.counted='1';const t=parseInt(el.dataset.target);let s=0;const d=1200;const step=ts=>{if(!s)s=ts;const p=Math.min((ts-s)/d,1);el.textContent=Math.floor(p*t);if(p<1)requestAnimationFrame(step);else el.textContent=t;};requestAnimationFrame(step);}
+
+/* ===== モバイル固定サブヘッダー: スクロール中の現在セクション名を表示（HP同様） ===== */
+function initMobileSubheader(){
+  const bar=document.getElementById('mobileFixedSubheader');
+  const labelEl=document.getElementById('subheaderLabel');
+  const titleEl=document.getElementById('subheaderTitle');
+  if(!bar||!labelEl||!titleEl) return;
+  const titles={
+    target:['FOR WHOM','こんな方へ'],
+    course:['COURSE','講座の概要'],
+    price:['PRICE','受講料'],
+    sched:['OVERVIEW','開催概要'],
+    voice:['VOICE','受講生の声'],
+    story:['PROFILE','プロフィール'],
+    cta:['CONTACT','お問い合わせ']
+  };
+  const hideIds=['hero','catch'];
+  const sObs=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{
+      if(!e.isIntersecting) return;
+      const id=e.target.dataset.secId;
+      if(hideIds.indexOf(id)>-1){ bar.classList.remove('show'); }
+      else if(titles[id]){ labelEl.textContent=titles[id][0]; titleEl.textContent=titles[id][1]; bar.classList.add('show'); }
+    });
+  },{rootMargin:'-124px 0px -72% 0px',threshold:0});
+  document.querySelectorAll('[data-sec-id]').forEach(s=>sObs.observe(s));
+}
+if(window.innerWidth<=900) initMobileSubheader();
 
 /* === MODAL === */
 function openMol(id){document.getElementById(id).classList.add('on');}
