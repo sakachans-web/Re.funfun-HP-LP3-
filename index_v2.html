@@ -577,9 +577,9 @@ body.edit-mode .hero-img-col{opacity:1 !important;transform:none !important;clip
     scroll-padding-top:60px;
     scroll-behavior:auto;
   }
-  /* snap-typeはJS側でscrollTo(0)後に .snap-ready を付与して有効化 */
+  /* スクロールスナップは廃止（スマホでカクつくため）。普通の滑らかスクロールに */
   html.snap-ready{
-    scroll-snap-type:y mandatory;
+    scroll-snap-type:none;
   }
 
   /* breadcrumbはスナップ時に邪魔なので非表示 */
@@ -592,11 +592,9 @@ body.edit-mode .hero-img-col{opacity:1 !important;transform:none !important;clip
   .hero-p1{ scroll-snap-align:none; }
   .hero-p2{ scroll-snap-align:none; }
 
-  /* モバイルサービスページ: 各1画面 */
+  /* モバイルサービスページ: 各1画面ぶんの高さ（内容が多ければ伸びる） */
   .mobile-svc-page{
-    scroll-snap-align:start;
-    scroll-snap-stop:always;
-    height:100svh;
+    min-height:100svh;
   }
   .msvc-img{height:38svh;}
   .msvc-body{
@@ -608,10 +606,7 @@ body.edit-mode .hero-img-col{opacity:1 !important;transform:none !important;clip
 
   /* プロフィール: 1画面(内容が多い場合はスクロール可) */
   #profile{
-    scroll-snap-align:start;
     min-height:100svh;
-    max-height:100svh;
-    overflow-y:auto;
     box-sizing:border-box;
     padding-top:64px;
   }
@@ -619,17 +614,15 @@ body.edit-mode .hero-img-col{opacity:1 !important;transform:none !important;clip
     align-items:center;
     gap:.8rem;
   }
-  .profile-body{-webkit-line-clamp:6;display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden;}
+  /* プロフィール本文は全文表示（1画面制約・内部スクロールを撤廃したため切り詰めない） */
+  .profile-body{-webkit-line-clamp:none;overflow:visible;display:block;}
 
   /* インスタ: 1画面 (見出しは固定サブヘッダーに譲るので非表示) */
+  /* スナップ撤廃に合わせ、上下の余白をコンパクトに（全画面センタリングを廃止） */
   .instagram{
-    scroll-snap-align:start;
-    min-height:100svh;
+    padding-top:1.5rem;
+    padding-bottom:1rem;
     box-sizing:border-box;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    padding-top:64px;
   }
   .insta-top .section-label,.insta-top h2{display:none;}
 
