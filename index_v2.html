@@ -71,7 +71,7 @@ a{color:inherit;text-decoration:none;}
   100%{backdrop-filter:blur(0px);background:rgba(247,243,236,.04)}
 }
 @media(min-width:901px){
-  .hero-bg-overlay{animation:cf-blur-del 2.6s cubic-bezier(.4,0,.2,1) forwards;}
+  .hero-bg-overlay{animation:cf-blur-del 1.5s cubic-bezier(.4,0,.2,1) forwards;}
 }
 
 /* ===== 後方互換 (reveal / [data-anim]) ===== */
@@ -167,7 +167,7 @@ a{color:inherit;text-decoration:none;}
 .hero-p1{grid-column:1;display:flex;flex-direction:column;justify-content:center;gap:1.8rem;}
 .hero-p2{grid-column:2;display:flex;flex-direction:column;align-items:center;gap:2rem;}
 .hero-text{display:flex;flex-direction:column;gap:.6rem;}
-.hero-actions{display:flex;gap:1rem;flex-wrap:wrap;}
+.hero-actions{display:flex;gap:1rem;flex-wrap:wrap;align-items:center;}
 /* デスクトップ: スクロールヒント非表示 */
 .hero-scroll-hint{display:none;}
 /* スクロールヒント (デスクトップでは非表示) */
@@ -190,10 +190,9 @@ a{color:inherit;text-decoration:none;}
 .hero-img-frame{
   position:relative;
   border-radius:var(--r-lg);
-  overflow:hidden;
-  box-shadow:0 20px 60px rgba(74,103,65,0.18);
 }
-.hero-img-frame img{width:100%;aspect-ratio:3/4;object-fit:cover;background:var(--beige);}
+/* 写真の縁をぼかして背景に溶け込ませる（矩形の貼り付け感を解消） */
+.hero-img-frame img{width:100%;aspect-ratio:3/4;object-fit:cover;background:none;-webkit-mask-image:radial-gradient(100% 94% at 50% 46%,#000 56%,transparent 90%);mask-image:radial-gradient(100% 94% at 50% 46%,#000 56%,transparent 90%);}
 .hero-deco{
   position:absolute;top:-24px;right:-24px;
   width:120px;height:120px;border-radius:50%;
@@ -272,16 +271,8 @@ a{color:inherit;text-decoration:none;}
 }
 .img-ph{width:100%;height:100%;background:var(--beige);display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--muted);font-size:.82rem;gap:.5rem;cursor:pointer;}
 .img-ph span:first-child{font-size:2.8rem;}
-.profile-deco{
-  position:absolute;top:-20px;right:-20px;
-  width:100px;height:100px;border-radius:50%;
-  border:2px solid var(--sage-p);
-}
-.profile-deco2{
-  position:absolute;bottom:-12px;left:-12px;
-  width:64px;height:64px;border-radius:50%;
-  background:var(--mauve-p);opacity:0.7;
-}
+/* プロフィール写真の枠を全ページで統一（装飾なし・角丸四角＋影） */
+.profile-deco,.profile-deco2{display:none;}
 .profile-text .section-label{margin-bottom:0.4rem;}
 .profile-text .section-title{margin-bottom:0.3rem;}
 .profile-name-yomi{font-size:0.82rem;color:var(--muted);margin-bottom:1.5rem;}
@@ -444,7 +435,7 @@ footer{background:#2c2520;color:rgba(255,255,255,.55);padding:3rem 2rem;text-ali
 .fb-color{width:22px;height:22px;border-radius:50%;border:2px solid rgba(255,255,255,.3);cursor:pointer;flex-shrink:0;}
 
 /* ===== 編集モード: アニメーション完全無効化 ===== */
-body.edit-mode *{animation:none !important;transition:opacity .2s,transform .15s !important;}
+body.edit-mode *{animation:none !important;transition:none !important;}
 body.edit-mode .reveal,
 body.edit-mode [data-anim],
 body.edit-mode .cf-anim,
@@ -517,7 +508,7 @@ body.edit-mode .hero-img-col{opacity:1 !important;transform:none !important;clip
   }
   .hero-img-col{max-width:none;width:100%;position:relative;}
   /* 画像: 普通の四角(角丸のみ) + 横長、画面幅いっぱいに大きく */
-  .hero-img-frame{border-radius:var(--r);}
+  .hero-img-frame{border-radius:var(--r);max-width:430px;margin-left:auto;margin-right:auto;}
   .hero-img-frame img{aspect-ratio:4/3;}
   .hero-deco,.hero-deco2{display:none;}
   /* モバイルではヒーローのボタンを削除（テキスト＋写真で1画面） */
@@ -550,7 +541,7 @@ body.edit-mode .hero-img-col{opacity:1 !important;transform:none !important;clip
   /* ===== プロフィール ===== */
   .profile{padding:2rem 0;}
   .profile-inner{grid-template-columns:1fr;padding:1.2rem 1.4rem;}
-  .profile-img-col{width:100%;max-width:170px;margin:0 auto;}
+  .profile-img-col{width:100%;max-width:240px;margin:0 auto;}
   .profile-img-frame{border-radius:var(--r);}
   .profile-name{font-size:1.5rem !important;}
   .profile-text{padding:0 !important;}
@@ -1034,7 +1025,9 @@ body.edit-mode .hero-img-col{opacity:1 !important;transform:none !important;clip
 <div class="imol bg-mol" id="bgImgMol" style="z-index:2100;">
   <div style="background:#fff;border-radius:14px;padding:1.8rem;width:min(420px,92vw);text-align:center;">
     <h4 style="font-family:'Noto Serif JP',serif;color:var(--sage);margin-bottom:1rem;">📷 背景画像を変更</h4>
-    <input type="file" accept="image/*" id="bgImgFileIn" onchange="handleBgImg()" style="margin-bottom:1.2rem;">
+    <p style="font-size:.78rem;color:var(--muted);line-height:1.7;margin-bottom:.9rem;">※保存できる写真のサイズには上限があります（1ページの写真の合計で約35KBまで）。大きすぎる写真は、選んだあとにお知らせします。</p>
+    <input type="file" accept="image/*" id="bgImgFileIn" onchange="handleBgImg()" style="margin-bottom:.6rem;">
+    <p id="bgImgErrMsg" style="display:none;color:#c0392b;font-size:.8rem;line-height:1.7;margin:.2rem 0 1rem;text-align:left;"></p>
     <div style="display:flex;gap:.6rem;justify-content:center;">
       <button class="btn" onclick="applyBgImg()">適用</button>
       <button class="btn btn-outline" onclick="document.getElementById('bgImgMol').classList.remove('on')">キャンセル</button>
@@ -1070,8 +1063,10 @@ body.edit-mode .hero-img-col{opacity:1 !important;transform:none !important;clip
 <!-- IMAGE MODAL -->
 <div class="imol" id="imgModal">
   <div class="imbox">
-    <h4>画像を変更</h4>
+    <h4>写真を変更</h4>
+    <p style="font-size:.78rem;color:var(--muted);line-height:1.7;margin-bottom:.9rem;">※保存できる写真のサイズには上限があります（1ページの写真の合計で約35KBまで）。大きすぎる写真は、選んだあとにお知らせします。</p>
     <input type="file" accept="image/*" id="imgFileInput" onchange="handleImgUpload()">
+    <p id="imgErrMsg" style="display:none;color:#c0392b;font-size:.8rem;line-height:1.7;margin:.4rem 0;text-align:left;"></p>
     <div class="mbrow">
       <button class="btn" onclick="applyImg()">適用</button>
       <button class="btn btn-outline" onclick="closeImgModal()">キャンセル</button>
@@ -1111,23 +1106,15 @@ function cfInit(){
   /* --- ヒーロー: ページロード時 --- */
   // 背景: ゆっくりズーム (photo-scale)
   gsap.to('#heroBgImg', {scale:1.1, duration:14, ease:'none'});
-  // P1 (タイトル): ページロード時にアニメーション
-  const heroTl = gsap.timeline({delay:.5});
-  heroTl
-    .from('.hero h1',      {opacity:0, y:70, duration:1.2, ease:EASE_EXPO})
-    .from('.hero-sub',     {opacity:0, y:44, duration:1.0, ease:EASE_EXPO}, '-=.7')
-    .from('.hero-sub2',    {opacity:0, y:32, duration:.9, ease:EASE_EXPO}, '-=.7')
-    .from('.hero-eyebrow', {opacity:0, y:20, duration:.7, ease:EASE_OUT}, '-=.5')
-    .from('.hero-scroll-hint', {opacity:0, y:12, duration:.6, ease:EASE_OUT}, '-=.4');
+  // P1 (タイトル+ボタン): 写真の出現と同時に、まとめてふわっと表示（順次=パワポ感を解消）
+  // ※ボタンは hero-actions ごとまとめて動かす（個別アニメだと縦ズレの原因になる）
+  gsap.from(['.hero-eyebrow','.hero h1','.hero-sub','.hero-sub2','.hero-actions','.hero-scroll-hint'],
+    {opacity:0, y:24, duration:1.0, ease:EASE_OUT, stagger:0});
 
-  // P2 (画像+ボタン): スクロールして入ってきた時にアニメーション
+  // P2 (画像): スクロールして入ってきた時にアニメーション
   gsap.from('.hero-img-col', {
     opacity:0, scale:.9, duration:1.1, ease:EASE_OUT,
     scrollTrigger:{trigger:'.hero-p2', start:'top 85%'}
-  });
-  gsap.from('.hero-actions .btn', {
-    opacity:0, y:20, stagger:.15, duration:.7, ease:EASE_OUT,
-    scrollTrigger:{trigger:'.hero-actions', start:'top 95%'}
   });
 
   /* --- section-label: ラインが左から伸びる (slider-border) --- */
@@ -1460,7 +1447,12 @@ function showToast(msg){
 function openImgModal(imgId,phId){if(!em)return;openImg(imgId,phId);}
 function openImg(imgId,phId){if(!em)return;cImg=imgId;cPh=phId;pendImg=null;document.getElementById('imgFileInput').value='';openMol('imgModal');}
 function closeImgModal(){closeMol('imgModal');}
-function handleImgUpload(){const f=document.getElementById('imgFileInput').files[0];if(!f)return;const r=new FileReader();r.onload=e=>{pendImg=e.target.result;};r.readAsDataURL(f);}
+/* 画像はbase64でGASの1セル(5万文字)に保存するため合計サイズに上限がある */
+const RF_IMG_LIMIT=48000;
+function rfImgFits(id,dataUrl){let m={};try{m=getState().imgs||{};}catch(e){}m={...m,[id]:dataUrl};return JSON.stringify(m).length<=RF_IMG_LIMIT;}
+function rfShowImgErr(elId,bytes){const el=document.getElementById(elId);if(!el)return;el.textContent='⚠ この写真は大きすぎて保存できません（選んだ写真：約'+Math.round(bytes/1024)+'KB）。保存できるのは写真の合計で約35KBまでです。もっと小さい・軽い写真をお選びください。';el.style.display='block';}
+function rfHideImgErr(elId){const el=document.getElementById(elId);if(el)el.style.display='none';}
+function handleImgUpload(){const f=document.getElementById('imgFileInput').files[0];if(!f)return;const r=new FileReader();r.onload=e=>{if(!rfImgFits(cImg,e.target.result)){pendImg=null;rfShowImgErr('imgErrMsg',f.size);document.getElementById('imgFileInput').value='';return;}rfHideImgErr('imgErrMsg');pendImg=e.target.result;};r.readAsDataURL(f);}
 function applyImg(){
   if(!pendImg||!cImg){closeImgModal();return;}
   const img=document.getElementById(cImg);img.style.transition='none';img.src=pendImg;img.style.display='block';
@@ -1470,7 +1462,7 @@ function applyImg(){
 
 /* BG IMAGE */
 function openBgImg(imgId){if(!em)return;cBgImgId=imgId;pendBgImg=null;document.getElementById('bgImgFileIn').value='';openMol('bgImgMol');}
-function handleBgImg(){const f=document.getElementById('bgImgFileIn').files[0];if(!f)return;const r=new FileReader();r.onload=e=>{pendBgImg=e.target.result;};r.readAsDataURL(f);}
+function handleBgImg(){const f=document.getElementById('bgImgFileIn').files[0];if(!f)return;const r=new FileReader();r.onload=e=>{if(!rfImgFits(cBgImgId,e.target.result)){pendBgImg=null;rfShowImgErr('bgImgErrMsg',f.size);document.getElementById('bgImgFileIn').value='';return;}rfHideImgErr('bgImgErrMsg');pendBgImg=e.target.result;};r.readAsDataURL(f);}
 function applyBgImg(){
   if(!pendBgImg||!cBgImgId){closeMol('bgImgMol');return;}
   const img=document.getElementById(cBgImgId);img.style.transition='none';img.src=pendBgImg;img.style.display='block';

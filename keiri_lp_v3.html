@@ -10,8 +10,8 @@
 <style>
 /* ===== RESET & BASE ===== */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-html{scroll-behavior:smooth;}
-body{font-family:'Noto Sans JP',sans-serif;font-size:16px;line-height:1.8;color:var(--text);background:var(--pale);overflow-x:hidden;}
+html{scroll-behavior:smooth;overscroll-behavior-y:none;}
+body{font-family:'Noto Sans JP',sans-serif;font-size:16px;line-height:1.8;color:var(--text);background:var(--pale);overflow-x:hidden;overscroll-behavior-y:none;}
 
 /* ===== COLOR VARS（明るいクリーム＋コーラル） ===== */
 :root{
@@ -326,7 +326,12 @@ body.edit-mode [contenteditable="true"]:focus{outline:2px solid var(--dp);backgr
 }
 
 /* ===== 編集モード: アニメーション完全無効化 ===== */
-body.edit-mode *{animation:none !important;transition:opacity .2s,transform .15s !important;}
+.hero-edit-tools{display:none;}
+.edit-mode .hero-edit-tools{display:flex;flex-wrap:wrap;gap:.4rem;align-items:center;position:absolute;top:12px;left:12px;right:12px;z-index:40;background:rgba(58,48,43,.82);padding:.5rem .7rem;border-radius:10px;}
+.edit-mode .hero-edit-tools .het-label{color:#fff;font-size:.78rem;font-weight:500;}
+.edit-mode .hero-edit-tools button{background:#fff;color:var(--dp);border:none;border-radius:7px;padding:.45rem .8rem;font-size:.78rem;cursor:pointer;font-weight:600;min-height:36px;}
+.edit-mode .hero-edit-tools button:hover{background:var(--pale);}
+body.edit-mode *{animation:none !important;transition:none !important;}
 body.edit-mode .fade-up,
 body.edit-mode .reveal,
 body.edit-mode [data-anim],
@@ -412,14 +417,14 @@ body.edit-mode .hero-slide:nth-child(1){opacity:1 !important;}
 <!-- HERO -->
 <section class="hero sec-manageable" data-sec-id="hero" style="position:relative;">
   <div class="sec-ctrl">
-    <button class="sc-btn bg" title="背景画像を変更" onclick="openBgImg('heroBgImg')">📷</button>
+    <button class="sc-btn bg" title="背景写真を変更" onclick="openHeroPick()">📷</button>
     <button class="sc-btn vis" title="このセクションを非表示" onclick="toggleSecVis(this)">👁</button>
     <button class="sc-btn up" title="上へ移動" onclick="moveSec(this,-1)">↑</button>
     <button class="sc-btn dn" title="下へ移動" onclick="moveSec(this,1)">↓</button>
   </div>
-  <div class="hero-slide" style="background-image:url('images/keiri-1.jpg');"></div>
-  <div class="hero-slide" style="background-image:url('images/keiri-2.jpg');"></div>
-  <div class="hero-slide" style="background-image:url('images/keiri-3.jpg');"></div>
+  <div class="hero-slide" id="heroSlide1" style="background-image:url('images/keiri-1.jpg');"></div>
+  <div class="hero-slide" id="heroSlide2" style="background-image:url('images/keiri-2.jpg');"></div>
+  <div class="hero-slide" id="heroSlide3" style="background-image:url('images/keiri-3.jpg');"></div>
   <div class="hero-scrim"></div>
   <div class="hero-inner">
     <div class="hero-copy fade-up">
@@ -651,7 +656,7 @@ body.edit-mode .hero-slide:nth-child(1){opacity:1 !important;}
     <h2 class="sec-title fade-up">講師プロフィール</h2>
     <div class="profile-grid">
       <div class="fade-up" style="position:relative;">
-        <img id="profileImg" src="images/profile-keiri.jpg" alt="講師メイン写真（尾﨑幸子）" style="width:100%;height:340px;object-fit:cover;border-radius:var(--r);">
+        <img id="profileImg" src="images/profile-keiri.jpg" alt="講師メイン写真（尾﨑幸子）" style="width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:var(--r-lg);box-shadow:0 24px 60px rgba(192,127,120,0.18);">
         <div class="img-placeholder" id="profileImgPh" style="height:340px;display:none;">
           <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
           <span>講師メイン写真（尾﨑幸子）</span>
@@ -931,8 +936,10 @@ body.edit-mode .hero-slide:nth-child(1){opacity:1 !important;}
 <!-- BG IMAGE MODAL -->
 <div class="imol" id="bgImgMol" style="display:none;">
   <div class="imbox">
-    <p style="font-size:.88rem;margin-bottom:.7rem;color:#4a3b6b;font-weight:600;">📷 背景画像を変更</p>
+    <p style="font-size:1rem;margin-bottom:.5rem;color:var(--dp);font-weight:700;">📷 背景画像を変更</p>
+    <p style="font-size:.78rem;color:var(--muted);line-height:1.7;margin-bottom:.7rem;">※保存できる写真のサイズには上限があります（1ページの写真の合計で約35KBまで）。大きすぎる写真は、選んだあとにお知らせします。</p>
     <input type="file" id="bgImgFileIn" accept="image/*" style="font-size:.82rem;width:100%;" onchange="handleBgImg()">
+    <p id="bgImgErrMsg" style="display:none;color:#c0392b;font-size:.8rem;line-height:1.7;margin:.5rem 0 0;text-align:left;"></p>
     <div style="display:flex;gap:.5rem;margin-top:.8rem;">
       <button class="btn" onclick="applyBgImg()">適用</button>
       <button class="btn-outline" onclick="closeMol('bgImgMol')">キャンセル</button>
@@ -940,11 +947,27 @@ body.edit-mode .hero-slide:nth-child(1){opacity:1 !important;}
   </div>
 </div>
 
+<!-- HERO BG PICKER -->
+<div class="imol" id="heroPickMol" style="display:none;">
+  <div class="imbox">
+    <p style="font-size:1rem;margin-bottom:.5rem;color:var(--dp);font-weight:700;">背景写真を変更</p>
+    <p style="font-size:.8rem;color:var(--muted);line-height:1.7;margin-bottom:1rem;">トップの背景は数枚の写真が切り替わります。変えたい写真を選んでください。</p>
+    <div style="display:flex;flex-direction:column;gap:.5rem;">
+      <button class="btn" onclick="pickHeroSlide(1)">1枚目を変更</button>
+      <button class="btn" onclick="pickHeroSlide(2)">2枚目を変更</button>
+      <button class="btn" onclick="pickHeroSlide(3)">3枚目を変更</button>
+      <button class="btn-outline" onclick="closeMol('heroPickMol')">キャンセル</button>
+    </div>
+  </div>
+</div>
+
 <!-- IMAGE MODAL -->
 <div class="imol" id="imgMol" style="display:none;">
   <div class="imbox">
-    <p style="font-size:.85rem;margin-bottom:.7rem;color:#4a3b6b;font-weight:600;">画像を選択</p>
+    <p style="font-size:1rem;margin-bottom:.5rem;color:var(--dp);font-weight:700;">写真を変更</p>
+    <p style="font-size:.78rem;color:var(--muted);line-height:1.7;margin-bottom:.7rem;">※保存できる写真のサイズには上限があります（1ページの写真の合計で約35KBまで）。大きすぎる写真は「適用」を押したときにお知らせします。</p>
     <input type="file" id="imgFile" accept="image/*" style="font-size:.82rem;width:100%;">
+    <p id="imgErrMsg" style="display:none;color:#c0392b;font-size:.8rem;line-height:1.7;margin:.5rem 0 0;text-align:left;"></p>
     <div style="display:flex;gap:.5rem;margin-top:.8rem;">
       <button class="btn" onclick="applyImg()">適用</button>
       <button class="btn-outline" onclick="closeMol('imgMol')">キャンセル</button>
@@ -1122,27 +1145,36 @@ function moveSec(btn,dir){
 const BG_IDS = ['heroBgImg','numBgImg','troubleBgImg','whomBgImg','semBgImg','ctaBgImg'];
 let _cBgImgId = null, _pendBgImg = null;
 
+/* 画像はbase64でGASの1セル(5万文字)に保存するため合計サイズに上限がある */
+const RF_IMG_LIMIT=48000;
+function rfImgFits(id,dataUrl){let m={};try{m=getState().imgs||{};}catch(e){}m={...m,[id]:dataUrl};return JSON.stringify(m).length<=RF_IMG_LIMIT;}
+function rfShowImgErr(elId,bytes){const el=document.getElementById(elId);if(!el)return;el.textContent='⚠ この写真は大きすぎて保存できません（選んだ写真：約'+Math.round(bytes/1024)+'KB）。保存できるのは写真の合計で約35KBまでです。もっと小さい・軽い写真をお選びください。';el.style.display='block';}
+function rfHideImgErr(elId){const el=document.getElementById(elId);if(el)el.style.display='none';}
 function openBgImg(imgId){
   if(!isEditing) return;
   _cBgImgId = imgId;
   _pendBgImg = null;
   document.getElementById('bgImgFileIn').value = '';
+  rfHideImgErr('bgImgErrMsg');
   document.getElementById('bgImgMol').style.display = 'flex';
 }
 function handleBgImg(){
   const f = document.getElementById('bgImgFileIn').files[0];
   if(!f) return;
   const r = new FileReader();
-  r.onload = e => { _pendBgImg = e.target.result; };
+  r.onload = e => { if(!rfImgFits(_cBgImgId,e.target.result)){_pendBgImg=null;rfShowImgErr('bgImgErrMsg',f.size);document.getElementById('bgImgFileIn').value='';return;} rfHideImgErr('bgImgErrMsg'); _pendBgImg = e.target.result; };
   r.readAsDataURL(f);
 }
 function applyBgImg(){
   if(!_pendBgImg || !_cBgImgId){ closeMol('bgImgMol'); return; }
-  const img = document.getElementById(_cBgImgId);
-  if(img) img.src = _pendBgImg;
+  const el = document.getElementById(_cBgImgId);
+  if(el){ if(el.tagName==='IMG'){ el.src = _pendBgImg; } else { el.style.backgroundImage="url('"+_pendBgImg+"')"; } }
   closeMol('bgImgMol');
-  showToast('背景写真を設定しました');
+  showToast(_cBgImgId.indexOf('heroSlide')===0?'背景写真を変えました（閲覧モードで切り替わりを確認できます）':'背景写真を設定しました');
 }
+/* ヒーロー背景：数枚から1枚を選んで変更 */
+function openHeroPick(){ if(!isEditing) return; document.getElementById('heroPickMol').style.display='flex'; }
+function pickHeroSlide(n){ closeMol('heroPickMol'); openBgImg('heroSlide'+n); }
 
 /* ===== IMAGE UPLOAD ===== */
 function openImg(imgId, phId){
@@ -1150,6 +1182,7 @@ function openImg(imgId, phId){
   _imgTargetId=imgId;
   _imgPhId=phId;
   document.getElementById('imgFile').value='';
+  rfHideImgErr('imgErrMsg');
   document.getElementById('imgMol').style.display='flex';
 }
 
@@ -1158,6 +1191,7 @@ function applyImg(){
   if(!file){ closeMol('imgMol'); return; }
   const reader=new FileReader();
   reader.onload=e=>{
+    if(!rfImgFits(_imgTargetId,e.target.result)){ rfShowImgErr('imgErrMsg',file.size); return; }
     const img=document.getElementById(_imgTargetId);
     const ph=_imgPhId?document.getElementById(_imgPhId):null;
     if(img){ img.src=e.target.result; img.style.display='block'; }
@@ -1177,6 +1211,7 @@ function getState(){
     const el=document.getElementById(id);
     if(el && el.src && el.src.startsWith('data:')) imgs[id]=el.src;
   });
+  ['heroSlide1','heroSlide2','heroSlide3'].forEach(id=>{const el=document.getElementById(id);if(el){const m=(el.style.backgroundImage||'').match(/url\(["']?(data:[^"')]+)["']?\)/);if(m)imgs[id]=m[1];}});
   const hidden=[];
   document.querySelectorAll('.sec-manageable.sec-hidden').forEach(s=>hidden.push(s.dataset.secId));
   const order=[];
@@ -1211,9 +1246,10 @@ function applyState(st){
     semDates=st.dates; renderSemDates();
   }
   if(st.imgs) Object.entries(st.imgs).forEach(([id,src])=>{
-    const img=document.getElementById(id);
-    if(img){ img.src=src; img.style.display='block';
+    const el=document.getElementById(id);
+    if(el){ if(el.tagName==='IMG'){ el.src=src; el.style.display='block';
       const ph=document.getElementById(id+'Ph'); if(ph) ph.style.display='none'; }
+      else { el.style.backgroundImage="url('"+src+"')"; } }
   });
   const sections = st.sections_json || {};
   const hidden = sections.hidden || st.hidden || [];

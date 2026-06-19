@@ -16,8 +16,8 @@
   --pad-x:clamp(1.25rem,4vw,2.5rem);
 }
 *{margin:0;padding:0;box-sizing:border-box;}
-html{scroll-behavior:smooth;}
-body{font-family:'Noto Sans JP',sans-serif;background:var(--cream);color:var(--text);line-height:1.8;overflow-x:hidden;}
+html{scroll-behavior:smooth;overscroll-behavior-y:none;}
+body{font-family:'Noto Sans JP',sans-serif;background:var(--cream);color:var(--text);line-height:1.8;overflow-x:hidden;overscroll-behavior-y:none;}
 img{max-width:100%;display:block;}
 a{color:inherit;text-decoration:none;}
 
@@ -108,25 +108,23 @@ a{color:inherit;text-decoration:none;}
 .hero-slide:nth-child(3){animation-delay:14s;}
 @keyframes heroSlide{0%{opacity:0;}3%{opacity:1;}30%{opacity:1;}34%{opacity:0;}100%{opacity:0;}}
 @media(prefers-reduced-motion:reduce){.hero-slide{animation:none;}.hero-slide:nth-child(1){opacity:1;}}
-.hero-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(46,66,40,0) 0%,rgba(46,66,40,.04) 50%,rgba(46,66,40,.3) 100%);}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(40,56,34,.1) 0%,rgba(40,56,34,.34) 50%,rgba(40,56,34,.78) 100%);}
 .hdc{display:none;}
 .hero-inner{position:relative;z-index:1;max-width:1140px;margin:0 auto;padding:0 var(--pad-x) 3.5rem;width:100%;}
 .hero-card{
-  background:linear-gradient(135deg,rgba(255,255,255,.78) 0%,rgba(255,255,255,.6) 60%,rgba(255,255,255,.25) 100%);
-  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
-  border-radius:4px 24px 4px 4px;padding:2.2rem 2.4rem;max-width:480px;
-  box-shadow:0 16px 48px rgba(0,0,0,.1);
-  border-left:3px solid var(--sage);
+  background:none;backdrop-filter:none;-webkit-backdrop-filter:none;
+  border-radius:0;padding:0;max-width:620px;
+  box-shadow:none;border-left:none;
   opacity:0;animation:card-in .8s .3s ease forwards;
 }
 @keyframes card-in{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:none;}}
-.hero-eyebrow{font-size:.72rem;letter-spacing:.22em;color:var(--sage);margin-bottom:1.2rem;display:flex;align-items:center;gap:.7rem;}
-.hero-eyebrow::after{content:'';width:32px;height:1px;background:var(--sage-l);}
-.hero h1{font-family:'Noto Serif JP',serif;font-size:clamp(1.5rem,3vw,2.1rem);line-height:1.55;color:var(--text);margin-bottom:1rem;}
-.hero h1 em{font-style:normal;color:var(--sage);}
-.hero-tag{display:inline-block;background:var(--sage);color:#fff;font-size:.78rem;letter-spacing:.1em;padding:.3rem 1rem;border-radius:99px;margin-bottom:1rem;}
-.hero-catch{font-family:'Noto Serif JP',serif;font-size:1.1rem;color:var(--text);margin-bottom:.4rem;padding-left:1rem;border-left:3px solid var(--sage);}
-.hero-sub{font-size:.86rem;color:var(--muted);margin-bottom:1.8rem;}
+.hero-eyebrow{font-size:.72rem;letter-spacing:.22em;color:#fff;margin-bottom:1.2rem;display:flex;align-items:center;gap:.7rem;text-shadow:0 1px 8px rgba(0,0,0,.35);}
+.hero-eyebrow::after{content:'';width:32px;height:1px;background:rgba(255,255,255,.6);}
+.hero h1{font-family:'Noto Serif JP',serif;font-size:clamp(1.8rem,3.8vw,2.6rem);line-height:1.5;color:#fff;margin-bottom:1rem;text-shadow:0 2px 18px rgba(0,0,0,.4);}
+.hero h1 em{font-style:normal;color:#d8e8cf;}
+.hero-tag{display:inline-block;background:var(--sage);color:#fff;font-size:.78rem;letter-spacing:.1em;padding:.3rem 1rem;border-radius:99px;margin-bottom:1rem;box-shadow:0 4px 14px rgba(0,0,0,.2);}
+.hero-catch{font-family:'Noto Serif JP',serif;font-size:1.15rem;color:#fff;margin-bottom:.4rem;padding-left:1rem;border-left:3px solid rgba(255,255,255,.7);text-shadow:0 1px 10px rgba(0,0,0,.35);}
+.hero-sub{font-size:.9rem;color:rgba(255,255,255,.92);margin-bottom:1.8rem;text-shadow:0 1px 8px rgba(0,0,0,.35);}
 .hero-btns{display:flex;gap:1rem;flex-wrap:wrap;}
 .hero-img-col,.hero-blob-ring,.hero-blob-dot,.hero-img-blob,.img-change-btn.hero-photo-btn,.scroll-ind{display:none;}
 
@@ -239,12 +237,11 @@ a{color:inherit;text-decoration:none;}
 .story-sec{background:var(--cream);}
 .story-layout{display:grid;grid-template-columns:400px 1fr;gap:6rem;align-items:center;}
 .story-img-wrap{position:relative;}
-.story-img-blob{border-radius:var(--r-lg);overflow:hidden;aspect-ratio:3/4;box-shadow:0 24px 72px rgba(74,103,65,.18);position:relative;z-index:1;}
+.story-img-blob{border-radius:var(--r-lg);overflow:hidden;aspect-ratio:3/4;box-shadow:0 24px 60px rgba(74,103,65,0.16);position:relative;z-index:1;}
 .story-img-blob img{width:100%;height:100%;object-fit:cover;background:var(--beige);}
 .story-img-placeholder{width:100%;height:100%;background:var(--beige);display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--muted);font-size:.82rem;gap:.5rem;cursor:pointer;}
-.story-ring{position:absolute;inset:-12px;z-index:0;border-radius:var(--r-lg);border:2px dashed rgba(74,103,65,.18);}
-.story-dot1{position:absolute;width:90px;height:90px;border-radius:50%;border:2px solid var(--sage-p);top:-24px;right:-24px;z-index:2;}
-.story-dot2{position:absolute;width:60px;height:60px;border-radius:50%;background:var(--mauve-p);bottom:-16px;left:-16px;z-index:2;opacity:.7;}
+/* プロフィール写真の枠を全ページで統一（装飾リング/ドットなし） */
+.story-ring,.story-dot1,.story-dot2{display:none;}
 .p-name-ja{font-family:'Noto Serif JP',serif;font-size:1.9rem;margin-bottom:.2rem;}
 .p-yomi{font-size:.8rem;color:var(--muted);margin-bottom:1.6rem;}
 .p-body{font-size:.89rem;color:var(--muted);line-height:2.1;margin-bottom:1.6rem;}
@@ -388,7 +385,7 @@ footer{background:#2c2520;color:rgba(255,255,255,.55);padding:3rem var(--pad-x);
 
 @media(max-width:960px){
   .hero-inner{padding:0 var(--pad-x) 2.5rem;}
-  .hero-card{padding:1.8rem 1.6rem;max-width:100%;}
+  .hero-card{padding:0;max-width:100%;}
   .catch-inner{grid-template-columns:1fr;gap:0;}
   .catch-card{border-right:none;border-bottom:1px solid rgba(255,255,255,.08);padding:2.5rem 2rem;}
   .target-grid{grid-template-columns:1fr 1fr;}
@@ -447,7 +444,7 @@ footer{background:#2c2520;color:rgba(255,255,255,.55);padding:3rem var(--pad-x);
 .edit-mode .price-edit-btn{display:inline-block;}
 @media(max-width:960px){
   .hero-inner{padding:0 var(--pad-x) 2.5rem;}
-  .hero-card{padding:1.8rem 1.6rem;max-width:100%;}
+  .hero-card{padding:0;max-width:100%;}
   .catch-inner{grid-template-columns:1fr;gap:0;}
   .catch-card{border-right:none;border-bottom:1px solid rgba(255,255,255,.08);padding:2.5rem 2rem;}
   .target-grid{grid-template-columns:1fr 1fr;}
@@ -466,13 +463,21 @@ footer{background:#2c2520;color:rgba(255,255,255,.55);padding:3rem var(--pad-x);
   .sec-inner{padding-left:1.2rem;padding-right:1.2rem;}
 }
 
+/* ===== ヒーロー写真変更ツール（編集モードのみ） ===== */
+.hero-edit-tools{display:none;}
+.edit-mode .hero-edit-tools{display:flex;flex-wrap:wrap;gap:.4rem;align-items:center;position:absolute;top:12px;left:12px;right:12px;z-index:40;background:rgba(44,37,32,.82);padding:.5rem .7rem;border-radius:10px;}
+.edit-mode .hero-edit-tools .het-label{color:#fff;font-size:.78rem;font-weight:500;}
+.edit-mode .hero-edit-tools button{background:#fff;color:var(--sage);border:none;border-radius:7px;padding:.45rem .8rem;font-size:.78rem;cursor:pointer;font-weight:600;min-height:36px;}
+.edit-mode .hero-edit-tools button:hover{background:var(--cream);}
+
 /* ===== 編集モード: アニメーション完全無効化 ===== */
-body.edit-mode *{animation:none !important;transition:opacity .2s,transform .15s !important;}
+body.edit-mode *{animation:none !important;transition:none !important;}
 body.edit-mode .fade-up,
 body.edit-mode .reveal,
 body.edit-mode [data-anim],
 body.edit-mode .from-left,
 body.edit-mode .from-right,
+body.edit-mode .hero-card,
 body.edit-mode .hero-eyebrow,
 body.edit-mode .hero .li,
 body.edit-mode .hero-tag,
@@ -541,15 +546,15 @@ body.edit-mode .hero-slide:nth-child(1){opacity:1 !important;}
 <!-- HERO -->
 <section class="hero sec-manageable" data-sec-id="hero">
   <div class="sec-ctrl">
-    <button class="sc-btn bg" title="背景画像を変更" onclick="openBgImg('heroBgImg')">📷</button>
+    <button class="sc-btn bg" title="背景写真を変更" onclick="openHeroPick()">📷</button>
     <button class="sc-btn vis" title="このセクションを非表示" onclick="toggleSecVis(this)">👁</button>
     <button class="sc-btn up" onclick="moveSec(this,-1)">↑</button>
     <button class="sc-btn dn" onclick="moveSec(this,1)">↓</button>
   </div>
   <div class="hero-bg">
-    <div class="hero-slide" style="background-image:url('images/atama-1.jpg');"></div>
-    <div class="hero-slide" style="background-image:url('images/atama-2.jpg');"></div>
-    <div class="hero-slide" style="background-image:url('images/atama-3.jpg');"></div>
+    <div class="hero-slide" id="heroSlide1" style="background-image:url('images/atama-1.jpg');"></div>
+    <div class="hero-slide" id="heroSlide2" style="background-image:url('images/atama-2.jpg');"></div>
+    <div class="hero-slide" id="heroSlide3" style="background-image:url('images/atama-3.jpg');"></div>
     <div class="hero-overlay"></div>
   </div>
   <div class="hero-inner">
@@ -709,10 +714,10 @@ body.edit-mode .hero-slide:nth-child(1){opacity:1 !important;}
     <span class="sec-label">GALLERY</span>
     <h2 class="sec-title">講座の様子</h2>
     <div class="gallery-grid">
-      <div class="gallery-item"><img src="images/atama-g1.jpg" alt="あたまほぐしの施術風景"><div class="gallery-cap">頭をほぐす施術</div></div>
-      <div class="gallery-item"><img src="images/atama-g2.jpg" alt="ていねいな手技"><div class="gallery-cap">ていねいな手技</div></div>
-      <div class="gallery-item"><img src="images/atama-g3.jpg" alt="少人数で学ぶ様子"><div class="gallery-cap">少人数で学ぶ</div></div>
-      <div class="gallery-item"><img src="images/atama-g4.jpg" alt="実践で身につける"><div class="gallery-cap">実践で身につける</div></div>
+      <div class="gallery-item"><img id="gal1img" src="images/atama-g1.jpg" alt="あたまほぐしの施術風景"><div class="gallery-cap" id="gal1cap">頭をほぐす施術</div><button class="img-change-btn" style="top:10px;bottom:auto;" onclick="openImg('gal1img','')">📷 写真を変更</button></div>
+      <div class="gallery-item"><img id="gal2img" src="images/atama-g2.jpg" alt="ていねいな手技"><div class="gallery-cap" id="gal2cap">ていねいな手技</div><button class="img-change-btn" style="top:10px;bottom:auto;" onclick="openImg('gal2img','')">📷 写真を変更</button></div>
+      <div class="gallery-item"><img id="gal3img" src="images/atama-g3.jpg" alt="少人数で学ぶ様子"><div class="gallery-cap" id="gal3cap">少人数で学ぶ</div><button class="img-change-btn" style="top:10px;bottom:auto;" onclick="openImg('gal3img','')">📷 写真を変更</button></div>
+      <div class="gallery-item"><img id="gal4img" src="images/atama-g4.jpg" alt="実践で身につける"><div class="gallery-cap" id="gal4cap">実践で身につける</div><button class="img-change-btn" style="top:10px;bottom:auto;" onclick="openImg('gal4img','')">📷 写真を変更</button></div>
     </div>
   </div>
 </section>
@@ -821,8 +826,9 @@ body.edit-mode .hero-slide:nth-child(1){opacity:1 !important;}
 <div id="fmtBar"><button class="fb-btn" onclick="fmt('bold')" id="fb-bold"><b>B</b></button><button class="fb-btn" onclick="fmt('italic')" id="fb-italic"><i>I</i></button><div class="fb-divider"></div><button class="fb-btn" onclick="fmtSize('0.75em')">小</button><button class="fb-btn" onclick="fmtSize('1em')">中</button><button class="fb-btn" onclick="fmtSize('1.25em')">大</button><button class="fb-btn" onclick="fmtSize('1.6em')">特大</button><div class="fb-divider"></div><div class="fb-color" style="background:var(--sage)" onclick="fmtColor('#4a6741')"></div><div class="fb-color" style="background:var(--mauve)" onclick="fmtColor('#7d6b8a')"></div><div class="fb-color" style="background:#2c2520" onclick="fmtColor('#2c2520')"></div><div class="fb-color" style="background:#c0392b" onclick="fmtColor('#c0392b')"></div><div class="fb-divider"></div><button class="fb-btn" onclick="fmtReset()">リセット</button></div>
 
 <div class="mol" id="loginMol"><div class="mbox"><h3>🔐 管理者ログイン</h3><p class="mbox-d">パスワードを入力してください</p><input type="password" id="pwIn" placeholder="パスワード" onkeydown="if(event.key==='Enter')doLogin()"><p class="merr" id="loginErr">パスワードが違います</p><button class="btn" onclick="doLogin()" style="width:100%;">ログイン</button><p style="font-size:.74rem;color:var(--muted);margin-top:1rem;cursor:pointer;" onclick="closeMol('loginMol')">キャンセル</p></div></div>
-<div class="imol" id="imgMol"><div class="imbox"><h4>写真を変更</h4><input type="file" accept="image/*" id="imgFileIn" onchange="handleImg()"><div class="mbrow"><button class="btn" onclick="applyImg()">適用</button><button class="btn btn-outline" onclick="closeMol('imgMol')">キャンセル</button></div></div></div>
-<div class="imol" id="bgImgMol"><div class="imbox"><h4>📷 背景画像を変更</h4><input type="file" accept="image/*" id="bgImgFileIn" onchange="handleBgImg()"><div class="mbrow"><button class="btn" onclick="applyBgImg()">適用</button><button class="btn btn-outline" onclick="closeMol('bgImgMol')">キャンセル</button></div></div></div>
+<div class="imol" id="imgMol"><div class="imbox"><h4>写真を変更</h4><p style="font-size:.78rem;color:var(--muted);line-height:1.7;margin-bottom:.9rem;">※保存できる写真のサイズには上限があります（1ページの写真の合計で約35KBまで）。大きすぎる写真は、選んだあとにお知らせします。</p><input type="file" accept="image/*" id="imgFileIn" onchange="handleImg()"><p id="imgErrMsg" style="display:none;color:#c0392b;font-size:.8rem;line-height:1.7;margin:.2rem 0 1rem;text-align:left;"></p><div class="mbrow"><button class="btn" onclick="applyImg()">適用</button><button class="btn btn-outline" onclick="closeMol('imgMol')">キャンセル</button></div></div></div>
+<div class="imol" id="bgImgMol"><div class="imbox"><h4>📷 背景画像を変更</h4><p style="font-size:.78rem;color:var(--muted);line-height:1.7;margin-bottom:.9rem;">※保存できる写真のサイズには上限があります（1ページの写真の合計で約35KBまで）。大きすぎる写真は、選んだあとにお知らせします。</p><input type="file" accept="image/*" id="bgImgFileIn" onchange="handleBgImg()"><p id="bgImgErrMsg" style="display:none;color:#c0392b;font-size:.8rem;line-height:1.7;margin:.2rem 0 1rem;text-align:left;"></p><div class="mbrow"><button class="btn" onclick="applyBgImg()">適用</button><button class="btn btn-outline" onclick="closeMol('bgImgMol')">キャンセル</button></div></div></div>
+<div class="imol" id="heroPickMol"><div class="imbox"><h4>背景写真を変更</h4><p style="font-size:.8rem;color:var(--muted);line-height:1.7;margin-bottom:1rem;">トップの背景は数枚の写真が切り替わります。変えたい写真を選んでください。</p><div style="display:flex;flex-direction:column;gap:.5rem;"><button class="btn" onclick="pickHeroSlide(1)">1枚目を変更</button><button class="btn" onclick="pickHeroSlide(2)">2枚目を変更</button><button class="btn" onclick="pickHeroSlide(3)">3枚目を変更</button><button class="btn btn-outline" onclick="closeMol('heroPickMol')">キャンセル</button></div></div></div>
 <div class="mol" id="priceMol"><div class="mbox"><h3>受講料を編集</h3><label>金額・表示テキスト</label><input type="text" id="piNum"><label>注記</label><input type="text" id="piNote"><label>詳細</label><input type="text" id="piDetail"><div class="mbrow"><button class="btn" onclick="applyPrice()">適用</button><button class="btn btn-outline" onclick="closeMol('priceMol')">キャンセル</button></div></div></div>
 <div class="mol" id="schedMol"><div class="scbox"><h4>開催概要を編集</h4><div class="sc-row"><label>時間</label><input type="text" id="se1"></div><div class="sc-row"><label>定員</label><input type="text" id="se2"></div><div class="sc-row"><label>開催場所</label><input type="text" id="se3"></div><div class="sc-row"><label>日程</label><input type="text" id="se4"></div><div class="sc-row"><label>申込方法</label><input type="text" id="se5"></div><div class="sc-row"><label>特典</label><input type="text" id="se6"></div><div class="mbrow"><button class="btn" onclick="applySchedule()">適用</button><button class="btn btn-outline" onclick="closeMol('schedMol')">キャンセル</button></div></div></div>
 <div class="mol" id="voiceMol"><div class="mbox"><h3>受講生の声を追加</h3><label>コメント</label><textarea id="vText"></textarea><label>属性</label><input type="text" id="vMeta"><div class="mbrow"><button class="btn" onclick="applyVoice()">追加</button><button class="btn btn-outline" onclick="closeMol('voiceMol')">キャンセル</button></div></div></div>
@@ -837,7 +843,8 @@ let em=false, cImg=null, cPh=null, pendImg=null, pendBgImg=null, cBgImgId=null, 
 const EIDS=['heroH1','heroCatch','heroSub','catch1','catchSub1','catch2','catchSub2','catch3','catchSub3',
   'tc1h','tc1p','tc2h','tc2p','tc3h','tc3p','tc4h','tc4p','tc5h','tc5p','tc6h','tc6p',
   'courseDesc','highlightBox','cf1h','cf1p','cf2h','cf2p','cf3h','cf3p','cf4h','cf4p','cf5h','cf5p',
-  'priceCopy','priceBody','schedDesc','pName','pBody','pQuote','ctaTitle','ctaBody','v1q','v1m'];
+  'priceCopy','priceBody','schedDesc','pName','pBody','pQuote','ctaTitle','ctaBody','v1q','v1m',
+  'gal1cap','gal2cap','gal3cap','gal4cap'];
 
 
 /* === SCROLL REVEAL === */
@@ -857,6 +864,7 @@ function initMobileSubheader(){
     course:['COURSE','講座の概要'],
     price:['PRICE','受講料'],
     sched:['OVERVIEW','開催概要'],
+    gallery:['GALLERY','講座の様子'],
     voice:['VOICE','受講生の声'],
     story:['PROFILE','プロフィール'],
     cta:['CONTACT','お問い合わせ']
@@ -923,7 +931,8 @@ function getState(){
   const state={texts:{},imgs:{},voices,sections:[]};
   EIDS.forEach(id=>{const el=document.getElementById(id);if(el)state.texts[id]=el.innerHTML;});
   ['priceNum','priceNote','sch1','sch2','sch3','sch4','sch5','sch6'].forEach(id=>{const el=document.getElementById(id);if(el)state.texts[id]=el.innerHTML;});
-  ['heroImg','heroBgImg','stylesBgImg','schedBgImg','storyBgImg','ctaBgImg','profileImg'].forEach(id=>{const el=document.getElementById(id);if(el&&el.src&&el.src.startsWith('data:'))state.imgs[id]=el.src;});
+  ['heroImg','heroBgImg','stylesBgImg','schedBgImg','storyBgImg','ctaBgImg','profileImg','gal1img','gal2img','gal3img','gal4img'].forEach(id=>{const el=document.getElementById(id);if(el&&el.src&&el.src.startsWith('data:'))state.imgs[id]=el.src;});
+  ['heroSlide1','heroSlide2','heroSlide3'].forEach(id=>{const el=document.getElementById(id);if(el){const m=(el.style.backgroundImage||'').match(/url\(["']?(data:[^"')]+)["']?\)/);if(m)state.imgs[id]=m[1];}});
   // セクション順序と表示状態
   document.querySelectorAll('.sec-manageable').forEach(sec=>{
     state.sections.push({id:sec.dataset.secId,hidden:sec.classList.contains('sec-hidden')});
@@ -948,7 +957,7 @@ async function saveAll(){
 function applyState(d){
   if(!d)return;
   if(d.texts)Object.keys(d.texts).forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=d.texts[id];});
-  if(d.imgs)Object.keys(d.imgs).forEach(id=>{const el=document.getElementById(id);if(!el)return;el.src=d.imgs[id];el.style.display='block';const ph=document.getElementById(id+'Ph');if(ph)ph.style.display='none';});
+  if(d.imgs)Object.keys(d.imgs).forEach(id=>{const el=document.getElementById(id);if(!el)return;if(el.tagName==='IMG'){el.src=d.imgs[id];el.style.display='block';const ph=document.getElementById(id+'Ph');if(ph)ph.style.display='none';}else{el.style.backgroundImage="url('"+d.imgs[id]+"')";}});
   if(d.voices){voices=d.voices;renderVoices();}
   const secs=d.sections_json||d.sections||[];
   if(secs.length){
@@ -986,13 +995,21 @@ function showToast(msg){const t=document.getElementById('toast');if(msg)t.textCo
 
 /* === IMAGE (メイン写真) === */
 function openImg(imgId,phId){if(!em)return;cImg=imgId;cPh=phId;pendImg=null;document.getElementById('imgFileIn').value='';openMol('imgMol');}
-function handleImg(){const f=document.getElementById('imgFileIn').files[0];if(!f)return;const r=new FileReader();r.onload=e=>{pendImg=e.target.result;};r.readAsDataURL(f);}
+/* 画像はbase64でGASの1セル(5万文字)に保存するため合計サイズに上限がある */
+const RF_IMG_LIMIT=48000;
+function rfImgFits(id,dataUrl){let m={};try{m=getState().imgs||{};}catch(e){}m={...m,[id]:dataUrl};return JSON.stringify(m).length<=RF_IMG_LIMIT;}
+function rfShowImgErr(elId,bytes){const el=document.getElementById(elId);if(!el)return;el.textContent='⚠ この写真は大きすぎて保存できません（選んだ写真：約'+Math.round(bytes/1024)+'KB）。保存できるのは写真の合計で約35KBまでです。もっと小さい・軽い写真をお選びください。';el.style.display='block';}
+function rfHideImgErr(elId){const el=document.getElementById(elId);if(el)el.style.display='none';}
+function handleImg(){const f=document.getElementById('imgFileIn').files[0];if(!f)return;const r=new FileReader();r.onload=e=>{if(!rfImgFits(cImg,e.target.result)){pendImg=null;rfShowImgErr('imgErrMsg',f.size);document.getElementById('imgFileIn').value='';return;}rfHideImgErr('imgErrMsg');pendImg=e.target.result;};r.readAsDataURL(f);}
 function applyImg(){if(!pendImg||!cImg){closeMol('imgMol');return;}const img=document.getElementById(cImg);img.style.transition='none';img.src=pendImg;img.style.display='block';if(cPh){const ph=document.getElementById(cPh);if(ph)ph.style.display='none';}closeMol('imgMol');}
 
 /* === BG IMAGE (背景画像) === */
 function openBgImg(imgId){if(!em)return;cBgImgId=imgId;pendBgImg=null;document.getElementById('bgImgFileIn').value='';openMol('bgImgMol');}
-function handleBgImg(){const f=document.getElementById('bgImgFileIn').files[0];if(!f)return;const r=new FileReader();r.onload=e=>{pendBgImg=e.target.result;};r.readAsDataURL(f);}
-function applyBgImg(){if(!pendBgImg||!cBgImgId){closeMol('bgImgMol');return;}const img=document.getElementById(cBgImgId);img.style.transition='none';img.src=pendBgImg;closeMol('bgImgMol');}
+function handleBgImg(){const f=document.getElementById('bgImgFileIn').files[0];if(!f)return;const r=new FileReader();r.onload=e=>{if(!rfImgFits(cBgImgId,e.target.result)){pendBgImg=null;rfShowImgErr('bgImgErrMsg',f.size);document.getElementById('bgImgFileIn').value='';return;}rfHideImgErr('bgImgErrMsg');pendBgImg=e.target.result;};r.readAsDataURL(f);}
+function applyBgImg(){if(!pendBgImg||!cBgImgId){closeMol('bgImgMol');return;}const el=document.getElementById(cBgImgId);if(el){if(el.tagName==='IMG'){el.style.transition='none';el.src=pendBgImg;}else{el.style.backgroundImage="url('"+pendBgImg+"')";}}closeMol('bgImgMol');if(cBgImgId.indexOf('heroSlide')===0)alert('背景写真を変えました。閲覧モードに戻すと切り替わりを確認できます。');}
+/* ヒーロー背景：数枚から1枚を選んで変更 */
+function openHeroPick(){if(!em)return;openMol('heroPickMol');}
+function pickHeroSlide(n){closeMol('heroPickMol');openBgImg('heroSlide'+n);}
 
 /* === PRICE / SCHEDULE === */
 function openPriceEdit(){document.getElementById('piNum').value=document.getElementById('priceNum').textContent;document.getElementById('piNote').value=document.getElementById('priceNote').textContent;openMol('priceMol');}
