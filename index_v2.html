@@ -1081,8 +1081,24 @@ requestAnimationFrame(()=>{
   });
 });
 
-const PW=localStorage.getItem('rf_admin_pw')||'refunfun2026', SK='refunfun_hp_v4';
+const SK='refunfun_hp_v4'; /* 旧PW定数は廃止: パスワードはDB管理(rfVerifyPw経由) */
 const GAS_URL='https://script.google.com/macros/s/AKfycbz2BwKycPzj8mpU-OhjkjYmWvXvoS9eCVrWriNgxaqxQwXLgIBx2rpk-FSStJRXDSEs/exec';
+/* ===== パスワード照合: DB管理(SHA-256+ソルト)・GAS未デプロイ時のみ旧方式にフォールバック ===== */
+async function rfSha256Hex(s){const b=new TextEncoder().encode(s);const h=await crypto.subtle.digest('SHA-256',b);return Array.from(new Uint8Array(h)).map(x=>x.toString(16).padStart(2,'0')).join('');}
+let rfSessionPwHash=null;
+async function rfVerifyPw(input){
+  try{
+    const meta=await fetch(GAS_URL+'?action=pwmeta',{cache:'no-store'}).then(r=>r.json());
+    if(meta&&meta.salt){
+      const hash=await rfSha256Hex(meta.salt+':'+input);
+      const res=await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'login',hash})}).then(r=>r.json());
+      if(res&&res.ok){rfSessionPwHash=hash;return true;}
+      return false;
+    }
+  }catch(e){/* GAS未デプロイ/不通時のみ下のフォールバック（ロックアウト防止）。既定値ベタ書きは廃止＝このブラウザに保存済みの旧PWがある場合のみ通す */}
+  const legacy=localStorage.getItem('rf_admin_pw');
+  return !!legacy && input===legacy;
+}
 const PAGE_ID='index';
 const GAS_TIMEOUT_MS=8000;
 let em=false, cImg=null, cPh=null, pendImg=null, pendBgImg=null, cBgImgId=null;
@@ -1285,8 +1301,8 @@ function openLoginModal(){
   setTimeout(()=>document.getElementById('pwInput').focus(),100);
 }
 function closeLoginModal(){closeMol('loginModal');}
-function doLogin(){
-  if(document.getElementById('pwInput').value===PW){
+async function doLogin(){
+  if(await rfVerifyPw(document.getElementById('pwInput').value)){
     closeLoginModal();
     document.getElementById('adminBar').style.display='flex';
     loadSaved();

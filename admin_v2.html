@@ -224,8 +224,24 @@ button{font-family:inherit;}
 </div>
 
 <script>
-const ADMIN_PW_KEY='rf_admin_pw';
-const DEFAULT_PW='refunfun2026';
+const ADMIN_PW_KEY='rf_admin_pw'; /* フォールバック照合キーのみ。既定値ベタ書きは廃止 */
+const GAS_URL='https://script.google.com/macros/s/AKfycbz2BwKycPzj8mpU-OhjkjYmWvXvoS9eCVrWriNgxaqxQwXLgIBx2rpk-FSStJRXDSEs/exec';
+/* ===== パスワード照合: DB管理(SHA-256+ソルト)・GAS未デプロイ時のみ旧方式にフォールバック ===== */
+async function rfSha256Hex(s){const b=new TextEncoder().encode(s);const h=await crypto.subtle.digest('SHA-256',b);return Array.from(new Uint8Array(h)).map(x=>x.toString(16).padStart(2,'0')).join('');}
+let rfSessionPwHash=null;
+async function rfVerifyPw(input){
+  try{
+    const meta=await fetch(GAS_URL+'?action=pwmeta',{cache:'no-store'}).then(r=>r.json());
+    if(meta&&meta.salt){
+      const hash=await rfSha256Hex(meta.salt+':'+input);
+      const res=await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'login',hash})}).then(r=>r.json());
+      if(res&&res.ok){rfSessionPwHash=hash;return true;}
+      return false;
+    }
+  }catch(e){/* GAS未デプロイ/不通時のみ下のフォールバック（ロックアウト防止）。既定値ベタ書きは廃止＝このブラウザに保存済みの旧PWがある場合のみ通す */}
+  const legacy=localStorage.getItem('rf_admin_pw');
+  return !!legacy && input===legacy;
+}
 
 /* ページ定義（タブ・iframe・設定一覧の唯一の出どころ） */
 const PAGES=[
@@ -236,7 +252,7 @@ const PAGES=[
 ];
 
 let loggedIn=false, editMode=false;
-function getPW(){return localStorage.getItem(ADMIN_PW_KEY)||DEFAULT_PW;}
+/* getPW()は廃止: ログイン照合は rfVerifyPw(DB管理) に一本化 */
 
 /* ===== タブ・iframe・設定一覧を生成 ===== */
 const tabsEl=document.getElementById('tabs');
@@ -271,9 +287,9 @@ function frames(){return [...document.querySelectorAll('.page-frame')];}
 function callFrame(frame,fn,...args){try{frame.contentWindow[fn]?.(...args);}catch(e){}}
 
 /* ===== ログイン ===== */
-function doLogin(){
+async function doLogin(){
   const v=document.getElementById('pwInput').value;
-  if(v===getPW()){loggedIn=true;document.getElementById('loginOverlay').classList.add('hide');}
+  if(await rfVerifyPw(v)){loggedIn=true;document.getElementById('loginOverlay').classList.add('hide');}
   else{document.getElementById('loginErr').style.display='block';}
 }
 function doLogout(){
@@ -349,17 +365,35 @@ function hideInnerAdminBar(frame){
 }
 
 /* ===== パスワード変更 ===== */
-function changePassword(){
+async function changePassword(){
   const p1=document.getElementById('newPwInput').value;
   const p2=document.getElementById('newPwInput2').value;
   const msg=document.getElementById('pwMsg');
   if(p1.length<4){msg.textContent='4文字以上で入力してください。';msg.className='settings-msg err';return;}
   if(p1!==p2){msg.textContent='2つのパスワードが一致しません。もう一度ご確認ください。';msg.className='settings-msg err';return;}
-  localStorage.setItem(ADMIN_PW_KEY,p1);
-  msg.textContent='✓ パスワードを変更しました。次回ログインから新しいパスワードを使ってください。';
-  msg.className='settings-msg ok';
-  document.getElementById('newPwInput').value='';
-  document.getElementById('newPwInput2').value='';
+  if(!rfSessionPwHash){msg.textContent='ネットワークに接続した状態で、もう一度ログインしてからお試しください。';msg.className='settings-msg err';return;}
+  msg.textContent='変更しています…';msg.className='settings-msg';
+  try{
+    // 平文は送らない: 新ソルトで新ハッシュをクライアント計算し、現在ハッシュ(curHash)で本人確認
+    const newSalt=(window.crypto&&crypto.randomUUID)?crypto.randomUUID():(String(Date.now())+Math.random());
+    const newHash=await rfSha256Hex(newSalt+':'+p1);
+    const res=await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},
+      body:JSON.stringify({action:'setpw',curHash:rfSessionPwHash,newHash,newSalt})}).then(r=>r.json());
+    if(res&&res.ok){
+      rfSessionPwHash=newHash;
+      // 平文はローカルに保存しない（DBのハッシュが正本）
+      msg.textContent='✓ パスワードを変更しました。次回ログインから新しいパスワードを使ってください（すべての端末で有効）。';
+      msg.className='settings-msg ok';
+      document.getElementById('newPwInput').value='';
+      document.getElementById('newPwInput2').value='';
+    }else{
+      msg.textContent='変更に失敗しました：'+((res&&res.error)||'時間をおいて再度お試しください');
+      msg.className='settings-msg err';
+    }
+  }catch(e){
+    msg.textContent='変更に失敗しました。ネットワーク接続をご確認ください。';
+    msg.className='settings-msg err';
+  }
 }
 
 /* ===== iframe をキャッシュ無効で読み込み ===== */

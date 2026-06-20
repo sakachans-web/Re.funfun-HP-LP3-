@@ -835,8 +835,24 @@ body.edit-mode .hero-slide:nth-child(1){opacity:1 !important;}
 <div class="toast" id="toast">✅ 保存しました！</div>
 
 <script>
-const PW=localStorage.getItem('rf_admin_pw')||'refunfun2026', SK='rfatama_v3';
+const SK='rfatama_v3'; /* 旧PW定数は廃止: パスワードはDB管理(rfVerifyPw経由) */
 const GAS_URL='https://script.google.com/macros/s/AKfycbz2BwKycPzj8mpU-OhjkjYmWvXvoS9eCVrWriNgxaqxQwXLgIBx2rpk-FSStJRXDSEs/exec';
+/* ===== パスワード照合: DB管理(SHA-256+ソルト)・GAS未デプロイ時のみ旧方式にフォールバック ===== */
+async function rfSha256Hex(s){const b=new TextEncoder().encode(s);const h=await crypto.subtle.digest('SHA-256',b);return Array.from(new Uint8Array(h)).map(x=>x.toString(16).padStart(2,'0')).join('');}
+let rfSessionPwHash=null;
+async function rfVerifyPw(input){
+  try{
+    const meta=await fetch(GAS_URL+'?action=pwmeta',{cache:'no-store'}).then(r=>r.json());
+    if(meta&&meta.salt){
+      const hash=await rfSha256Hex(meta.salt+':'+input);
+      const res=await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'login',hash})}).then(r=>r.json());
+      if(res&&res.ok){rfSessionPwHash=hash;return true;}
+      return false;
+    }
+  }catch(e){/* GAS未デプロイ/不通時のみ下のフォールバック（ロックアウト防止）。既定値ベタ書きは廃止＝このブラウザに保存済みの旧PWがある場合のみ通す */}
+  const legacy=localStorage.getItem('rf_admin_pw');
+  return !!legacy && input===legacy;
+}
 const PAGE_ID='atama';
 const GAS_TIMEOUT_MS=8000;
 let em=false, cImg=null, cPh=null, pendImg=null, pendBgImg=null, cBgImgId=null, voices=[];
@@ -888,7 +904,7 @@ function closeMol(id){document.getElementById(id).classList.remove('on');}
 
 /* === LOGIN === */
 function openLoginModal(){openMol('loginMol');document.getElementById('pwIn').value='';document.getElementById('loginErr').style.display='none';setTimeout(()=>document.getElementById('pwIn').focus(),100);}
-function doLogin(){if(document.getElementById('pwIn').value===PW){closeMol('loginMol');document.getElementById('adminBar').style.display='flex';loadSaved();}else document.getElementById('loginErr').style.display='block';}
+async function doLogin(){if(await rfVerifyPw(document.getElementById('pwIn').value)){closeMol('loginMol');document.getElementById('adminBar').style.display='flex';loadSaved();}else document.getElementById('loginErr').style.display='block';}
 function logout(){document.getElementById('adminBar').style.display='none';if(em)toggleEdit();}
 
 /* === EDIT MODE === */
@@ -931,7 +947,7 @@ function getState(){
   const state={texts:{},imgs:{},voices,sections:[]};
   EIDS.forEach(id=>{const el=document.getElementById(id);if(el)state.texts[id]=el.innerHTML;});
   ['priceNum','priceNote','sch1','sch2','sch3','sch4','sch5','sch6'].forEach(id=>{const el=document.getElementById(id);if(el)state.texts[id]=el.innerHTML;});
-  ['heroImg','heroBgImg','stylesBgImg','schedBgImg','storyBgImg','ctaBgImg','profileImg','gal1img','gal2img','gal3img','gal4img'].forEach(id=>{const el=document.getElementById(id);if(el&&el.src&&el.src.startsWith('data:'))state.imgs[id]=el.src;});
+  ['heroImg','heroBgImg','courseBgImg','schedBgImg','storyBgImg','ctaBgImg','profileImg','gal1img','gal2img','gal3img','gal4img'].forEach(id=>{const el=document.getElementById(id);if(el&&el.src&&el.src.startsWith('data:'))state.imgs[id]=el.src;});
   ['heroSlide1','heroSlide2','heroSlide3'].forEach(id=>{const el=document.getElementById(id);if(el){const m=(el.style.backgroundImage||'').match(/url\(["']?(data:[^"')]+)["']?\)/);if(m)state.imgs[id]=m[1];}});
   // セクション順序と表示状態
   document.querySelectorAll('.sec-manageable').forEach(sec=>{
