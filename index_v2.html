@@ -935,15 +935,15 @@ body.edit-mode .hero-img-col{opacity:1 !important;transform:none !important;clip
     </div>
     <div class="contact-grid">
       <div>
-        <form class="contact-form" onsubmit="return false;">
+        <form class="contact-form" id="contactForm" onsubmit="return false;">
           <label>お名前 <span style="color:#c0392b">*</span></label>
-          <input type="text" placeholder="山田 花子">
+          <input type="text" id="cfName" placeholder="山田 花子">
           <label>メールアドレス <span style="color:#c0392b">*</span></label>
-          <input type="email" placeholder="example@mail.com">
+          <input type="email" id="cfEmail" placeholder="example@mail.com">
           <label>電話番号</label>
-          <input type="tel" placeholder="090-0000-0000">
+          <input type="tel" id="cfTel" placeholder="090-0000-0000">
           <label>希望の講座 <span style="color:#c0392b">*</span></label>
-          <select>
+          <select id="cfCourse">
             <option value="">選択してください</option>
             <option>よもぎ蒸し講座</option>
             <option>あたまほぐし講座</option>
@@ -951,11 +951,11 @@ body.edit-mode .hero-img-col{opacity:1 !important;transform:none !important;clip
             <option>その他</option>
           </select>
           <label>希望日時・受講スタイル</label>
-          <input type="text" placeholder="例：土日希望、夜間可">
+          <input type="text" id="cfSchedule" placeholder="例：土日希望、夜間可">
           <label>お問い合わせ内容 <span style="color:#c0392b">*</span></label>
-          <textarea placeholder="ご質問やご要望をどうぞ"></textarea>
-          <button type="submit" class="btn" style="width:100%;justify-content:center;">送信する</button>
-          <p class="form-note">※ WordPress実装時はContact Form 7等に差し替えます</p>
+          <textarea id="cfMessage" placeholder="ご質問やご要望をどうぞ"></textarea>
+          <button type="button" id="cfSubmit" class="btn" style="width:100%;justify-content:center;" onclick="rfSubmitContact('hp')">送信する</button>
+          <p class="form-note" id="cfNote">※ いただいた内容は管理者に届きます。通常2〜3日以内にご返信します。</p>
         </form>
       </div>
       <div class="sns-block">
@@ -1098,6 +1098,22 @@ async function rfVerifyPw(input){
   }catch(e){/* GAS未デプロイ/不通時のみ下のフォールバック（ロックアウト防止）。既定値ベタ書きは廃止＝このブラウザに保存済みの旧PWがある場合のみ通す */}
   const legacy=localStorage.getItem('rf_admin_pw');
   return !!legacy && input===legacy;
+}
+/* ===== 問い合わせフォーム送信（GAS contact・シート保存）。フィールドid: cfName/cfEmail/cfTel/cfCourse/cfSchedule/cfMessage、状態: cfNote、ボタン: cfSubmit ===== */
+async function rfSubmitContact(page){
+  const g=id=>{const el=document.getElementById(id);return el?String(el.value).trim():'';};
+  const name=g('cfName'),email=g('cfEmail'),message=g('cfMessage');
+  const note=document.getElementById('cfNote'),btn=document.getElementById('cfSubmit');
+  const setMsg=(t,ok)=>{if(note){note.textContent=t;note.style.color=ok?'#2e7d32':'#c0392b';}};
+  if(!name||!email||!message){setMsg('お名前・メールアドレス・お問い合わせ内容は必須です。',false);return;}
+  if(email.indexOf('@')<1){setMsg('メールアドレスの形式をご確認ください。',false);return;}
+  if(btn){btn.disabled=true;btn.dataset.orig=btn.textContent;btn.textContent='送信中…';}
+  try{
+    const res=await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'contact',page,name,email,tel:g('cfTel'),course:g('cfCourse'),schedule:g('cfSchedule'),message,user_agent:navigator.userAgent})}).then(r=>r.json());
+    if(res&&res.ok){setMsg('送信しました。ありがとうございます。通常2〜3日以内にご返信します。',true);['cfName','cfEmail','cfTel','cfSchedule','cfMessage'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});}
+    else{setMsg('送信に失敗しました：'+((res&&res.error)||'時間をおいて再度お試しください'),false);}
+  }catch(e){setMsg('送信に失敗しました。通信環境をご確認ください。',false);}
+  finally{if(btn){btn.disabled=false;btn.textContent=btn.dataset.orig||'送信する';}}
 }
 const PAGE_ID='index';
 const GAS_TIMEOUT_MS=8000;
@@ -1361,11 +1377,11 @@ function getState(){
   });
   return state;
 }
-async function saveAll(){
+async function saveAll(authArg){
   const st=getState();
   try{localStorage.setItem(SK,JSON.stringify(st));}catch(e){}
   (async()=>{
-    const payload={page_id:PAGE_ID,data_json:st.texts||{},images_json:st.imgs||{},sections_json:st.sections||[],sem_dates_json:[],user_agent:navigator.userAgent};
+    const payload={page_id:PAGE_ID,auth:(authArg||rfSessionPwHash),data_json:st.texts||{},images_json:st.imgs||{},sections_json:st.sections||[],sem_dates_json:[],user_agent:navigator.userAgent};
     const d=JSON.stringify(payload);
     try{
       const res=await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:d});

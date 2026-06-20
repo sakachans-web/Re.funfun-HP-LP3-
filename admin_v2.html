@@ -340,7 +340,7 @@ async function saveAllPages(){
   if(saving) return;
   saving=true;
   showSave('saving','保存しています…');
-  frames().forEach(f=>callFrame(f,'saveAll'));   // 各ページが説明会日程・セクション順を含む正しい形式で保存
+  frames().forEach(f=>callFrame(f,'saveAll', rfSessionPwHash));   // 各ページが正しい形式で保存。adminのログイン認証(pw_hash)を各iframeへ渡す（保存はGAS側で認証必須）
   await new Promise(r=>setTimeout(r,1900));
   showSave('done','保存しました ✓');
   saving=false;

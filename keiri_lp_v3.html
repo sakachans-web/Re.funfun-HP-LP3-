@@ -835,6 +835,30 @@ body.edit-mode .hero-slide:nth-child(1){opacity:1 !important;}
         Instagram
       </a>
     </div>
+    <style>
+    .rfcf-wrap{max-width:560px;margin:2.4rem auto 0;text-align:left;position:relative;z-index:2;}
+    .rfcf{background:#fff;border-radius:16px;padding:1.7rem 1.5rem;box-shadow:0 14px 44px rgba(0,0,0,.14);}
+    .rfcf-row{margin-bottom:.9rem;display:flex;flex-direction:column;}
+    .rfcf label{font-size:.82rem;font-weight:600;margin-bottom:.35rem;color:#333;}
+    .rfcf label span{color:#c0392b;}
+    .rfcf input,.rfcf textarea{width:100%;box-sizing:border-box;padding:.7rem .8rem;border:1.5px solid #dcdcdc;border-radius:8px;font-size:1rem;font-family:inherit;background:#fff;color:#222;}
+    .rfcf textarea{min-height:96px;resize:vertical;}
+    .rfcf input:focus,.rfcf textarea:focus{outline:none;border-color:#999;}
+    .rfcf .btn{width:100%;justify-content:center;margin-top:.4rem;}
+    .rfcf-note{font-size:.78rem;color:#666;margin-top:.85rem;line-height:1.6;}
+    </style>
+    <div class="rfcf-wrap">
+      <form class="rfcf" id="contactForm" onsubmit="return false;">
+        <input type="hidden" id="cfCourse" value="経理のがっこう">
+        <div class="rfcf-row"><label>お名前 <span>*</span></label><input type="text" id="cfName" placeholder="山田 花子"></div>
+        <div class="rfcf-row"><label>メールアドレス <span>*</span></label><input type="email" id="cfEmail" placeholder="example@mail.com"></div>
+        <div class="rfcf-row"><label>電話番号</label><input type="tel" id="cfTel" placeholder="090-0000-0000"></div>
+        <div class="rfcf-row"><label>ご希望・受講スタイル</label><input type="text" id="cfSchedule" placeholder="例：平日夜、オンライン希望"></div>
+        <div class="rfcf-row"><label>お問い合わせ内容 <span>*</span></label><textarea id="cfMessage" placeholder="ご質問やご要望をどうぞ"></textarea></div>
+        <button type="button" id="cfSubmit" class="btn" onclick="rfSubmitContact('keiri')">送信する</button>
+        <p class="rfcf-note" id="cfNote">※ いただいた内容は管理者に届きます。通常2〜3日以内にご返信します。</p>
+      </form>
+    </div>
   </div>
 </section>
 
@@ -1030,6 +1054,22 @@ async function rfVerifyPw(input){
   }catch(e){/* GAS未デプロイ/不通時のみ下のフォールバック（ロックアウト防止）。既定値ベタ書きは廃止＝このブラウザに保存済みの旧PWがある場合のみ通す */}
   const legacy=localStorage.getItem('rf_admin_pw');
   return !!legacy && input===legacy;
+}
+/* ===== 問い合わせフォーム送信（GAS contact・シート保存）。フィールドid: cfName/cfEmail/cfTel/cfCourse/cfSchedule/cfMessage、状態: cfNote、ボタン: cfSubmit ===== */
+async function rfSubmitContact(page){
+  const g=id=>{const el=document.getElementById(id);return el?String(el.value).trim():'';};
+  const name=g('cfName'),email=g('cfEmail'),message=g('cfMessage');
+  const note=document.getElementById('cfNote'),btn=document.getElementById('cfSubmit');
+  const setMsg=(t,ok)=>{if(note){note.textContent=t;note.style.color=ok?'#2e7d32':'#c0392b';}};
+  if(!name||!email||!message){setMsg('お名前・メールアドレス・お問い合わせ内容は必須です。',false);return;}
+  if(email.indexOf('@')<1){setMsg('メールアドレスの形式をご確認ください。',false);return;}
+  if(btn){btn.disabled=true;btn.dataset.orig=btn.textContent;btn.textContent='送信中…';}
+  try{
+    const res=await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'contact',page,name,email,tel:g('cfTel'),course:g('cfCourse'),schedule:g('cfSchedule'),message,user_agent:navigator.userAgent})}).then(r=>r.json());
+    if(res&&res.ok){setMsg('送信しました。ありがとうございます。通常2〜3日以内にご返信します。',true);['cfName','cfEmail','cfTel','cfSchedule','cfMessage'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});}
+    else{setMsg('送信に失敗しました：'+((res&&res.error)||'時間をおいて再度お試しください'),false);}
+  }catch(e){setMsg('送信に失敗しました。通信環境をご確認ください。',false);}
+  finally{if(btn){btn.disabled=false;btn.textContent=btn.dataset.orig||'送信する';}}
 }
 const PAGE_ID = 'keiri';
 const GAS_TIMEOUT_MS = 8000;
@@ -1235,14 +1275,14 @@ function getState(){
   return {texts,dates:[...semDates],imgs,hidden,order};
 }
 
-async function saveAll(){
+async function saveAll(authArg){
   const st = getState();
   // ① LocalStorage（フォールバック）
   try { localStorage.setItem(SK, JSON.stringify(st)); } catch(e){}
 
   // GAS doGet(action=save) 経由でクラウド保存（CORS対応・fetch GET）
   (async()=>{
-    const payload={page_id:PAGE_ID,data_json:st.texts||{},images_json:st.imgs||{},sections_json:{hidden:st.hidden||[],order:st.order||[]},sem_dates_json:st.dates||[],user_agent:navigator.userAgent};
+    const payload={page_id:PAGE_ID,auth:(authArg||rfSessionPwHash),data_json:st.texts||{},images_json:st.imgs||{},sections_json:{hidden:st.hidden||[],order:st.order||[]},sem_dates_json:st.dates||[],user_agent:navigator.userAgent};
     const d=JSON.stringify(payload);
     try{
       const res=await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:d});
