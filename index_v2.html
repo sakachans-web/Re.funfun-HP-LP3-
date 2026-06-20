@@ -632,6 +632,24 @@ body.edit-mode .hero-img-col{opacity:1 !important;transform:none !important;clip
   /* 管理バーがある場合: スナップ位置調整 */
   body.admin-active html{scroll-padding-bottom:60px;}
 }
+
+/* ===== HERO: 写真スライドショー（よもぎ→あたま→経理が切り替わる）＋ 白文字（PC/モバイル共通） ===== */
+.hero-slideshow{position:absolute;inset:0;z-index:0;background:var(--sage-d,#3a5233);}
+.hero-slide{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;animation:heroSlideHP 21s infinite;}
+.hero-slide:nth-child(1){animation-delay:0s;}
+.hero-slide:nth-child(2){animation-delay:7s;}
+.hero-slide:nth-child(3){animation-delay:14s;}
+@keyframes heroSlideHP{0%{opacity:0;}3%{opacity:1;}30%{opacity:1;}34%{opacity:0;}100%{opacity:0;}}
+.hero-scrim{position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(38,52,32,.5) 0%,rgba(38,52,32,.66) 100%);}
+.hero-eyebrow{color:#fff !important;}
+.hero-eyebrow::after{background:rgba(255,255,255,.6) !important;}
+.hero h1{color:#fff !important;text-shadow:0 2px 18px rgba(0,0,0,.4);}
+.hero h1 em{color:#d8e8cf !important;}
+.hero-sub{color:rgba(255,255,255,.96) !important;text-shadow:0 1px 8px rgba(0,0,0,.35);}
+.hero-sub2{color:rgba(255,255,255,.9) !important;text-shadow:0 1px 8px rgba(0,0,0,.35);}
+.hero-actions .btn-outline{border-color:#fff;color:#fff;background:transparent;}
+.hero-actions .btn-outline:hover{background:rgba(255,255,255,.15);}
+@media(prefers-reduced-motion:reduce){.hero-slide{animation:none;}.hero-slide:nth-child(1){opacity:1;}}
 </style>
 </head>
 <body>
@@ -686,14 +704,17 @@ body.edit-mode .hero-img-col{opacity:1 !important;transform:none !important;clip
 <!-- HERO -->
 <section class="hero sec-manageable" id="heroSec" data-sec-id="hero">
   <div class="sec-ctrl">
-    <button class="sc-btn bg" onclick="openBgImg('heroBgImg')">📷</button>
     <button class="sc-btn vis" onclick="toggleSecVis(this)">👁</button>
     <button class="sc-btn up" onclick="moveSec(this,-1)">↑</button>
     <button class="sc-btn dn" onclick="moveSec(this,1)">↓</button>
   </div>
   <div class="hero-bg">
-    <img src="images/bg-herbs.jpg" id="heroBgImg" alt="">
-    <div class="hero-bg-overlay"></div>
+    <div class="hero-slideshow">
+      <div class="hero-slide" style="background-image:url('images/bg-herbs.jpg');"></div>
+      <div class="hero-slide" style="background-image:url('images/course-atama.jpg');"></div>
+      <div class="hero-slide" style="background-image:url('images/course-keiri.jpg');"></div>
+    </div>
+    <div class="hero-scrim"></div>
   </div>
   <div class="hero-inner">
     <!-- P1: テキスト (モバイル1画面目) -->
