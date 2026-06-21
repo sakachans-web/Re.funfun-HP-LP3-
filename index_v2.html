@@ -287,12 +287,12 @@ a{color:inherit;text-decoration:none;}
 .instagram-inner{max-width:1100px;margin:0 auto;}
 .insta-top{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:2rem;flex-wrap:wrap;gap:1rem;}
 .insta-grid{
-  display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-bottom:2rem;
+  display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:2rem;
 }
 .insta-cell{
   aspect-ratio:1;background:var(--beige);border-radius:6px;overflow:hidden;
   display:flex;align-items:center;justify-content:center;
-  font-size:1.4rem;transition:transform 0.3s;cursor:pointer;
+  font-size:1.4rem;transition:transform 0.3s;cursor:default;
 }
 .insta-cell img{width:100%;height:100%;object-fit:cover;display:block;}
 .insta-cell:hover{transform:scale(1.04);}
@@ -916,12 +916,15 @@ body.edit-mode .hero-img-col{opacity:1 !important;transform:none !important;clip
       <a href="https://www.instagram.com/re_fun_fun/" target="_blank" class="btn btn-outline btn-sm">フォローする</a>
     </div>
     <div class="insta-grid reveal">
-      <a class="insta-cell" href="https://www.instagram.com/re_fun_fun/" target="_blank" rel="noopener"><img src="images/ig1.jpg" alt="Re.funfunのInstagram投稿"></a>
-      <a class="insta-cell" href="https://www.instagram.com/re_fun_fun/" target="_blank" rel="noopener"><img src="images/ig2.jpg" alt="Re.funfunのInstagram投稿"></a>
-      <a class="insta-cell" href="https://www.instagram.com/re_fun_fun/" target="_blank" rel="noopener"><img src="images/ig3.jpg" alt="Re.funfunのInstagram投稿"></a>
-      <a class="insta-cell" href="https://www.instagram.com/re_fun_fun/" target="_blank" rel="noopener"><img src="images/ig4.jpg" alt="Re.funfunのInstagram投稿"></a>
-      <a class="insta-cell" href="https://www.instagram.com/re_fun_fun/" target="_blank" rel="noopener"><img src="images/ig5.jpg" alt="Re.funfunのInstagram投稿"></a>
-      <a class="insta-cell" href="https://www.instagram.com/re_fun_fun/" target="_blank" rel="noopener"><img src="images/ig6.jpg" alt="Re.funfunのInstagram投稿"></a>
+      <div class="insta-cell cf-img-wrap editable-wrap"><img src="images/ig1.jpg" id="igImg1" alt="Re.funfunのInstagram投稿"><button class="img-change-btn" onclick="openImg('igImg1',null)">📷</button></div>
+      <div class="insta-cell cf-img-wrap editable-wrap"><img src="images/ig2.jpg" id="igImg2" alt="Re.funfunのInstagram投稿"><button class="img-change-btn" onclick="openImg('igImg2',null)">📷</button></div>
+      <div class="insta-cell cf-img-wrap editable-wrap"><img src="images/ig3.jpg" id="igImg3" alt="Re.funfunのInstagram投稿"><button class="img-change-btn" onclick="openImg('igImg3',null)">📷</button></div>
+      <div class="insta-cell cf-img-wrap editable-wrap"><img src="images/ig4.jpg" id="igImg4" alt="Re.funfunのInstagram投稿"><button class="img-change-btn" onclick="openImg('igImg4',null)">📷</button></div>
+      <div class="insta-cell cf-img-wrap editable-wrap"><img src="images/ig5.jpg" id="igImg5" alt="Re.funfunのInstagram投稿"><button class="img-change-btn" onclick="openImg('igImg5',null)">📷</button></div>
+      <div class="insta-cell cf-img-wrap editable-wrap"><img src="images/ig6.jpg" id="igImg6" alt="Re.funfunのInstagram投稿"><button class="img-change-btn" onclick="openImg('igImg6',null)">📷</button></div>
+      <div class="insta-cell cf-img-wrap editable-wrap"><img src="images/ig7.jpg" id="igImg7" alt="Re.funfunのInstagram投稿"><button class="img-change-btn" onclick="openImg('igImg7',null)">📷</button></div>
+      <div class="insta-cell cf-img-wrap editable-wrap"><img src="images/ig8.jpg" id="igImg8" alt="Re.funfunのInstagram投稿"><button class="img-change-btn" onclick="openImg('igImg8',null)">📷</button></div>
+      <div class="insta-cell cf-img-wrap editable-wrap"><img src="images/ig9.jpg" id="igImg9" alt="Re.funfunのInstagram投稿"><button class="img-change-btn" onclick="openImg('igImg9',null)">📷</button></div>
     </div>
   </div>
 </section>
@@ -1377,7 +1380,8 @@ function getState(){
   HP_EIDS.forEach(id=>{const el=document.getElementById(id);if(el)state.texts[id]=el.innerHTML;});
   ['heroImg','heroBgImg','svcBgImg','profileBgImg','contactBgImg',
    'svcImg1','svcImg2','svcImg3','profileImg',
-   'mSvcImg1','mSvcImg2','mSvcImg3'].forEach(id=>{
+   'mSvcImg1','mSvcImg2','mSvcImg3',
+   'igImg1','igImg2','igImg3','igImg4','igImg5','igImg6','igImg7','igImg8','igImg9'].forEach(id=>{
     const el=document.getElementById(id);
     if(el&&el.src&&(el.src.startsWith('data:')||el.src.startsWith('blob:')))state.imgs[id]=el.src;
   });
