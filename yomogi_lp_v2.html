@@ -221,16 +221,18 @@ a{color:inherit;text-decoration:none;}
 /* ===== VOICE ===== */
 .voice-sec{background:var(--white);}
 .voice-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.5rem;align-items:start;}
-.v-card{background:var(--cream);border-radius:var(--r);padding:2rem 1.8rem;border:1px solid var(--beige);position:relative;transition:transform .3s;}
+.v-card{background:#fff;border-radius:var(--r);padding:2rem 1.8rem;border:1px solid var(--beige);position:relative;transition:transform .3s;}
 .v-card:hover{transform:translateY(-4px);}
 .v-card:nth-child(2){margin-top:2rem;}
 .v-mark{font-family:'Noto Serif JP',serif;font-size:5rem;color:var(--sage-p);line-height:1;position:absolute;top:.2rem;left:.8rem;}
 .v-body{padding-top:2rem;font-size:.88rem;color:var(--text);line-height:2;margin-bottom:1.1rem;}
-.v-footer{display:flex;align-items:center;gap:.8rem;}
+.v-footer{display:flex;align-items:center;gap:.8rem;border-top:1px solid var(--beige);padding-top:.9rem;}
 .v-avatar{width:52px;height:52px;border-radius:50%;overflow:hidden;background:var(--beige);border:2px solid var(--sage-p);flex-shrink:0;display:flex;align-items:center;justify-content:center;}
 .v-avatar img{width:100%;height:100%;object-fit:cover;display:block;}
 .v-avatar-ph{display:flex;align-items:center;justify-content:center;width:100%;height:100%;}
 .v-meta{font-size:.74rem;color:var(--muted);}
+.v-footer .v-meta::before{content:"★★★★★";display:block;color:var(--sage);font-size:.82rem;letter-spacing:.1em;margin-bottom:.18rem;}
+.v-lead{font-size:.86rem;color:var(--muted);line-height:1.9;max-width:560px;margin:.7rem 0 0;}
 .add-voice-btn{display:none;width:100%;background:none;border:1.5px dashed var(--sage-l);border-radius:var(--r);padding:1.4rem;color:var(--sage);font-size:.85rem;cursor:pointer;margin-top:1.5rem;transition:background .2s;}
 .add-voice-btn:hover{background:var(--sage-p);}
 .edit-mode .add-voice-btn{display:block;}
@@ -725,7 +727,7 @@ body.edit-mode .hero-slide:nth-child(1){opacity:1 !important;}
     <button class="sc-btn dn" title="下へ移動" onclick="moveSec(this,1)">↓</button>
   </div>
   <div class="sec-inner">
-    <div style="margin-bottom:3rem;"><span class="sec-label">VOICE</span><h2 class="sec-title" style="margin-bottom:0;">受講生の声</h2></div>
+    <div style="margin-bottom:3rem;"><span class="sec-label">VOICE</span><h2 class="sec-title" style="margin-bottom:0;">受講生の声</h2><p class="v-lead">※掲載は受講生の許可を得ています。実際にいただいたメッセージを掲載しています。</p></div>
     <div class="voice-grid" id="voiceGrid">
       <div class="v-card">
         <div class="v-mark">"</div>
