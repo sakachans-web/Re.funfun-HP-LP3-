@@ -76,6 +76,25 @@ button{font-family:inherit;}
 .settings-msg{font-size:.96rem;margin-top:.4rem;display:none;font-weight:500;}
 .settings-msg.ok{color:var(--ok);display:block;}
 .settings-msg.err{color:var(--ng);display:block;}
+/* ===== お問い合わせ一覧 ===== */
+.contact-panel{display:none;padding:1.4rem 1.2rem;max-width:760px;margin:0 auto;overflow-y:auto;height:100%;}
+.contact-panel.active{display:block;}
+.contact-head{display:flex;align-items:center;justify-content:space-between;gap:.8rem;margin-bottom:1rem;flex-wrap:wrap;}
+.contact-head h3{font-family:'Noto Serif JP',serif;color:var(--sage);font-size:1.2rem;}
+.contact-head select{padding:.55rem .9rem;border:2px solid var(--beige);border-radius:10px;font-size:1rem;background:var(--white);min-height:44px;outline:none;}
+.contact-msg{font-size:.95rem;color:var(--muted);margin-bottom:.8rem;min-height:1.2em;}
+.contact-msg.err{color:var(--ng);}
+.c-card{background:var(--white);border:1px solid var(--beige);border-radius:14px;padding:1rem 1.2rem;margin-bottom:.9rem;}
+.c-top{display:flex;align-items:center;gap:.7rem;margin-bottom:.4rem;flex-wrap:wrap;}
+.c-date{font-size:.86rem;color:var(--muted);}
+.c-page{font-size:.78rem;color:var(--sage-d);background:#eef2ea;border:1px solid #cdd8c6;border-radius:6px;padding:1px 8px;}
+.c-name{font-size:1.05rem;font-weight:700;color:var(--ink,#333);margin-bottom:.5rem;}
+.c-mail{font-size:.85rem;font-weight:400;color:var(--muted);}
+.c-row{font-size:.92rem;margin:.15rem 0;color:#444;}
+.c-row b{color:var(--sage-d);font-weight:700;margin-right:.4rem;font-size:.82rem;}
+.c-msg{font-size:.95rem;color:#333;background:#faf8f3;border-radius:8px;padding:.7rem .9rem;margin:.6rem 0;white-space:pre-wrap;line-height:1.7;}
+.c-reply{display:inline-block;font-size:.9rem;color:var(--sage-d);text-decoration:none;border:1px solid var(--sage-l);border-radius:8px;padding:.4rem .9rem;min-height:40px;line-height:1.6;}
+.c-reply:hover{background:#eef2ea;}
 .pages-list{display:flex;flex-direction:column;gap:.55rem;}
 .page-row{display:flex;align-items:center;gap:.7rem;padding:.85rem 1rem;background:var(--cream);border-radius:10px;font-size:1.02rem;}
 .page-row .pico{font-size:1.3rem;}.page-row .pname{font-weight:500;}
@@ -184,18 +203,25 @@ button{font-family:inherit;}
       <p class="settings-msg" id="pwMsg"></p>
     </div>
     <div class="settings-card">
-      <h3>お問い合わせの通知先メール</h3>
-      <p class="desc">お問い合わせフォームに送信があったとき、ここに設定したメールアドレスに通知メールが届きます。空欄で保存すると通知は止まります（その場合も内容はスプレッドシートに記録されます）。</p>
-      <label for="notifyEmailInput">通知先メールアドレス</label>
-      <input type="email" id="notifyEmailInput" placeholder="example@mail.com" autocomplete="email">
-      <button class="btn-act btn-edit" onclick="saveNotifyEmail()">メールアドレスを保存する</button>
-      <p class="settings-msg" id="notifyMsg"></p>
-    </div>
-    <div class="settings-card">
       <h3>編集できるページ</h3>
       <p class="desc">上のタブから各ページを開いて、文字や写真を直せます。「保存」を押すと、直した内容がインターネット上に自動で記録されます。</p>
       <div class="pages-list" id="settingsPagesList"></div>
     </div>
+  </div>
+
+  <!-- ===== お問い合わせ一覧 ===== -->
+  <div class="contact-panel" id="contactPanel">
+    <div class="contact-head">
+      <h3>お問い合わせ</h3>
+      <select id="contactRange" onchange="renderContacts()">
+        <option value="1">直近1ヶ月</option>
+        <option value="3">直近3ヶ月</option>
+        <option value="6">直近6ヶ月</option>
+        <option value="all">全期間</option>
+      </select>
+    </div>
+    <p class="contact-msg" id="contactMsg"></p>
+    <div class="contact-list" id="contactList"></div>
   </div>
 </div>
 
@@ -250,25 +276,45 @@ async function rfVerifyPw(input){
   const legacy=localStorage.getItem('rf_admin_pw');
   return !!legacy && input===legacy;
 }
-/* ===== お問い合わせ通知先メール（設定の読み書き・要認証） ===== */
-async function loadNotifyEmail(){
-  if(!rfSessionPwHash) return;
+/* ===== お問い合わせ一覧（取得・期間フィルタ表示・要認証） ===== */
+let _contactRows=null;
+function escHtml(s){return (s||'').toString().replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+async function loadContacts(){
+  const msg=document.getElementById('contactMsg');
+  const list=document.getElementById('contactList');
+  if(!rfSessionPwHash){msg.textContent='お手数ですが、もう一度ログインしてからお試しください。';msg.className='contact-msg err';return;}
+  msg.textContent='読み込み中…';msg.className='contact-msg';list.innerHTML='';
   try{
-    const res=await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'getsettings',auth:rfSessionPwHash})}).then(r=>r.json());
-    if(res&&res.ok){const el=document.getElementById('notifyEmailInput');if(el)el.value=res.notifyEmail||'';}
-  }catch(e){/* 通信不可時は空のまま */}
+    const res=await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'listcontacts',auth:rfSessionPwHash})}).then(r=>r.json());
+    if(res&&res.ok){_contactRows=res.rows||[];renderContacts();}
+    else{msg.textContent='取得に失敗しました：'+((res&&res.error)||'時間をおいて再度お試しください');msg.className='contact-msg err';}
+  }catch(e){msg.textContent='取得に失敗しました。ネットワーク接続をご確認ください。';msg.className='contact-msg err';}
 }
-async function saveNotifyEmail(){
-  const v=document.getElementById('notifyEmailInput').value.trim();
-  const msg=document.getElementById('notifyMsg');
-  if(v && v.indexOf('@')<1){msg.textContent='メールアドレスの形式をご確認ください。';msg.className='settings-msg err';return;}
-  if(!rfSessionPwHash){msg.textContent='ネットワークに接続した状態で、もう一度ログインしてからお試しください。';msg.className='settings-msg err';return;}
-  msg.textContent='保存しています…';msg.className='settings-msg';
-  try{
-    const res=await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'setnotify',auth:rfSessionPwHash,email:v})}).then(r=>r.json());
-    if(res&&res.ok){msg.textContent=v?'✓ 通知先メールを保存しました。次回のお問い合わせから届きます。':'✓ 通知を止めました（メールは送られません）。';msg.className='settings-msg ok';}
-    else{msg.textContent='保存に失敗しました：'+((res&&res.error)||'時間をおいて再度お試しください');msg.className='settings-msg err';}
-  }catch(e){msg.textContent='保存に失敗しました。ネットワーク接続をご確認ください。';msg.className='settings-msg err';}
+function renderContacts(){
+  const list=document.getElementById('contactList');
+  const msg=document.getElementById('contactMsg');
+  if(!_contactRows){return;}
+  const range=document.getElementById('contactRange').value;
+  let rows=_contactRows;
+  if(range!=='all'){
+    const cutoff=new Date();cutoff.setMonth(cutoff.getMonth()-parseInt(range,10));
+    rows=rows.filter(r=>{const d=new Date(r.timestamp);return !isNaN(d.getTime())&&d>=cutoff;});
+  }
+  if(!rows.length){list.innerHTML='';msg.textContent='この期間のお問い合わせはありません。';msg.className='contact-msg';return;}
+  msg.textContent=rows.length+'件';msg.className='contact-msg';
+  list.innerHTML=rows.map(r=>{
+    const d=new Date(r.timestamp);
+    const dt=isNaN(d.getTime())?escHtml(r.timestamp):`${d.getFullYear()}/${d.getMonth()+1}/${d.getDate()} ${('0'+d.getHours()).slice(-2)}:${('0'+d.getMinutes()).slice(-2)}`;
+    return `<div class="c-card">
+      <div class="c-top"><span class="c-date">${dt}</span>${r.page?`<span class="c-page">${escHtml(r.page)}</span>`:''}</div>
+      <div class="c-name">${escHtml(r.name)} <span class="c-mail">&lt;${escHtml(r.email)}&gt;</span></div>
+      ${r.course?`<div class="c-row"><b>講座</b>${escHtml(r.course)}</div>`:''}
+      ${r.tel?`<div class="c-row"><b>電話</b>${escHtml(r.tel)}</div>`:''}
+      ${r.schedule?`<div class="c-row"><b>希望</b>${escHtml(r.schedule)}</div>`:''}
+      <div class="c-msg">${escHtml(r.message)}</div>
+      ${r.email?`<a class="c-reply" href="mailto:${escHtml(r.email)}">✉ 返信する</a>`:''}
+    </div>`;
+  }).join('');
 }
 
 /* ページ定義（タブ・iframe・設定一覧の唯一の出どころ） */
@@ -286,6 +332,7 @@ let loggedIn=false, editMode=false;
 const tabsEl=document.getElementById('tabs');
 const mainEl=document.getElementById('mainArea');
 const settingsPanel=document.getElementById('settingsPanel');
+const contactPanel=document.getElementById('contactPanel');
 PAGES.forEach((p,i)=>{
   const t=document.createElement('button');
   t.className='tab'+(i===0?' active':'');
@@ -298,6 +345,11 @@ PAGES.forEach((p,i)=>{
   f.dataset.page=p.file; f.id='frame-'+p.id;
   mainEl.insertBefore(f,settingsPanel);
 });
+const ctab=document.createElement('button');
+ctab.className='tab'; ctab.dataset.page='__contacts__';
+ctab.innerHTML='<span class="tab-ico">📩</span>お問い合わせ';
+ctab.addEventListener('click',()=>switchTab('__contacts__',ctab));
+tabsEl.appendChild(ctab);
 const stab=document.createElement('button');
 stab.className='tab'; stab.dataset.page='__settings__';
 stab.innerHTML='<span class="tab-ico">⚙️</span>設定';
@@ -317,7 +369,7 @@ function callFrame(frame,fn,...args){try{frame.contentWindow[fn]?.(...args);}cat
 /* ===== ログイン ===== */
 async function doLogin(){
   const v=document.getElementById('pwInput').value;
-  if(await rfVerifyPw(v)){loggedIn=true;document.getElementById('loginOverlay').classList.add('hide');loadNotifyEmail();}
+  if(await rfVerifyPw(v)){loggedIn=true;document.getElementById('loginOverlay').classList.add('hide');}
   else{document.getElementById('loginErr').style.display='block';}
 }
 function doLogout(){
@@ -336,11 +388,16 @@ function closeHelp(){document.getElementById('helpMol').classList.remove('show')
 function switchTab(page,tabBtn){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   tabBtn.classList.add('active');
+  settingsPanel.classList.remove('active');
+  contactPanel.classList.remove('active');
   if(page==='__settings__'){
     frames().forEach(f=>f.classList.remove('active'));
     settingsPanel.classList.add('active');
+  }else if(page==='__contacts__'){
+    frames().forEach(f=>f.classList.remove('active'));
+    contactPanel.classList.add('active');
+    loadContacts();
   }else{
-    settingsPanel.classList.remove('active');
     frames().forEach(f=>f.classList.toggle('active',f.dataset.page===page));
   }
 }
