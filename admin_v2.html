@@ -333,23 +333,25 @@ const tabsEl=document.getElementById('tabs');
 const mainEl=document.getElementById('mainArea');
 const settingsPanel=document.getElementById('settingsPanel');
 const contactPanel=document.getElementById('contactPanel');
+// 「お問い合わせ」タブは一番左・既定で表示
+const ctab=document.createElement('button');
+ctab.className='tab active'; ctab.dataset.page='__contacts__';
+ctab.innerHTML='<span class="tab-ico">📩</span>お問い合わせ';
+ctab.addEventListener('click',()=>switchTab('__contacts__',ctab));
+tabsEl.appendChild(ctab);
+contactPanel.classList.add('active');
 PAGES.forEach((p,i)=>{
   const t=document.createElement('button');
-  t.className='tab'+(i===0?' active':'');
+  t.className='tab';
   t.dataset.page=p.file;
   t.innerHTML=`<span class="tab-ico">${p.icon}</span>${p.label}`;
   t.addEventListener('click',()=>switchTab(p.file,t));
   tabsEl.appendChild(t);
   const f=document.createElement('iframe');
-  f.className='page-frame'+(i===0?' active':'');
+  f.className='page-frame';
   f.dataset.page=p.file; f.id='frame-'+p.id;
   mainEl.insertBefore(f,settingsPanel);
 });
-const ctab=document.createElement('button');
-ctab.className='tab'; ctab.dataset.page='__contacts__';
-ctab.innerHTML='<span class="tab-ico">📩</span>お問い合わせ';
-ctab.addEventListener('click',()=>switchTab('__contacts__',ctab));
-tabsEl.appendChild(ctab);
 const stab=document.createElement('button');
 stab.className='tab'; stab.dataset.page='__settings__';
 stab.innerHTML='<span class="tab-ico">⚙️</span>設定';
@@ -369,7 +371,7 @@ function callFrame(frame,fn,...args){try{frame.contentWindow[fn]?.(...args);}cat
 /* ===== ログイン ===== */
 async function doLogin(){
   const v=document.getElementById('pwInput').value;
-  if(await rfVerifyPw(v)){loggedIn=true;document.getElementById('loginOverlay').classList.add('hide');}
+  if(await rfVerifyPw(v)){loggedIn=true;document.getElementById('loginOverlay').classList.add('hide');loadContacts();}
   else{document.getElementById('loginErr').style.display='block';}
 }
 function doLogout(){
@@ -416,6 +418,13 @@ function toggleAllEdit(){
   if(hint) hint.innerHTML=editMode
     ?'直したい <b>文字や写真をクリック</b> して直せます。終わったら <b>「保存」</b> を押してください。'
     :'まず <b>「編集する」</b> を押すと、文字や写真を直せるようになります。';
+  // 編集モード中は「お問い合わせ」「設定」タブを隠す（編集対象は各ページのみ）
+  ctab.style.display=editMode?'none':'';
+  stab.style.display=editMode?'none':'';
+  if(editMode && (contactPanel.classList.contains('active')||settingsPanel.classList.contains('active'))){
+    const firstTab=[...document.querySelectorAll('.tab')].find(t=>t.dataset.page===PAGES[0].file);
+    if(firstTab) switchTab(PAGES[0].file,firstTab);
+  }
   frames().forEach(f=>callFrame(f,'rfAdminMode',editMode));
 }
 
