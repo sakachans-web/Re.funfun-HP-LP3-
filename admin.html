@@ -319,10 +319,10 @@ function renderContacts(){
 
 /* ページ定義（タブ・iframe・設定一覧の唯一の出どころ） */
 const PAGES=[
-  {id:'index',  file:'index_v2.html',     label:'ホームページ',   icon:'🏠'},
-  {id:'yomogi', file:'yomogi_lp_v2.html', label:'よもぎ蒸し講座', icon:'🌿'},
-  {id:'atama',  file:'atama_lp_v2.html',  label:'あたまほぐし講座',icon:'✋'},
-  {id:'keiri',  file:'keiri_lp_v3.html',  label:'経理のがっこう', icon:'📊'},
+  {id:'index',  file:'index.html',     label:'ホームページ',   icon:'🏠'},
+  {id:'yomogi', file:'yomogi.html', label:'よもぎ蒸し講座', icon:'🌿'},
+  {id:'atama',  file:'atama.html',  label:'あたまほぐし講座',icon:'✋'},
+  {id:'keiri',  file:'keiri.html',  label:'経理のがっこう', icon:'📊'},
 ];
 
 let loggedIn=false, editMode=false;
@@ -380,7 +380,7 @@ function doLogout(){
 }
 function closeLogoutMol(){document.getElementById('logoutMol').classList.remove('show');}
 async function doLogoutWithSave(){closeLogoutMol();await saveAllPages();setTimeout(doLogoutNow,1900);}
-function doLogoutNow(){loggedIn=false;closeLogoutMol();window.location.href='index_v2.html';}
+function doLogoutNow(){loggedIn=false;closeLogoutMol();window.location.href='index.html';}
 
 /* ===== 使い方 ===== */
 function openHelp(){document.getElementById('helpMol').classList.add('show');}
