@@ -370,18 +370,23 @@ footer{background:#2c2520;color:rgba(255,255,255,.55);padding:3rem 2rem;text-ali
 .edit-mode [contenteditable="true"]{outline:2px dashed var(--sage-l);border-radius:4px;padding:2px 4px;cursor:text;transition:outline-color .2s;}
 .edit-mode [contenteditable="true"]:hover{outline-color:var(--sage);}
 .edit-mode [contenteditable="true"]:focus{outline:2px solid var(--sage);background:rgba(107,143,94,.08);}
-/* 編集モード：ジャーニー（スライド）を縦並びの読みやすいリストにし、全シーンの文字を直接編集できるようにする（通常時はGSAPスクロール演出。編集時はアニメをスキップ＝重なり防止） */
+/* 編集モード：ジャーニー（スライド）を縦並びのカードにし、各シーンの背景写真を表示したまま文字・背景を編集できるようにする（通常時はGSAPスクロール演出。編集時はアニメをスキップ＝重なり防止。背景写真は rfHjEditBg() がパネルへ反映） */
 .edit-mode .hero-journey{height:auto!important;}
 .edit-mode .hj-sticky{position:static!important;height:auto!important;display:block!important;overflow:visible!important;}
 .edit-mode .hero-bg{display:none!important;}
 .edit-mode .hj-hint{display:none!important;}
 .edit-mode .hj-content{position:static!important;pointer-events:auto!important;}
-.edit-mode .hj-panel{position:static!important;inset:auto!important;opacity:1!important;pointer-events:auto!important;min-height:0!important;padding:2.2rem 1.5rem!important;border-bottom:1px dashed var(--beige2);}
-/* GSAPがロード時に子要素へインラインで付ける opacity:0 / transform を編集中は打ち消す */
-.edit-mode .hj-panel>*,.edit-mode .hj-panel .hero-text>*{opacity:1!important;transform:none!important;}
-.edit-mode .hj-main,.edit-mode .hj-main-sub,.edit-mode .hj-ctitle,.edit-mode .hj-cdesc{color:var(--text)!important;text-shadow:none!important;}
-.edit-mode .hj-clabel{color:var(--sage)!important;text-shadow:none!important;}
-.edit-mode .hj-cbtn{pointer-events:none;opacity:.5;}
+.edit-mode .hj-panel{position:relative!important;inset:auto!important;opacity:1!important;pointer-events:auto!important;min-height:300px!important;padding:3rem 1.5rem!important;background-color:var(--sage-d);background-size:cover!important;background-position:center!important;border-bottom:3px solid #fff;}
+.edit-mode .hj-panel::before{content:'';position:absolute;inset:0;background:rgba(20,30,18,.42);pointer-events:none;z-index:0;}
+/* GSAPがロード時に子要素へ付ける opacity/transform を打ち消し、スクリムの上に出す */
+.edit-mode .hj-panel>*,.edit-mode .hj-panel .hero-text{opacity:1!important;transform:none!important;position:relative;z-index:1;}
+.edit-mode .hj-panel .hero-text>*{opacity:1!important;transform:none!important;}
+.edit-mode .hj-main,.edit-mode .hj-main-sub,.edit-mode .hj-ctitle,.edit-mode .hj-cdesc,.edit-mode .hj-clabel,.edit-mode .hero-eyebrow,.edit-mode #heroTitle,.edit-mode #heroSub,.edit-mode #heroSub2{color:#fff!important;text-shadow:0 1px 10px rgba(0,0,0,.55)!important;}
+.edit-mode .hj-cbtn{pointer-events:none;opacity:.55;}
+/* 📷 背景変更ボタン（編集モードのみ表示） */
+.hj-bg-btn{display:none;}
+.edit-mode .hj-bg-btn{display:inline-flex;align-items:center;gap:.4rem;margin-top:1.2rem;background:#fff;color:var(--sage-d);border:none;border-radius:8px;padding:.6rem 1.1rem;font-size:.82rem;font-weight:600;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.25);}
+.edit-mode .hj-bg-btn:hover{background:var(--sage-p);}
 
 /* ===== ADMIN BAR ===== */
 .admin-bar{
@@ -672,6 +677,7 @@ body.edit-mode .hero-img-col{opacity:1 !important;transform:none !important;clip
 .hj-sticky{position:sticky;top:0;height:100vh;overflow:hidden;display:flex;align-items:center;justify-content:center;}
 .hero-slideshow{position:absolute;inset:0;z-index:0;background:#cfe0c8;}
 .hero-slide{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;}
+img.hero-slide{width:100%;height:100%;object-fit:cover;}
 .hero-slide:first-child{opacity:1;}
 video.hero-slide{width:100%;height:100%;object-fit:cover;}
 /* 世界観を見せるため画像はしっかり表示。文字可読性はソフトスクリムで確保（明るく柔らかい印象） */
@@ -768,16 +774,14 @@ video.hero-slide{width:100%;height:100%;object-fit:cover;}
   <div class="hj-sticky">
     <div class="hero-bg">
       <div class="hero-slideshow">
-        <!-- 世界観: 海 → 島と島を渡る橋 → あたまほぐしの手 → よもぎ蒸しの湯気(動画) → 会計講座 -->
-        <div class="hero-slide" style="background-image:url('images/bg-sea.jpg');"></div>
-        <div class="hero-slide" style="background-image:url('images/bg-bridge.jpg');"></div>
-        <div class="hero-slide" style="background-image:url('images/bg-herbs.jpg');"></div>
-        <div class="hero-slide" style="background-image:url('images/course-atama.jpg');"></div>
-        <video class="hero-slide" autoplay muted loop playsinline preload="metadata" poster="images/course-yomogi.jpg">
-          <source src="images/804301555.257469.mp4" type="video/mp4">
-        </video>
-        <div class="hero-slide" style="background-image:url('images/course-keiri.jpg');"></div>
-        <div class="hero-slide" style="background-image:url('images/bg-closing.jpg');"></div>
+        <!-- 世界観: 海 → 島と島を渡る橋 → あたまほぐしの手 → よもぎ蒸し(静止画) → 会計講座 -->
+        <img class="hero-slide" id="bgScene1" src="images/bg-sea.jpg" alt="">
+        <img class="hero-slide" id="bgScene2" src="images/bg-bridge.jpg" alt="">
+        <img class="hero-slide" id="bgScene3" src="images/bg-herbs.jpg" alt="">
+        <img class="hero-slide" id="bgScene4" src="images/course-atama.jpg" alt="">
+        <img class="hero-slide" id="bgScene5" src="images/course-yomogi.jpg" alt="">
+        <img class="hero-slide" id="bgScene6" src="images/course-keiri.jpg" alt="">
+        <img class="hero-slide" id="bgScene7" src="images/bg-closing.jpg" alt="">
       </div>
       <div class="hero-scrim"></div>
     </div>
@@ -790,20 +794,20 @@ video.hero-slide{width:100%;height:100%;object-fit:cover;}
           <p class="hero-sub" id="heroSub">誰一人置いてきぼりにしない</p>
           <p class="hero-sub2" id="heroSub2">長崎県の小さな島から、全国へ。<br>61歳の今が、いちばん面白い。</p>
         </div>
-        <div class="hero-actions">
-          <a href="#contact" class="btn">お問い合わせはこちら</a>
-        </div>
+        <button class="hj-bg-btn" onclick="openBgImg('bgScene1')">📷 背景を変える</button>
       </div>
       <!-- 2: 橋 = メインタイトル -->
       <div class="hj-panel">
         <h2 class="hj-main" id="hjMain2">人と人を、つなぐ。</h2>
         <p class="hj-main-sub" id="hjSub2">生活の一部でもある、島と島を結ぶ橋のように。</p>
+        <button class="hj-bg-btn" onclick="openBgImg('bgScene2')">📷 背景を変える</button>
       </div>
       <!-- 3: 講座一覧 イントロ -->
       <div class="hj-panel">
         <span class="hj-clabel" id="hjLabel3">COURSE LINEUP</span>
         <h2 class="hj-main" id="hjMain3">3つの講座</h2>
         <p class="hj-main-sub" id="hjSub3">あなたのペースで学べる、Re.funfun の講座をご紹介します。</p>
+        <button class="hj-bg-btn" onclick="openBgImg('bgScene3')">📷 背景を変える</button>
       </div>
       <!-- 4: あたまほぐし講座 -->
       <div class="hj-panel">
@@ -811,6 +815,7 @@ video.hero-slide{width:100%;height:100%;object-fit:cover;}
         <h2 class="hj-ctitle" id="hjCTitle4">あたまほぐし講座</h2>
         <p class="hj-cdesc" id="hjCDesc4">「やってみたい！」がカタチになる、あたまほぐしの専門講座。少人数制でひとりひとりのペースに合わせて指導し、出張対応・受講後のフォロー・練習会まで充実。57歳で学び60歳でデビューした講師だからこそ、未経験からでも安心して一歩を踏み出せます。</p>
         <a href="atama.html" class="btn hj-cbtn">あたまほぐし講座を見る →</a>
+        <button class="hj-bg-btn" onclick="openBgImg('bgScene4')">📷 背景を変える</button>
       </div>
       <!-- 4: よもぎ蒸し講座 -->
       <div class="hj-panel">
@@ -818,6 +823,7 @@ video.hero-slide{width:100%;height:100%;object-fit:cover;}
         <h2 class="hj-ctitle" id="hjCTitle5">よもぎ蒸し講座</h2>
         <p class="hj-cdesc" id="hjCDesc5">ゼロからスタートした還暦セラピストが伝える、1日でしっかり身につく実践型のよもぎ蒸し講座。学んで終わりではなく、サロン導入後の運営・集客・続け方まで丁寧にサポート。おかま直伝®の公式テキストで、体系立てて確実に学べます。</p>
         <a href="yomogi.html" class="btn hj-cbtn">よもぎ蒸し講座を見る →</a>
+        <button class="hj-bg-btn" onclick="openBgImg('bgScene5')">📷 背景を変える</button>
       </div>
       <!-- 5: 経理のがっこう -->
       <div class="hj-panel">
@@ -825,11 +831,13 @@ video.hero-slide{width:100%;height:100%;object-fit:cover;}
         <h2 class="hj-ctitle" id="hjCTitle6">経理のがっこう</h2>
         <p class="hj-cdesc" id="hjCDesc6">「できるかどうか」ではなく「必要かどうか」。経理歴40年の現役サロンオーナーが、確定申告・節税・利益管理まで、数字が苦手な方にもやさしく実践的に教えます。「誰かに任せる」から「自分で読める」へ——サロン経営の土台が変わります。</p>
         <a href="keiri.html" class="btn hj-cbtn">経理のがっこうを見る →</a>
+        <button class="hj-bg-btn" onclick="openBgImg('bgScene6')">📷 背景を変える</button>
       </div>
       <!-- 7: 締め -->
       <div class="hj-panel">
         <span class="hj-clabel" id="hjLabel7">Re.funfun</span>
         <h2 class="hj-main" id="hjMain7">繰り返し笑顔に<br>会える場所。</h2>
+        <button class="hj-bg-btn" onclick="openBgImg('bgScene7')">📷 背景を変える</button>
       </div>
     </div>
     <div class="hj-hint" aria-hidden="true"><span>scroll</span></div>
@@ -1363,7 +1371,21 @@ function toggleEditMode(){
   document.getElementById('editToggleBtn').textContent=em?'👁 閲覧に戻す':'✏️ 編集する';
   document.getElementById('saveBtn').style.display=em?'inline-block':'none';
   HP_EIDS.forEach(id=>{const el=document.getElementById(id);if(el)el.contentEditable=em?'true':'false';});
+  rfHjEditBg(em);
   if(!em)hideFmtBar();
+}
+/* 編集モード時、各シーンのパネル背景を対応スライド写真で表示（パネル5=動画はポスター画像）。終了時はインライン背景を消す */
+const HJ_PANEL_BG=['bgScene1','bgScene2','bgScene3','bgScene4','bgScene5','bgScene6','bgScene7'];
+function rfHjEditBg(on){
+  const panels=document.querySelectorAll('.hero-journey .hj-panel');
+  panels.forEach((p,i)=>{
+    if(!on){p.style.backgroundImage='';return;}
+    const id=HJ_PANEL_BG[i];
+    let src=null;
+    if(id){const im=document.getElementById(id);if(im&&im.src)src=im.src;}
+    else{src='images/course-yomogi.jpg';} // 動画シーンはポスター画像を背景表示
+    if(src)p.style.backgroundImage='url("'+src+'")';
+  });
 }
 document.addEventListener('input',()=>{
   if(em) try{localStorage.setItem(SK,JSON.stringify(getState()));}catch(_){}
@@ -1394,6 +1416,7 @@ function getState(){
   ['heroImg','heroBgImg','svcBgImg','profileBgImg','contactBgImg',
    'svcImg1','svcImg2','svcImg3','profileImg',
    'mSvcImg1','mSvcImg2','mSvcImg3',
+   'bgScene1','bgScene2','bgScene3','bgScene4','bgScene5','bgScene6','bgScene7',
    'igImg1','igImg2','igImg3','igImg4','igImg5','igImg6','igImg7','igImg8','igImg9'].forEach(id=>{
     const el=document.getElementById(id);
     if(el&&el.src&&(el.src.startsWith('data:')||el.src.startsWith('blob:')))state.imgs[id]=el.src;
@@ -1517,6 +1540,7 @@ function handleBgImg(){const f=document.getElementById('bgImgFileIn').files[0];i
 function applyBgImg(){
   if(!pendBgImg||!cBgImgId){closeMol('bgImgMol');return;}
   const img=document.getElementById(cBgImgId);img.style.transition='none';img.src=pendBgImg;img.style.display='block';
+  if(em && /^bgScene/.test(cBgImgId)) rfHjEditBg(true); // ジャーニー背景はパネル表示も更新
   closeMol('bgImgMol');
 }
 
