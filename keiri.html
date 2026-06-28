@@ -133,6 +133,9 @@ body{font-family:'Noto Sans JP',sans-serif;font-size:16px;line-height:1.8;color:
 .sec-title{font-family:'Noto Serif JP',serif;font-size:clamp(1.6rem,3.2vw,2.2rem);font-weight:700;color:var(--dp);line-height:1.35;margin-bottom:.6rem;}
 .sec-title-white{color:var(--dp);}
 .sec-lead{font-size:.9rem;color:var(--muted);line-height:1.9;max-width:560px;}
+.tuition-box{max-width:600px;margin:1.6rem 0 0;background:var(--lav);border:1px solid rgba(192,127,120,.25);border-radius:16px;padding:2.6rem 2rem;}
+.tuition-main{font-family:'Noto Serif JP',serif;font-size:clamp(1.15rem,2.6vw,1.45rem);font-weight:700;color:var(--dp);line-height:1.7;margin-bottom:1rem;}
+.tuition-note{font-size:.86rem;color:var(--muted);line-height:1.95;}
 .sec-dark{background:var(--lav);color:var(--text);}
 .sec-dark .sec-label{color:var(--gold-l);border-color:var(--gold);}
 .sec-dark .sec-lead{color:var(--muted);}
@@ -480,8 +483,8 @@ body.edit-mode #heroSlide1{opacity:1 !important;}
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#f0c96b" stroke-width="1.8"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
         </div>
         <div>
-          <div class="hero-stat-val" id="hs2Val">約90<span style="font-size:1rem;">%</span></div>
-          <div class="hero-stat-unit" id="hs2Unit">サロンオーナー受講生のリピート率</div>
+          <div class="hero-stat-val" id="hs2Val">約550<span style="font-size:1rem;">名</span></div>
+          <div class="hero-stat-unit" id="hs2Unit">会計講座6年目・累計の受講者数</div>
         </div>
       </div>
       <div class="hero-stat-card">
@@ -703,6 +706,23 @@ body.edit-mode #heroSlide1{opacity:1 !important;}
           <span class="profile-tag">利益管理指導</span>
         </div>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- 受講料 -->
+<section class="sec sec-manageable" data-sec-id="tuition" style="background:#fff;position:relative;">
+  <div class="sec-ctrl">
+    <button class="sc-btn vis" title="このセクションを非表示" onclick="toggleSecVis(this)">👁</button>
+    <button class="sc-btn up" title="上へ移動" onclick="moveSec(this,-1)">↑</button>
+    <button class="sc-btn dn" title="下へ移動" onclick="moveSec(this,1)">↓</button>
+  </div>
+  <div class="sec-inner">
+    <span class="sec-label fade-up">TUITION</span>
+    <h2 class="sec-title fade-up">受講料</h2>
+    <div class="tuition-box fade-up">
+      <p class="tuition-main" id="tuitionMain">受講料は無料説明会にてご案内しております。</p>
+      <p class="tuition-note" id="tuitionNote">講座の内容により変更となる場合がございます。<br>「難しそう」という不安からで大丈夫。まずはお気軽に無料説明会で、お話を聞いてみてください。</p>
     </div>
   </div>
 </section>
@@ -1103,6 +1123,7 @@ const EIDS = [
   'cn1','cd1','cn2','cd2','cn3','cd3','cn4','cd4',
   'wh1','wh2','wh3','wh4','wh5','wh6',
   'pName','pTitle','pQuote','pBody',
+  'tuitionMain','tuitionNote',
   'v1Text','v1Meta','v2Text','v2Meta','v3Text','v3Meta',
   'semTitle','semSub','semFormat','semFee','semStyle','semHow','semNote',
   'ctaTitle','ctaSub'
@@ -1339,14 +1360,25 @@ function applyState(st){
   });
   if(order.length){
     const parent=document.querySelector('.sec-manageable')?.parentNode;
-    if(parent) order.forEach(sid=>{
-      const s=document.querySelector(`[data-sec-id="${sid}"]`);
-      if(s) parent.appendChild(s);
-    });
-    const footer=document.querySelector('footer');
-    const adminBar=document.getElementById('adminBar');
-    if(footer)parent.appendChild(footer);
-    if(adminBar)parent.appendChild(adminBar);
+    if(parent){
+      // 保存順に無いセクション（後から追加した新セクション等）は、元のDOM上の直前セクションの後ろに差し込む
+      const all=[...parent.querySelectorAll(':scope > .sec-manageable')].map(s=>s.dataset.secId);
+      const merged=order.filter(id=>all.includes(id));
+      all.forEach((id,i)=>{
+        if(merged.includes(id))return;
+        let after=null;
+        for(let j=i-1;j>=0;j--){ if(merged.includes(all[j])){ after=all[j]; break; } }
+        merged.splice(after?merged.indexOf(after)+1:0,0,id);
+      });
+      merged.forEach(sid=>{
+        const s=document.querySelector(`[data-sec-id="${sid}"]`);
+        if(s) parent.appendChild(s);
+      });
+      const footer=document.querySelector('footer');
+      const adminBar=document.getElementById('adminBar');
+      if(footer)parent.appendChild(footer);
+      if(adminBar)parent.appendChild(adminBar);
+    }
   }
 }
 

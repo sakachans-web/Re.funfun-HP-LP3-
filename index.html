@@ -613,9 +613,16 @@ body.edit-mode .hero-img-col{opacity:1 !important;transform:none !important;clip
   .footer-sns{flex-wrap:wrap;}
 }
 
+.spbr{display:none;} /* モバイルのみ改行（PCでは無効） */
 @media(max-width:600px){
   .hero-eyebrow{display:none;}
   .insta-grid{grid-template-columns:repeat(3,1fr);}
+  /* ジャーニー: モバイルでタイトルが大きすぎて1〜2文字溢れるのを防ぐ */
+  .hj-main{font-size:1.85rem !important;letter-spacing:.02em !important;}
+  .hj-ctitle{font-size:1.7rem !important;}
+  .spbr{display:inline;}
+  /* 看板シーンの3講座は縦並びに */
+  #hjCourses3{line-height:2.4;}
 }
 
 /* ===== MOBILE SCROLL SNAP ===== */
@@ -796,14 +803,15 @@ video.hero-slide{width:100%;height:100%;object-fit:cover;}
   <div class="hj-sticky">
     <div class="hero-bg">
       <div class="hero-slideshow">
-        <!-- 世界観: 海 → 島と島を渡る橋 → あたまほぐしの手 → よもぎ蒸し(静止画) → 会計講座 -->
+        <!-- 世界観: ①海 → ②橋＋見上げ → ③看板 → ④よもぎ → ⑤あたま → ⑥経理 → ⑦笑顔 → ⑧景色（→①ループ） -->
         <img class="hero-slide" id="bgScene1" src="images/bg-sea.jpg" alt="">
-        <img class="hero-slide" id="bgScene2" src="images/bg-bridge.jpg" alt="">
-        <img class="hero-slide" id="bgScene3" src="images/bg-herbs.jpg" alt="">
-        <img class="hero-slide" id="bgScene4" src="images/course-atama.jpg" alt="">
-        <img class="hero-slide" id="bgScene5" src="images/yomogi-okama.jpg" alt="">
-        <img class="hero-slide" id="bgScene6" src="images/keiri-together.jpg" alt="">
-        <img class="hero-slide" id="bgScene7" src="images/bg-closing.jpg" alt="">
+        <img class="hero-slide" id="bgScene2" src="images/ozaki-bridge-look.jpg" alt="">
+        <img class="hero-slide" id="bgScene3" src="images/bg-bridge.jpg" alt="">
+        <img class="hero-slide" id="bgScene4" src="images/yomogi-okama.jpg" alt="">
+        <img class="hero-slide" id="bgScene5" src="images/course-atama.jpg" alt="">
+        <img class="hero-slide" id="bgScene6" src="images/keiri-desk.jpg" alt="">
+        <img class="hero-slide" id="bgScene7" src="images/ozaki-smile.jpg" alt="">
+        <img class="hero-slide" id="bgScene8" src="images/scenery.jpg" alt="">
       </div>
       <div class="hero-scrim"></div>
     </div>
@@ -812,9 +820,8 @@ video.hero-slide{width:100%;height:100%;object-fit:cover;}
       <div class="hj-panel hj-panel-title">
         <div class="hero-text">
           <p class="hero-eyebrow">Re.funfun ／ り.ふぁんふぁん</p>
-          <h1 id="heroTitle">学んで終わり、<br><em>じゃない。</em></h1>
-          <p class="hero-sub" id="heroSub">誰一人置いてきぼりにしない</p>
-          <p class="hero-sub2" id="heroSub2">長崎県の小さな島から、全国へ。<br>61歳の今が、いちばん面白い。</p>
+          <h1 id="heroTitle">繰り返し笑顔に<br><em>会える場所。</em></h1>
+          <p class="hero-sub" id="heroSub">心も身体も、これからの一歩も。<br>また帰ってきたくなる場所。</p>
         </div>
         <div class="sec-ctrl hj-scene-ctrl">
           <button class="sc-btn bg" title="背景写真を変更" onclick="openBgImg(this.closest('.hj-panel').dataset.scene)">📷</button>
@@ -822,44 +829,33 @@ video.hero-slide{width:100%;height:100%;object-fit:cover;}
           <button class="sc-btn dn" title="下へ移動" onclick="moveScene(this,1)">↓</button>
         </div>
       </div>
-      <!-- 2: 橋 = メインタイトル -->
+      <!-- ②: 橋＋空を見上げる私 = この人は誰？ -->
       <div class="hj-panel">
-        <h2 class="hj-main" id="hjMain2">人と人を、つなぐ。</h2>
-        <p class="hj-main-sub" id="hjSub2">生活の一部でもある、島と島を結ぶ橋のように。</p>
+        <h2 class="hj-main" id="hjMain2">長崎の小さな島から。</h2>
+        <p class="hj-main-sub" id="hjSub2">61歳、今がいちばん面白い。</p>
         <div class="sec-ctrl hj-scene-ctrl">
           <button class="sc-btn bg" title="背景写真を変更" onclick="openBgImg(this.closest('.hj-panel').dataset.scene)">📷</button>
           <button class="sc-btn up" title="上へ移動" onclick="moveScene(this,-1)">↑</button>
           <button class="sc-btn dn" title="下へ移動" onclick="moveScene(this,1)">↓</button>
         </div>
       </div>
-      <!-- 3: 講座一覧 イントロ -->
+      <!-- ③: サロン看板（※本物の看板写真が届いたら差替） -->
       <div class="hj-panel">
-        <span class="hj-clabel" id="hjLabel3">COURSE LINEUP</span>
-        <h2 class="hj-main" id="hjMain3">3つの講座</h2>
-        <p class="hj-main-sub" id="hjSub3">あなたのペースで学べる、Re.funfun の講座をご紹介します。</p>
+        <span class="hj-clabel" id="hjLabel3">WELCOME</span>
+        <h2 class="hj-main" id="hjMain3">Re.funfun</h2>
+        <p class="hj-main-sub" id="hjSub3">り.ふぁんふぁん</p>
+        <p class="hj-main-sub" id="hjCourses3" style="margin-top:1rem;line-height:2;">🌿 おかま直伝よもぎ蒸し®　<br class="spbr">💆‍♀️ おかま直伝®あたまほぐし　<br class="spbr">📚 おかま直伝®経理のがっこう</p>
         <div class="sec-ctrl hj-scene-ctrl">
           <button class="sc-btn bg" title="背景写真を変更" onclick="openBgImg(this.closest('.hj-panel').dataset.scene)">📷</button>
           <button class="sc-btn up" title="上へ移動" onclick="moveScene(this,-1)">↑</button>
           <button class="sc-btn dn" title="下へ移動" onclick="moveScene(this,1)">↓</button>
         </div>
       </div>
-      <!-- 4: あたまほぐし講座 -->
+      <!-- ④: よもぎ蒸し -->
       <div class="hj-panel">
         <span class="hj-clabel" id="hjLabel4">COURSE</span>
-        <h2 class="hj-ctitle" id="hjCTitle4">あたまほぐし講座</h2>
-        <p class="hj-cdesc" id="hjCDesc4">「やってみたい！」がカタチになる、あたまほぐしの専門講座。少人数制でひとりひとりのペースに合わせて指導し、出張対応・受講後のフォロー・練習会まで充実。57歳で学び60歳でデビューした講師だからこそ、未経験からでも安心して一歩を踏み出せます。</p>
-        <a href="atama.html" class="btn hj-cbtn">あたまほぐし講座を見る →</a>
-        <div class="sec-ctrl hj-scene-ctrl">
-          <button class="sc-btn bg" title="背景写真を変更" onclick="openBgImg(this.closest('.hj-panel').dataset.scene)">📷</button>
-          <button class="sc-btn up" title="上へ移動" onclick="moveScene(this,-1)">↑</button>
-          <button class="sc-btn dn" title="下へ移動" onclick="moveScene(this,1)">↓</button>
-        </div>
-      </div>
-      <!-- 4: よもぎ蒸し講座 -->
-      <div class="hj-panel">
-        <span class="hj-clabel" id="hjLabel5">COURSE</span>
-        <h2 class="hj-ctitle" id="hjCTitle5">よもぎ蒸し講座</h2>
-        <p class="hj-cdesc" id="hjCDesc5">ゼロからスタートした還暦セラピストが伝える、1日でしっかり身につく実践型のよもぎ蒸し講座。学んで終わりではなく、サロン導入後の運営・集客・続け方まで丁寧にサポート。おかま直伝®の公式テキストで、体系立てて確実に学べます。</p>
+        <h2 class="hj-ctitle" id="hjCTitle4">よもぎ蒸し講座</h2>
+        <p class="hj-cdesc" id="hjCDesc4">1日で身につく、実践型のよもぎ蒸し講座。</p>
         <a href="yomogi.html" class="btn hj-cbtn">よもぎ蒸し講座を見る →</a>
         <div class="sec-ctrl hj-scene-ctrl">
           <button class="sc-btn bg" title="背景写真を変更" onclick="openBgImg(this.closest('.hj-panel').dataset.scene)">📷</button>
@@ -867,11 +863,23 @@ video.hero-slide{width:100%;height:100%;object-fit:cover;}
           <button class="sc-btn dn" title="下へ移動" onclick="moveScene(this,1)">↓</button>
         </div>
       </div>
-      <!-- 5: 経理のがっこう -->
+      <!-- ⑤: あたまほぐし -->
+      <div class="hj-panel">
+        <span class="hj-clabel" id="hjLabel5">COURSE</span>
+        <h2 class="hj-ctitle" id="hjCTitle5">あたまほぐし講座</h2>
+        <p class="hj-cdesc" id="hjCDesc5">未経験から、自分の手で。あたまほぐしの専門講座。</p>
+        <a href="atama.html" class="btn hj-cbtn">あたまほぐし講座を見る →</a>
+        <div class="sec-ctrl hj-scene-ctrl">
+          <button class="sc-btn bg" title="背景写真を変更" onclick="openBgImg(this.closest('.hj-panel').dataset.scene)">📷</button>
+          <button class="sc-btn up" title="上へ移動" onclick="moveScene(this,-1)">↑</button>
+          <button class="sc-btn dn" title="下へ移動" onclick="moveScene(this,1)">↓</button>
+        </div>
+      </div>
+      <!-- ⑥: 経理のがっこう -->
       <div class="hj-panel">
         <span class="hj-clabel" id="hjLabel6">COURSE</span>
         <h2 class="hj-ctitle" id="hjCTitle6">経理のがっこう</h2>
-        <p class="hj-cdesc" id="hjCDesc6">「できるかどうか」ではなく「必要かどうか」。経理歴40年の現役サロンオーナーが、確定申告・節税・利益管理まで、数字が苦手な方にもやさしく実践的に教えます。「誰かに任せる」から「自分で読める」へ——サロン経営の土台が変わります。</p>
+        <p class="hj-cdesc" id="hjCDesc6">数字が苦手でも大丈夫。サロンのための実践経理。</p>
         <a href="keiri.html" class="btn hj-cbtn">経理のがっこうを見る →</a>
         <div class="sec-ctrl hj-scene-ctrl">
           <button class="sc-btn bg" title="背景写真を変更" onclick="openBgImg(this.closest('.hj-panel').dataset.scene)">📷</button>
@@ -879,10 +887,20 @@ video.hero-slide{width:100%;height:100%;object-fit:cover;}
           <button class="sc-btn dn" title="下へ移動" onclick="moveScene(this,1)">↓</button>
         </div>
       </div>
-      <!-- 7: 締め -->
+      <!-- ⑦: 私の笑顔 = 会ってみたい -->
       <div class="hj-panel">
         <span class="hj-clabel" id="hjLabel7">Re.funfun</span>
-        <h2 class="hj-main" id="hjMain7">繰り返し笑顔に<br>会える場所。</h2>
+        <h2 class="hj-main" id="hjMain7">あなたに会えるのを、<br>楽しみに。</h2>
+        <p class="hj-main-sub" id="hjSub7">心も身体も、軽くなる時間を。</p>
+        <div class="sec-ctrl hj-scene-ctrl">
+          <button class="sc-btn bg" title="背景写真を変更" onclick="openBgImg(this.closest('.hj-panel').dataset.scene)">📷</button>
+          <button class="sc-btn up" title="上へ移動" onclick="moveScene(this,-1)">↑</button>
+          <button class="sc-btn dn" title="下へ移動" onclick="moveScene(this,1)">↓</button>
+        </div>
+      </div>
+      <!-- ⑧: 橋や海の景色 = 締め（①へループ） -->
+      <div class="hj-panel">
+        <h2 class="hj-main" id="hjMain8">また、帰ってきたくなる場所。</h2>
         <div class="sec-ctrl hj-scene-ctrl">
           <button class="sc-btn bg" title="背景写真を変更" onclick="openBgImg(this.closest('.hj-panel').dataset.scene)">📷</button>
           <button class="sc-btn up" title="上へ移動" onclick="moveScene(this,-1)">↑</button>
@@ -1416,13 +1434,13 @@ async function doLogin(){
 function adminLogout(){document.getElementById('adminBar').style.display='none';if(em)toggleEditMode();}
 
 /* EDIT MODE */
-const HP_EIDS=['heroTitle','heroSub','heroSub2','svcTitle',
+const HP_EIDS=['heroTitle','heroSub','svcTitle',
   'svc1Title','svc1Body','svc2Title','svc2Body','svc3Title','svc3Body','profileBody',
   'msvc1Title','msvc1Body','msvc2Title','msvc2Body','msvc3Title','msvc3Body',
   // ジャーニー（スライド）各シーンのテキスト
-  'hjMain2','hjSub2','hjLabel3','hjMain3','hjSub3',
+  'hjMain2','hjSub2','hjLabel3','hjMain3','hjSub3','hjCourses3',
   'hjLabel4','hjCTitle4','hjCDesc4','hjLabel5','hjCTitle5','hjCDesc5',
-  'hjLabel6','hjCTitle6','hjCDesc6','hjLabel7','hjMain7'];
+  'hjLabel6','hjCTitle6','hjCDesc6','hjLabel7','hjMain7','hjSub7','hjMain8'];
 function toggleEditMode(){
   em=!em;
   document.body.classList.toggle('edit-mode',em);
@@ -1471,7 +1489,7 @@ function applySceneOrder(order){
 }
 // localStorageから保存済みのシーン順を取得（cfInitがGSAP構築前に使う）
 function getSceneOrder(){
-  try{const st=JSON.parse(localStorage.getItem(SK));const o=st&&st.texts&&st.texts.cfg_sceneOrder;return o?JSON.parse(o):null;}catch(e){return null;}
+  try{const st=JSON.parse(localStorage.getItem(SK));const o=st&&st.texts&&st.texts.cfg_sceneOrder2;return o?JSON.parse(o):null;}catch(e){return null;}
 }
 // 現在のパネルDOM順（=シーン順）
 function currentSceneOrder(){
@@ -1520,7 +1538,7 @@ function getState(){
   ['heroImg','heroBgImg','svcBgImg','profileBgImg','contactBgImg',
    'svcImg1','svcImg2','svcImg3','profileImg',
    'mSvcImg1','mSvcImg2','mSvcImg3',
-   'bgScene1','bgScene2','bgScene3','bgScene4','bgScene5','bgScene6','bgScene7',
+   'bgScene1','bgScene2','bgScene3','bgScene4','bgScene5','bgScene6','bgScene7','bgScene8',
    'igImg1','igImg2','igImg3','igImg4','igImg5','igImg6','igImg7','igImg8','igImg9'].forEach(id=>{
     const el=document.getElementById(id);
     if(el&&el.src&&(el.src.startsWith('data:')||el.src.startsWith('blob:')))state.imgs[id]=el.src;
@@ -1530,7 +1548,7 @@ function getState(){
   });
   // ジャーニー7シーンの並び順を data_json(texts) に保存（要素idと衝突しない cfg_ キー）
   const order=currentSceneOrder();
-  if(order.length)state.texts.cfg_sceneOrder=JSON.stringify(order);
+  if(order.length)state.texts.cfg_sceneOrder2=JSON.stringify(order);
   return state;
 }
 async function saveAll(authArg){
@@ -1550,7 +1568,7 @@ async function saveAll(authArg){
 function applyState(d){
   if(!d)return;
   if(d.texts)Object.keys(d.texts).forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=d.texts[id];});
-  if(d.texts&&d.texts.cfg_sceneOrder){try{applySceneOrder(JSON.parse(d.texts.cfg_sceneOrder));}catch(e){}}
+  if(d.texts&&d.texts.cfg_sceneOrder2){try{applySceneOrder(JSON.parse(d.texts.cfg_sceneOrder2));}catch(e){}}
   if(d.imgs)Object.keys(d.imgs).forEach(id=>{
     const el=document.getElementById(id);if(!el)return;
     el.src=d.imgs[id];el.style.display='block';
