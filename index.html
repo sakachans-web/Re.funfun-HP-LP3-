@@ -370,6 +370,18 @@ footer{background:#2c2520;color:rgba(255,255,255,.55);padding:3rem 2rem;text-ali
 .edit-mode [contenteditable="true"]{outline:2px dashed var(--sage-l);border-radius:4px;padding:2px 4px;cursor:text;transition:outline-color .2s;}
 .edit-mode [contenteditable="true"]:hover{outline-color:var(--sage);}
 .edit-mode [contenteditable="true"]:focus{outline:2px solid var(--sage);background:rgba(107,143,94,.08);}
+/* 編集モード：ジャーニー（スライド）を縦並びの読みやすいリストにし、全シーンの文字を直接編集できるようにする（通常時はGSAPスクロール演出。編集時はアニメをスキップ＝重なり防止） */
+.edit-mode .hero-journey{height:auto!important;}
+.edit-mode .hj-sticky{position:static!important;height:auto!important;display:block!important;overflow:visible!important;}
+.edit-mode .hero-bg{display:none!important;}
+.edit-mode .hj-hint{display:none!important;}
+.edit-mode .hj-content{position:static!important;pointer-events:auto!important;}
+.edit-mode .hj-panel{position:static!important;inset:auto!important;opacity:1!important;pointer-events:auto!important;min-height:0!important;padding:2.2rem 1.5rem!important;border-bottom:1px dashed var(--beige2);}
+/* GSAPがロード時に子要素へインラインで付ける opacity:0 / transform を編集中は打ち消す */
+.edit-mode .hj-panel>*,.edit-mode .hj-panel .hero-text>*{opacity:1!important;transform:none!important;}
+.edit-mode .hj-main,.edit-mode .hj-main-sub,.edit-mode .hj-ctitle,.edit-mode .hj-cdesc{color:var(--text)!important;text-shadow:none!important;}
+.edit-mode .hj-clabel{color:var(--sage)!important;text-shadow:none!important;}
+.edit-mode .hj-cbtn{pointer-events:none;opacity:.5;}
 
 /* ===== ADMIN BAR ===== */
 .admin-bar{
@@ -655,17 +667,42 @@ body.edit-mode .hero-img-col{opacity:1 !important;transform:none !important;clip
 }
 
 /* ===== HERO: 写真スライドショー（よもぎ→あたま→経理が切り替わる）＋ 白文字（PC/モバイル共通） ===== */
-.hero-slideshow{position:absolute;inset:0;z-index:0;background:var(--sage-d,#3a5233);}
-.hero-slide{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;animation:heroSlideHP 21s infinite;}
-.hero-slide:nth-child(1){animation-delay:0s;}
-.hero-slide:nth-child(2){animation-delay:7s;}
-.hero-slide:nth-child(3){animation-delay:14s;}
-@keyframes heroSlideHP{0%{opacity:0;}3%{opacity:1;}30%{opacity:1;}34%{opacity:0;}100%{opacity:0;}}
-.hero-scrim{position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(38,52,32,.5) 0%,rgba(38,52,32,.66) 100%);}
+/* ピン留めスクロール・ジャーニー: スクロールで海→橋→手→湯気→会計と切り替わりプロフィールへ */
+.hero-journey{position:relative;height:1120vh;display:block;overflow:visible;background:#cfe0c8;min-height:0;}
+.hj-sticky{position:sticky;top:0;height:100vh;overflow:hidden;display:flex;align-items:center;justify-content:center;}
+.hero-slideshow{position:absolute;inset:0;z-index:0;background:#cfe0c8;}
+.hero-slide{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;}
+.hero-slide:first-child{opacity:1;}
+video.hero-slide{width:100%;height:100%;object-fit:cover;}
+/* 世界観を見せるため画像はしっかり表示。文字可読性はソフトスクリムで確保（明るく柔らかい印象） */
+.hero-scrim{position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(26,40,24,.18) 0%,rgba(26,40,24,.36) 45%,rgba(26,40,24,.46) 100%);}
+/* スライド連動キャプション（GSAPがスクロールに合わせて出し分け） */
+.hero-captions{position:absolute;left:0;right:0;bottom:clamp(4.5rem,12vh,7rem);z-index:2;height:1.8em;text-align:center;pointer-events:none;}
+.hero-caption{position:absolute;left:0;right:0;opacity:0;color:#fff;font-family:'Noto Serif JP',serif;font-size:clamp(.95rem,1.8vw,1.15rem);letter-spacing:.14em;text-shadow:0 1px 12px rgba(0,0,0,.55);}
+.hero-caption:first-child{opacity:1;}
+/* スクロール促し */
+.hj-hint{position:absolute;left:50%;bottom:1.6rem;transform:translateX(-50%);z-index:2;color:#fff;font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;opacity:.9;display:flex;flex-direction:column;align-items:center;gap:.5rem;pointer-events:none;}
+.hj-hint::after{content:'';width:1px;height:34px;background:rgba(255,255,255,.75);animation:hjHint 1.8s ease-in-out infinite;transform-origin:top;}
+@keyframes hjHint{0%{transform:scaleY(0);opacity:0;}40%{opacity:1;}100%{transform:scaleY(1);opacity:0;}}
+.hero-journey .hero-inner{min-height:0;}
+/* 各シーンの内容パネル（GSAPがシーンと同期して出し分け） */
+.hj-content{position:absolute;inset:0;z-index:2;pointer-events:none;}
+.hj-panel{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:.7rem;padding:5rem 1.5rem;opacity:1;pointer-events:none;}
+.hj-panel:first-child{opacity:1;}
+.hj-panel .hero-text{display:flex;flex-direction:column;gap:.4rem;align-items:center;}
+.hj-panel .hero-actions{margin-top:1.2rem;}
+.hj-main{font-family:'Noto Serif JP',serif;font-size:clamp(2.1rem,5.2vw,3.6rem);color:#fff;text-shadow:0 2px 20px rgba(0,0,0,.5);letter-spacing:.05em;line-height:1.5;}
+.hj-main-sub{color:rgba(255,255,255,.92);font-size:clamp(.9rem,1.8vw,1.05rem);text-shadow:0 1px 10px rgba(0,0,0,.45);margin-top:.4rem;}
+.hj-clabel{color:#fff;font-size:.7rem;letter-spacing:.26em;opacity:.92;text-shadow:0 1px 8px rgba(0,0,0,.5);}
+.hj-ctitle{font-family:'Noto Serif JP',serif;font-size:clamp(1.8rem,4.6vw,3rem);color:#fff;text-shadow:0 2px 20px rgba(0,0,0,.5);}
+.hj-cdesc{color:rgba(255,255,255,.95);font-size:clamp(.9rem,1.7vw,1.05rem);line-height:1.95;max-width:680px;text-shadow:0 1px 12px rgba(0,0,0,.6);margin:.3rem 0 1rem;}
+.hj-cbtn{background:#fff;color:var(--sage)!important;box-shadow:0 8px 24px rgba(0,0,0,.22);}
+.hj-cbtn:hover{background:#fff;transform:translateY(-3px);}
 .hero-eyebrow{color:#fff !important;}
 .hero-eyebrow::after{background:rgba(255,255,255,.6) !important;}
 .hero h1{color:#fff !important;text-shadow:0 2px 18px rgba(0,0,0,.4);}
 .hero h1 em{color:#d8e8cf !important;}
+.hero-tagline{font-family:'Noto Serif JP',serif;font-size:clamp(1.05rem,2.3vw,1.55rem);color:#fff !important;text-shadow:0 2px 16px rgba(0,0,0,.45);letter-spacing:.05em;margin:.1rem 0 1rem;}
 .hero-sub{color:rgba(255,255,255,.96) !important;text-shadow:0 1px 8px rgba(0,0,0,.35);}
 .hero-sub2{color:rgba(255,255,255,.9) !important;text-shadow:0 1px 8px rgba(0,0,0,.35);}
 .hero-actions .btn-outline{border-color:#fff;color:#fff;background:transparent;}
@@ -688,7 +725,6 @@ body.edit-mode .hero-img-col{opacity:1 !important;transform:none !important;clip
     </div>
     <div class="nd-group">
       <span class="nd-glabel">このページ</span>
-      <a href="#services"><span class="nd-icon">📋</span>講座一覧</a>
       <a href="#profile"><span class="nd-icon">👤</span>プロフィール</a>
       <a href="#instagram"><span class="nd-icon">📸</span>Instagram</a>
       <a href="#contact"><span class="nd-icon">✉️</span>お問い合わせ</a>
@@ -723,161 +759,83 @@ body.edit-mode .hero-img-col{opacity:1 !important;transform:none !important;clip
 <nav class="breadcrumb"><span class="bc-cur">トップ</span></nav>
 
 <!-- HERO -->
-<section class="hero sec-manageable" id="heroSec" data-sec-id="hero">
+<section class="hero hero-journey sec-manageable" id="heroSec" data-sec-id="hero">
   <div class="sec-ctrl">
     <button class="sc-btn vis" onclick="toggleSecVis(this)">👁</button>
     <button class="sc-btn up" onclick="moveSec(this,-1)">↑</button>
     <button class="sc-btn dn" onclick="moveSec(this,1)">↓</button>
   </div>
-  <div class="hero-bg">
-    <div class="hero-slideshow">
-      <div class="hero-slide" style="background-image:url('images/bg-herbs.jpg');"></div>
-      <div class="hero-slide" style="background-image:url('images/course-atama.jpg');"></div>
-      <div class="hero-slide" style="background-image:url('images/course-keiri.jpg');"></div>
+  <div class="hj-sticky">
+    <div class="hero-bg">
+      <div class="hero-slideshow">
+        <!-- 世界観: 海 → 島と島を渡る橋 → あたまほぐしの手 → よもぎ蒸しの湯気(動画) → 会計講座 -->
+        <div class="hero-slide" style="background-image:url('images/bg-sea.jpg');"></div>
+        <div class="hero-slide" style="background-image:url('images/bg-bridge.jpg');"></div>
+        <div class="hero-slide" style="background-image:url('images/bg-herbs.jpg');"></div>
+        <div class="hero-slide" style="background-image:url('images/course-atama.jpg');"></div>
+        <video class="hero-slide" autoplay muted loop playsinline preload="metadata" poster="images/course-yomogi.jpg">
+          <source src="images/804301555.257469.mp4" type="video/mp4">
+        </video>
+        <div class="hero-slide" style="background-image:url('images/course-keiri.jpg');"></div>
+        <div class="hero-slide" style="background-image:url('images/bg-closing.jpg');"></div>
+      </div>
+      <div class="hero-scrim"></div>
     </div>
-    <div class="hero-scrim"></div>
-  </div>
-  <div class="hero-inner">
-    <!-- P1: テキスト (モバイル1画面目) -->
-    <div class="hero-p1">
-      <div class="hero-text">
-        <p class="hero-eyebrow">Re.funfun ／ り.ふぁんふぁん</p>
-        <h1 id="heroTitle">学んで終わり、<br><em>じゃない。</em></h1>
-        <p class="hero-sub" id="heroSub">誰一人置いてきぼりにしない</p>
-        <p class="hero-sub2" id="heroSub2">長崎県の小さな島から、全国へ。<br>61歳の今が、いちばん面白い。</p>
-      </div>
-      <!-- CTAボタン（モバイルは非表示・PCはテキスト下に左揃え表示） -->
-      <div class="hero-actions">
-        <a href="#contact" class="btn">お問い合わせはこちら</a>
-        <a href="#services" class="btn btn-outline">講座を見る</a>
-      </div>
-      <!-- スクロール促しインジケーター (モバイルのみ表示) -->
-      <div class="hero-scroll-hint">
-        <span>scroll</span>
-        <div class="scroll-line"></div>
-      </div>
-    </div>
-    <!-- P2: 画像+ボタン (モバイル2画面目) -->
-    <div class="hero-p2">
-      <div class="hero-img-col">
-        <div class="hero-deco"></div>
-        <div class="hero-deco2"></div>
-        <div class="hero-img-frame cf-img-wrap editable-wrap">
-          <img src="images/hero.jpg" id="heroImg" alt="頭をほぐす施術の様子" style="display:block;aspect-ratio:4/3;object-fit:cover;">
-          <div class="img-ph" id="heroImgPlaceholder" onclick="openImgModal('heroImg','heroImgPlaceholder')" style="aspect-ratio:4/3;display:none;">
-            <span>📸</span><span>メイン写真を追加</span>
-          </div>
-          <button class="img-change-btn" onclick="openImg('heroImg','heroImgPlaceholder')">📷 写真を変更</button>
+    <div class="hj-content">
+      <!-- 1: 海 = タイトル一式 -->
+      <div class="hj-panel hj-panel-title">
+        <div class="hero-text">
+          <p class="hero-eyebrow">Re.funfun ／ り.ふぁんふぁん</p>
+          <h1 id="heroTitle">学んで終わり、<br><em>じゃない。</em></h1>
+          <p class="hero-sub" id="heroSub">誰一人置いてきぼりにしない</p>
+          <p class="hero-sub2" id="heroSub2">長崎県の小さな島から、全国へ。<br>61歳の今が、いちばん面白い。</p>
+        </div>
+        <div class="hero-actions">
+          <a href="#contact" class="btn">お問い合わせはこちら</a>
         </div>
       </div>
+      <!-- 2: 橋 = メインタイトル -->
+      <div class="hj-panel">
+        <h2 class="hj-main" id="hjMain2">人と人を、つなぐ。</h2>
+        <p class="hj-main-sub" id="hjSub2">生活の一部でもある、島と島を結ぶ橋のように。</p>
+      </div>
+      <!-- 3: 講座一覧 イントロ -->
+      <div class="hj-panel">
+        <span class="hj-clabel" id="hjLabel3">COURSE LINEUP</span>
+        <h2 class="hj-main" id="hjMain3">3つの講座</h2>
+        <p class="hj-main-sub" id="hjSub3">あなたのペースで学べる、Re.funfun の講座をご紹介します。</p>
+      </div>
+      <!-- 4: あたまほぐし講座 -->
+      <div class="hj-panel">
+        <span class="hj-clabel" id="hjLabel4">COURSE</span>
+        <h2 class="hj-ctitle" id="hjCTitle4">あたまほぐし講座</h2>
+        <p class="hj-cdesc" id="hjCDesc4">「やってみたい！」がカタチになる、あたまほぐしの専門講座。少人数制でひとりひとりのペースに合わせて指導し、出張対応・受講後のフォロー・練習会まで充実。57歳で学び60歳でデビューした講師だからこそ、未経験からでも安心して一歩を踏み出せます。</p>
+        <a href="atama.html" class="btn hj-cbtn">あたまほぐし講座を見る →</a>
+      </div>
+      <!-- 4: よもぎ蒸し講座 -->
+      <div class="hj-panel">
+        <span class="hj-clabel" id="hjLabel5">COURSE</span>
+        <h2 class="hj-ctitle" id="hjCTitle5">よもぎ蒸し講座</h2>
+        <p class="hj-cdesc" id="hjCDesc5">ゼロからスタートした還暦セラピストが伝える、1日でしっかり身につく実践型のよもぎ蒸し講座。学んで終わりではなく、サロン導入後の運営・集客・続け方まで丁寧にサポート。おかま直伝®の公式テキストで、体系立てて確実に学べます。</p>
+        <a href="yomogi.html" class="btn hj-cbtn">よもぎ蒸し講座を見る →</a>
+      </div>
+      <!-- 5: 経理のがっこう -->
+      <div class="hj-panel">
+        <span class="hj-clabel" id="hjLabel6">COURSE</span>
+        <h2 class="hj-ctitle" id="hjCTitle6">経理のがっこう</h2>
+        <p class="hj-cdesc" id="hjCDesc6">「できるかどうか」ではなく「必要かどうか」。経理歴40年の現役サロンオーナーが、確定申告・節税・利益管理まで、数字が苦手な方にもやさしく実践的に教えます。「誰かに任せる」から「自分で読める」へ——サロン経営の土台が変わります。</p>
+        <a href="keiri.html" class="btn hj-cbtn">経理のがっこうを見る →</a>
+      </div>
+      <!-- 7: 締め -->
+      <div class="hj-panel">
+        <span class="hj-clabel" id="hjLabel7">Re.funfun</span>
+        <h2 class="hj-main" id="hjMain7">繰り返し笑顔に<br>会える場所。</h2>
+      </div>
     </div>
+    <div class="hj-hint" aria-hidden="true"><span>scroll</span></div>
   </div>
 </section>
 
-
-<!-- MOBILE SERVICE PAGES (mobile only) -->
-<section class="mobile-svc-page" id="svcPage1" style="background:#c8ddbf;">
-  <div class="msvc-img cf-img-wrap editable-wrap">
-    <img src="images/bg-herbs.jpg" id="mSvcImg1" alt="よもぎ蒸しの素材" style="display:block;">
-    <div class="svc-tag">よもぎ蒸し</div>
-    <button class="img-change-btn" onclick="openImg('mSvcImg1',null)">📷 画像を変更</button>
-  </div>
-  <div class="msvc-body">
-    <span class="section-label">COURSE 01</span>
-    <h3 id="msvc1Title">よもぎ蒸し講座</h3>
-    <p id="msvc1Body">ゼロからスタートした還暦セラピスト講師が伝える、1日でしっかり身につく実践型講座。学んで終わりではなく、導入後のサポートまで丁寧に。</p>
-    <a href="yomogi.html" class="svc-link">詳しく見る →</a>
-  </div>
-</section>
-
-<section class="mobile-svc-page" id="svcPage2" style="background:#b8d4ae;">
-  <div class="msvc-img cf-img-wrap editable-wrap">
-    <img src="images/course-atama.jpg" id="mSvcImg2" alt="あたまほぐし講座の様子" style="display:block;">
-    <div class="svc-tag">あたまほぐし</div>
-    <button class="img-change-btn" onclick="openImg('mSvcImg2',null)">📷 画像を変更</button>
-  </div>
-  <div class="msvc-body">
-    <span class="section-label">COURSE 02</span>
-    <h3 id="msvc2Title">あたまほぐし講座</h3>
-    <p id="msvc2Body">やってみたい！がカタチになる。少人数制・出張対応・受講後フォローも充実。57歳で学び60歳でデビューした講師だからこそ伝えられること。</p>
-    <a href="atama.html" class="svc-link">詳しく見る →</a>
-  </div>
-</section>
-
-<section class="mobile-svc-page" id="svcPage3" style="background:#cfc3e8;">
-  <div class="msvc-img cf-img-wrap editable-wrap">
-    <img src="images/course-keiri.jpg" id="mSvcImg3" alt="経理のがっこう講座の様子" style="display:block;">
-    <div class="svc-tag" style="background:#7d6b8a;">経理のがっこう</div>
-    <button class="img-change-btn" onclick="openImg('mSvcImg3',null)">📷 画像を変更</button>
-  </div>
-  <div class="msvc-body">
-    <span class="section-label">COURSE 03</span>
-    <h3 id="msvc3Title">経理のがっこう</h3>
-    <p id="msvc3Body">できるかどうかではなく、必要かどうか。経理歴40年のサロンオーナーが、確定申告・節税・利益戦略までをやさしく教えます。</p>
-    <a href="keiri.html" class="svc-link" style="color:#7d6b8a;">詳しく見る →</a>
-  </div>
-</section>
-
-<!-- SERVICES (desktop only) -->
-<section class="services sec-manageable desktop-only" id="services" data-sec-id="services">
-  <div class="sec-ctrl">
-    <button class="sc-btn bg" onclick="openBgImg('svcBgImg')">📷</button>
-    <button class="sc-btn vis" onclick="toggleSecVis(this)">👁</button>
-    <button class="sc-btn up" onclick="moveSec(this,-1)">↑</button>
-    <button class="sc-btn dn" onclick="moveSec(this,1)">↓</button>
-  </div>
-  <div class="services-bg">
-    <img src="" id="svcBgImg" alt="">
-  </div>
-  <div class="services-inner">
-    <div class="services-header reveal">
-      <span class="section-label">COURSES</span>
-      <h2 class="section-title" id="svcTitle">講座・サービス一覧</h2>
-    </div>
-    <div class="service-grid stagger">
-
-      <div class="service-card reveal from-left">
-        <div class="svc-img-wrap cf-img-wrap editable-wrap">
-          <img src="images/bg-herbs.jpg" id="svcImg1" alt="よもぎ蒸しの素材" style="display:block;">
-          <div class="svc-tag">よもぎ蒸し</div>
-          <button class="img-change-btn" onclick="openImg('svcImg1',null)">📷 画像を変更</button>
-        </div>
-        <div class="svc-body">
-          <h3 id="svc1Title">よもぎ蒸し講座</h3>
-          <p id="svc1Body">ゼロからスタートした還暦セラピスト講師が伝える、1日でしっかり身につく実践型講座。学んで終わりではなく、導入後のサポートまで丁寧に。</p>
-          <a href="yomogi.html" class="svc-link" id="svc1Link">詳しく見る →</a>
-        </div>
-      </div>
-
-      <div class="service-card reveal">
-        <div class="svc-img-wrap cf-img-wrap editable-wrap">
-          <img src="images/course-atama.jpg" id="svcImg2" alt="あたまほぐし講座の様子" style="display:block;">
-          <div class="svc-tag">あたまほぐし</div>
-          <button class="img-change-btn" onclick="openImg('svcImg2',null)">📷 画像を変更</button>
-        </div>
-        <div class="svc-body">
-          <h3 id="svc2Title">あたまほぐし講座</h3>
-          <p id="svc2Body">やってみたい！がカタチになる。少人数制・出張対応・受講後フォローも充実。57歳で学び60歳でデビューした講師だからこそ伝えられること。</p>
-          <a href="atama.html" class="svc-link" id="svc2Link">詳しく見る →</a>
-        </div>
-      </div>
-
-      <div class="service-card reveal from-right">
-        <div class="svc-img-wrap cf-img-wrap editable-wrap">
-          <img src="images/course-keiri.jpg" id="svcImg3" alt="経理のがっこう講座の様子" style="display:block;">
-          <div class="svc-tag">経理のがっこう</div>
-          <button class="img-change-btn" onclick="openImg('svcImg3',null)">📷 画像を変更</button>
-        </div>
-        <div class="svc-body">
-          <h3 id="svc3Title">経理のがっこう</h3>
-          <p id="svc3Body">できるかどうかではなく、必要かどうか。経理歴40年のサロンオーナーが、確定申告・節税・利益戦略までをやさしく教えます。</p>
-          <a href="keiri.html" class="svc-link" id="svc3Link">詳しく見る →</a>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</section>
 
 <!-- PROFILE -->
 <section class="profile sec-manageable" id="profile" data-sec-id="profile">
@@ -909,7 +867,7 @@ body.edit-mode .hero-img-col{opacity:1 !important;transform:none !important;clip
     <div class="profile-text reveal from-right">
       <h2 class="section-title" style="margin-bottom:0.3rem;font-size:1.6rem;">尾﨑 幸子</h2>
       <p class="profile-name-yomi">おざきゆきこ / Re.funfun（り.ふぁんふぁん）</p>
-      <p class="profile-body" id="profileBody">学んで終わりではなく、そこからどう続けていくかまで大切にしています。技術や知識だけを伝えるのではなく、導入後の運営や続け方、発信なども含め、一人ひとりに寄り添いながらサポートしています。フォロー体制の厚さも特徴のひとつで、<em style="font-style:normal;color:var(--sage);">"誰一人置いてきぼりにしない"</em>を大切にしています。61歳。今がいちばん面白い！そんな想いを込めながら、小さな島から全国へ発信しています。</p>
+      <p class="profile-body" id="profileBody">学んで終わりではなく、そこからどう続けていくかまで大切にしています。技術や知識だけを伝えるのではなく、導入後の運営や続け方、発信なども含め、一人ひとりに寄り添いながらサポートしています。フォロー体制の厚さも特徴のひとつで、<em style="font-style:normal;color:var(--sage);">"誰一人置いてきぼりにしない"</em>を大切にしています。61歳。今がいちばん面白い！そんな想いを込めながら、小さな島から全国へ発信しています。<br><br>そうした想いを大切にしながら、現在はよもぎ蒸し・あたまほぐし・経理のがっこうの講師として活動しています。</p>
       <div class="profile-stats">
         <div class="stat-item"><div class="stat-num">40年</div><div class="stat-label">経理歴</div></div>
         <div class="stat-item"><div class="stat-num">約90%</div><div class="stat-label">サロンリピーター</div></div>
@@ -1017,7 +975,6 @@ body.edit-mode .hero-img-col{opacity:1 !important;transform:none !important;clip
   <div class="footer-inner">
     <p class="footer-logo">Re.funfun</p>
     <nav class="footer-nav">
-      <a href="#services">講座一覧</a>
       <a href="#profile">プロフィール</a>
       <a href="#instagram">Instagram</a>
       <a href="#contact">お問い合わせ</a>
@@ -1170,14 +1127,41 @@ function cfInit(){
 
   /* --- ヒーロー: ページロード時 --- */
   // 背景: ゆっくりズーム (photo-scale)
-  gsap.to('#heroBgImg', {scale:1.1, duration:14, ease:'none'});
+  if(document.querySelector('#heroBgImg')) gsap.to('#heroBgImg', {scale:1.1, duration:14, ease:'none'});
+
+  /* --- ヒーロー: ピン留めスクロール・ジャーニー（scrubでシーンをクロスフェード） --- */
+  (function(){
+    const sec=document.querySelector('.hero-journey'); if(!sec) return;
+    const scenes=gsap.utils.toArray('.hero-journey .hero-slide');
+    const panels=gsap.utils.toArray('.hero-journey .hj-panel');
+    if(scenes.length<2) return;
+    // 各パネルの中身（ラベル/タイトル/説明/ボタン）を個別に時間差で出すため子要素を取得
+    const kids=panels.map(p=>gsap.utils.toArray(p.children));
+    gsap.set(scenes,{opacity:0}); gsap.set(scenes[0],{opacity:1});
+    gsap.set(panels,{opacity:1,pointerEvents:'none'}); if(panels[0]) gsap.set(panels[0],{pointerEvents:'auto'});
+    kids.forEach((k,idx)=>gsap.set(k,{opacity: idx===0?1:0, y: idx===0?0:44}));
+    const tl=gsap.timeline({scrollTrigger:{trigger:sec,start:'top top',end:'bottom bottom',scrub:1.5}});
+    for(let i=1;i<scenes.length;i++){
+      // 背景: 前シーンをゆっくりフェードアウト、次シーンは軽くズームしながら浮かび上がる
+      tl.to(scenes[i-1],{opacity:0,duration:2.0,ease:'none'})
+        .fromTo(scenes[i],{opacity:0,scale:1.08},{opacity:1,scale:1,duration:2.0,ease:'none'},'<');
+      // 前パネルの中身は上へ抜けて消える
+      if(kids[i-1].length) tl.to(kids[i-1],{opacity:0,y:-22,duration:.9,ease:'power1.in',stagger:0.1},'<');
+      tl.set(panels[i-1],{pointerEvents:'none'},'<').set(panels[i],{pointerEvents:'auto'},'>');
+      // 次パネル: タイトル→説明→ボタン の順に、ゆっくり時間差で浮かび上がる
+      if(kids[i].length) tl.fromTo(kids[i],{opacity:0,y:44},{opacity:1,y:0,duration:1.5,ease:'power2.out',stagger:1.1},'>');
+      tl.to({},{duration:2.0}); // 各シーンを保持
+    }
+    gsap.to('.hj-hint',{opacity:0,scrollTrigger:{trigger:sec,start:'top top',end:'top -15%',scrub:true}});
+  })();
+
   // P1 (タイトル+ボタン): 写真の出現と同時に、まとめてふわっと表示（順次=パワポ感を解消）
   // ※ボタンは hero-actions ごとまとめて動かす（個別アニメだと縦ズレの原因になる）
   gsap.from(['.hero-eyebrow','.hero h1','.hero-sub','.hero-sub2','.hero-actions','.hero-scroll-hint'],
     {opacity:0, y:24, duration:1.0, ease:EASE_OUT, stagger:0});
 
-  // P2 (画像): スクロールして入ってきた時にアニメーション
-  gsap.from('.hero-img-col', {
+  // P2 (画像): 旧ヒーロー写真は廃止（ジャーニー化）。要素がある場合のみ
+  if(document.querySelector('.hero-img-col')) gsap.from('.hero-img-col', {
     opacity:0, scale:.9, duration:1.1, ease:EASE_OUT,
     scrollTrigger:{trigger:'.hero-p2', start:'top 85%'}
   });
@@ -1306,14 +1290,11 @@ function initMobileSubheader(){
   const titleEl = document.getElementById('subheaderTitle');
   if(!bar || !labelEl || !titleEl) return;
   const sectionConfigs = [
-    {el:document.getElementById('svcPage1'), label:'COURSES', title:'講座一覧'},
-    {el:document.getElementById('svcPage2'), label:'COURSES', title:'講座一覧'},
-    {el:document.getElementById('svcPage3'), label:'COURSES', title:'講座一覧'},
     {el:document.getElementById('profile'), label:'PROFILE', title:'プロフィール'},
     {el:document.querySelector('.instagram'), label:'INSTAGRAM', title:'@re_fun_fun'},
     {el:document.querySelector('.contact'), label:'CONTACT', title:'お問い合わせ'},
   ].filter(c=>c.el);
-  const hideTargets = [...document.querySelectorAll('.hero-p1,.hero-p2')];
+  const hideTargets = [...document.querySelectorAll('.hj-sticky')];
 
   const obs = new IntersectionObserver(entries=>{
     entries.forEach(entry=>{
@@ -1369,7 +1350,11 @@ function adminLogout(){document.getElementById('adminBar').style.display='none';
 /* EDIT MODE */
 const HP_EIDS=['heroTitle','heroSub','heroSub2','svcTitle',
   'svc1Title','svc1Body','svc2Title','svc2Body','svc3Title','svc3Body','profileBody',
-  'msvc1Title','msvc1Body','msvc2Title','msvc2Body','msvc3Title','msvc3Body'];
+  'msvc1Title','msvc1Body','msvc2Title','msvc2Body','msvc3Title','msvc3Body',
+  // ジャーニー（スライド）各シーンのテキスト
+  'hjMain2','hjSub2','hjLabel3','hjMain3','hjSub3',
+  'hjLabel4','hjCTitle4','hjCDesc4','hjLabel5','hjCTitle5','hjCDesc5',
+  'hjLabel6','hjCTitle6','hjCDesc6','hjLabel7','hjMain7'];
 function toggleEditMode(){
   em=!em;
   document.body.classList.toggle('edit-mode',em);
