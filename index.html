@@ -384,9 +384,9 @@ footer{background:#2c2520;color:rgba(255,255,255,.55);padding:3rem 2rem;text-ali
 .edit-mode .hj-main,.edit-mode .hj-main-sub,.edit-mode .hj-ctitle,.edit-mode .hj-cdesc,.edit-mode .hj-clabel,.edit-mode .hero-eyebrow,.edit-mode #heroTitle,.edit-mode #heroSub,.edit-mode #heroSub2{color:#fff!important;text-shadow:0 1px 10px rgba(0,0,0,.55)!important;}
 .edit-mode .hj-cbtn{pointer-events:none;opacity:.55;}
 /* 📷 背景変更ボタン（編集モードのみ表示） */
-.hj-bg-btn{display:none;}
-.edit-mode .hj-bg-btn{display:inline-flex;align-items:center;gap:.4rem;margin-top:1.2rem;background:#fff;color:var(--sage-d);border:none;border-radius:8px;padding:.6rem 1.1rem;font-size:.82rem;font-weight:600;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.25);}
-.edit-mode .hj-bg-btn:hover{background:var(--sage-p);}
+/* 各シーンの右側コントロール（背景写真📷・上へ・下へ）。他セクションの sec-ctrl と同じ見た目。編集モードのみ表示 */
+.edit-mode .hj-scene-ctrl{display:flex;}
+.edit-mode .hj-panel>.hj-scene-ctrl{position:absolute!important;z-index:50!important;opacity:1!important;transform:none!important;}
 
 /* ===== ADMIN BAR ===== */
 .admin-bar{
@@ -779,8 +779,8 @@ video.hero-slide{width:100%;height:100%;object-fit:cover;}
         <img class="hero-slide" id="bgScene2" src="images/bg-bridge.jpg" alt="">
         <img class="hero-slide" id="bgScene3" src="images/bg-herbs.jpg" alt="">
         <img class="hero-slide" id="bgScene4" src="images/course-atama.jpg" alt="">
-        <img class="hero-slide" id="bgScene5" src="images/course-yomogi.jpg" alt="">
-        <img class="hero-slide" id="bgScene6" src="images/course-keiri.jpg" alt="">
+        <img class="hero-slide" id="bgScene5" src="images/yomogi-okama.jpg" alt="">
+        <img class="hero-slide" id="bgScene6" src="images/keiri-together.jpg" alt="">
         <img class="hero-slide" id="bgScene7" src="images/bg-closing.jpg" alt="">
       </div>
       <div class="hero-scrim"></div>
@@ -794,20 +794,32 @@ video.hero-slide{width:100%;height:100%;object-fit:cover;}
           <p class="hero-sub" id="heroSub">誰一人置いてきぼりにしない</p>
           <p class="hero-sub2" id="heroSub2">長崎県の小さな島から、全国へ。<br>61歳の今が、いちばん面白い。</p>
         </div>
-        <button class="hj-bg-btn" onclick="openBgImg('bgScene1')">📷 背景を変える</button>
+        <div class="sec-ctrl hj-scene-ctrl">
+          <button class="sc-btn bg" title="背景写真を変更" onclick="openBgImg(this.closest('.hj-panel').dataset.scene)">📷</button>
+          <button class="sc-btn up" title="上へ移動" onclick="moveScene(this,-1)">↑</button>
+          <button class="sc-btn dn" title="下へ移動" onclick="moveScene(this,1)">↓</button>
+        </div>
       </div>
       <!-- 2: 橋 = メインタイトル -->
       <div class="hj-panel">
         <h2 class="hj-main" id="hjMain2">人と人を、つなぐ。</h2>
         <p class="hj-main-sub" id="hjSub2">生活の一部でもある、島と島を結ぶ橋のように。</p>
-        <button class="hj-bg-btn" onclick="openBgImg('bgScene2')">📷 背景を変える</button>
+        <div class="sec-ctrl hj-scene-ctrl">
+          <button class="sc-btn bg" title="背景写真を変更" onclick="openBgImg(this.closest('.hj-panel').dataset.scene)">📷</button>
+          <button class="sc-btn up" title="上へ移動" onclick="moveScene(this,-1)">↑</button>
+          <button class="sc-btn dn" title="下へ移動" onclick="moveScene(this,1)">↓</button>
+        </div>
       </div>
       <!-- 3: 講座一覧 イントロ -->
       <div class="hj-panel">
         <span class="hj-clabel" id="hjLabel3">COURSE LINEUP</span>
         <h2 class="hj-main" id="hjMain3">3つの講座</h2>
         <p class="hj-main-sub" id="hjSub3">あなたのペースで学べる、Re.funfun の講座をご紹介します。</p>
-        <button class="hj-bg-btn" onclick="openBgImg('bgScene3')">📷 背景を変える</button>
+        <div class="sec-ctrl hj-scene-ctrl">
+          <button class="sc-btn bg" title="背景写真を変更" onclick="openBgImg(this.closest('.hj-panel').dataset.scene)">📷</button>
+          <button class="sc-btn up" title="上へ移動" onclick="moveScene(this,-1)">↑</button>
+          <button class="sc-btn dn" title="下へ移動" onclick="moveScene(this,1)">↓</button>
+        </div>
       </div>
       <!-- 4: あたまほぐし講座 -->
       <div class="hj-panel">
@@ -815,7 +827,11 @@ video.hero-slide{width:100%;height:100%;object-fit:cover;}
         <h2 class="hj-ctitle" id="hjCTitle4">あたまほぐし講座</h2>
         <p class="hj-cdesc" id="hjCDesc4">「やってみたい！」がカタチになる、あたまほぐしの専門講座。少人数制でひとりひとりのペースに合わせて指導し、出張対応・受講後のフォロー・練習会まで充実。57歳で学び60歳でデビューした講師だからこそ、未経験からでも安心して一歩を踏み出せます。</p>
         <a href="atama.html" class="btn hj-cbtn">あたまほぐし講座を見る →</a>
-        <button class="hj-bg-btn" onclick="openBgImg('bgScene4')">📷 背景を変える</button>
+        <div class="sec-ctrl hj-scene-ctrl">
+          <button class="sc-btn bg" title="背景写真を変更" onclick="openBgImg(this.closest('.hj-panel').dataset.scene)">📷</button>
+          <button class="sc-btn up" title="上へ移動" onclick="moveScene(this,-1)">↑</button>
+          <button class="sc-btn dn" title="下へ移動" onclick="moveScene(this,1)">↓</button>
+        </div>
       </div>
       <!-- 4: よもぎ蒸し講座 -->
       <div class="hj-panel">
@@ -823,7 +839,11 @@ video.hero-slide{width:100%;height:100%;object-fit:cover;}
         <h2 class="hj-ctitle" id="hjCTitle5">よもぎ蒸し講座</h2>
         <p class="hj-cdesc" id="hjCDesc5">ゼロからスタートした還暦セラピストが伝える、1日でしっかり身につく実践型のよもぎ蒸し講座。学んで終わりではなく、サロン導入後の運営・集客・続け方まで丁寧にサポート。おかま直伝®の公式テキストで、体系立てて確実に学べます。</p>
         <a href="yomogi.html" class="btn hj-cbtn">よもぎ蒸し講座を見る →</a>
-        <button class="hj-bg-btn" onclick="openBgImg('bgScene5')">📷 背景を変える</button>
+        <div class="sec-ctrl hj-scene-ctrl">
+          <button class="sc-btn bg" title="背景写真を変更" onclick="openBgImg(this.closest('.hj-panel').dataset.scene)">📷</button>
+          <button class="sc-btn up" title="上へ移動" onclick="moveScene(this,-1)">↑</button>
+          <button class="sc-btn dn" title="下へ移動" onclick="moveScene(this,1)">↓</button>
+        </div>
       </div>
       <!-- 5: 経理のがっこう -->
       <div class="hj-panel">
@@ -831,13 +851,21 @@ video.hero-slide{width:100%;height:100%;object-fit:cover;}
         <h2 class="hj-ctitle" id="hjCTitle6">経理のがっこう</h2>
         <p class="hj-cdesc" id="hjCDesc6">「できるかどうか」ではなく「必要かどうか」。経理歴40年の現役サロンオーナーが、確定申告・節税・利益管理まで、数字が苦手な方にもやさしく実践的に教えます。「誰かに任せる」から「自分で読める」へ——サロン経営の土台が変わります。</p>
         <a href="keiri.html" class="btn hj-cbtn">経理のがっこうを見る →</a>
-        <button class="hj-bg-btn" onclick="openBgImg('bgScene6')">📷 背景を変える</button>
+        <div class="sec-ctrl hj-scene-ctrl">
+          <button class="sc-btn bg" title="背景写真を変更" onclick="openBgImg(this.closest('.hj-panel').dataset.scene)">📷</button>
+          <button class="sc-btn up" title="上へ移動" onclick="moveScene(this,-1)">↑</button>
+          <button class="sc-btn dn" title="下へ移動" onclick="moveScene(this,1)">↓</button>
+        </div>
       </div>
       <!-- 7: 締め -->
       <div class="hj-panel">
         <span class="hj-clabel" id="hjLabel7">Re.funfun</span>
         <h2 class="hj-main" id="hjMain7">繰り返し笑顔に<br>会える場所。</h2>
-        <button class="hj-bg-btn" onclick="openBgImg('bgScene7')">📷 背景を変える</button>
+        <div class="sec-ctrl hj-scene-ctrl">
+          <button class="sc-btn bg" title="背景写真を変更" onclick="openBgImg(this.closest('.hj-panel').dataset.scene)">📷</button>
+          <button class="sc-btn up" title="上へ移動" onclick="moveScene(this,-1)">↑</button>
+          <button class="sc-btn dn" title="下へ移動" onclick="moveScene(this,1)">↓</button>
+        </div>
       </div>
     </div>
     <div class="hj-hint" aria-hidden="true"><span>scroll</span></div>
@@ -1140,6 +1168,8 @@ function cfInit(){
   /* --- ヒーロー: ピン留めスクロール・ジャーニー（scrubでシーンをクロスフェード） --- */
   (function(){
     const sec=document.querySelector('.hero-journey'); if(!sec) return;
+    // 保存されたシーン順をGSAP構築前にDOMへ反映（タイムラインが正しい順序で組まれる）
+    hjInitScenes(); applySceneOrder(getSceneOrder());
     const scenes=gsap.utils.toArray('.hero-journey .hero-slide');
     const panels=gsap.utils.toArray('.hero-journey .hj-panel');
     if(scenes.length<2) return;
@@ -1302,24 +1332,32 @@ function initMobileSubheader(){
     {el:document.querySelector('.instagram'), label:'INSTAGRAM', title:'@re_fun_fun'},
     {el:document.querySelector('.contact'), label:'CONTACT', title:'お問い合わせ'},
   ].filter(c=>c.el);
-  const hideTargets = [...document.querySelectorAll('.hj-sticky')];
-
+  // 現在50%以上見えているセクションを集合管理し、空ならバーを隠す
+  // （旧実装は .hj-sticky の可視判定に依存し、上のジャーニーへ戻った時に消えなかった）
+  const visible = new Map(); // conf -> 画面内の上端Y
   const obs = new IntersectionObserver(entries=>{
     entries.forEach(entry=>{
-      if(!entry.isIntersecting || entry.intersectionRatio < 0.5) return;
       const conf = sectionConfigs.find(c=>c.el===entry.target);
-      if(conf){
-        labelEl.textContent = conf.label;
-        titleEl.textContent = conf.title;
-        bar.classList.add('show');
+      if(!conf) return;
+      if(entry.isIntersecting && entry.intersectionRatio >= 0.5){
+        visible.set(conf, entry.boundingClientRect.top);
       } else {
-        bar.classList.remove('show');
+        visible.delete(conf);
       }
     });
+    if(visible.size === 0){
+      bar.classList.remove('show');
+      return;
+    }
+    // 一番上に見えているセクションの文言を出す
+    let top = null, minTop = Infinity;
+    visible.forEach((y, conf)=>{ if(y < minTop){ minTop = y; top = conf; } });
+    labelEl.textContent = top.label;
+    titleEl.textContent = top.title;
+    bar.classList.add('show');
   }, {threshold:[0.5]});
 
   sectionConfigs.forEach(c=>obs.observe(c.el));
-  hideTargets.forEach(el=>obs.observe(el));
 }
 if(window.innerWidth<=900) initMobileSubheader();
 
@@ -1374,18 +1412,62 @@ function toggleEditMode(){
   rfHjEditBg(em);
   if(!em)hideFmtBar();
 }
-/* 編集モード時、各シーンのパネル背景を対応スライド写真で表示（パネル5=動画はポスター画像）。終了時はインライン背景を消す */
-const HJ_PANEL_BG=['bgScene1','bgScene2','bgScene3','bgScene4','bgScene5','bgScene6','bgScene7'];
+/* ===== ジャーニー（7シーン）背景表示・並び替え ===== */
+// 各パネルに data-scene（対応スライドのid）を一度だけ付与（HTMLは常に元順なので位置対応でOK）
+let hjScenesInit=false;
+function hjInitScenes(){
+  if(hjScenesInit)return;
+  const slides=[...document.querySelectorAll('.hero-journey .hero-slideshow > .hero-slide')];
+  const panels=[...document.querySelectorAll('.hero-journey .hj-content > .hj-panel')];
+  if(!slides.length||!panels.length)return;
+  panels.forEach((p,i)=>{ if(slides[i]&&slides[i].id) p.dataset.scene=slides[i].id; });
+  hjScenesInit=true;
+}
+// 編集モード時、各パネル背景を対応スライド写真で表示（data-scene基準）。終了時は消す
 function rfHjEditBg(on){
-  const panels=document.querySelectorAll('.hero-journey .hj-panel');
-  panels.forEach((p,i)=>{
+  hjInitScenes();
+  document.querySelectorAll('.hero-journey .hj-content > .hj-panel').forEach(p=>{
     if(!on){p.style.backgroundImage='';return;}
-    const id=HJ_PANEL_BG[i];
-    let src=null;
-    if(id){const im=document.getElementById(id);if(im&&im.src)src=im.src;}
-    else{src='images/course-yomogi.jpg';} // 動画シーンはポスター画像を背景表示
-    if(src)p.style.backgroundImage='url("'+src+'")';
+    const im=p.dataset.scene&&document.getElementById(p.dataset.scene);
+    if(im&&im.src)p.style.backgroundImage='url("'+im.src+'")';
   });
+}
+// 保存された順序（bgSceneidの配列）にスライド＋パネルを並べ替える
+function applySceneOrder(order){
+  hjInitScenes();
+  if(!order||!order.length)return;
+  const slideshow=document.querySelector('.hero-journey .hero-slideshow');
+  const content=document.querySelector('.hero-journey .hj-content');
+  if(!slideshow||!content)return;
+  order.forEach(id=>{
+    const slide=document.getElementById(id);
+    const panel=content.querySelector('.hj-panel[data-scene="'+id+'"]');
+    if(slide)slideshow.appendChild(slide);
+    if(panel)content.appendChild(panel);
+  });
+  if(document.body.classList.contains('edit-mode'))rfHjEditBg(true);
+}
+// localStorageから保存済みのシーン順を取得（cfInitがGSAP構築前に使う）
+function getSceneOrder(){
+  try{const st=JSON.parse(localStorage.getItem(SK));const o=st&&st.texts&&st.texts.cfg_sceneOrder;return o?JSON.parse(o):null;}catch(e){return null;}
+}
+// 現在のパネルDOM順（=シーン順）
+function currentSceneOrder(){
+  return [...document.querySelectorAll('.hero-journey .hj-content > .hj-panel')].map(p=>p.dataset.scene).filter(Boolean);
+}
+// 編集モード: シーンを上下に移動（スライドとパネルを同時に並べ替え）
+function moveScene(btn,dir){
+  const panel=btn.closest('.hj-panel');
+  const content=panel.parentNode;
+  const panels=[...content.querySelectorAll(':scope > .hj-panel')];
+  const slideshow=document.querySelector('.hero-journey .hero-slideshow');
+  const slides=[...slideshow.querySelectorAll(':scope > .hero-slide')];
+  const i=panels.indexOf(panel), j=i+dir;
+  if(j<0||j>=panels.length)return;
+  if(dir===-1){content.insertBefore(panel,panels[j]); if(slides[i]&&slides[j])slideshow.insertBefore(slides[i],slides[j]);}
+  else{content.insertBefore(panels[j],panel); if(slides[i]&&slides[j])slideshow.insertBefore(slides[j],slides[i]);}
+  rfHjEditBg(true);
+  try{localStorage.setItem(SK,JSON.stringify(getState()));}catch(_){}
 }
 document.addEventListener('input',()=>{
   if(em) try{localStorage.setItem(SK,JSON.stringify(getState()));}catch(_){}
@@ -1424,6 +1506,9 @@ function getState(){
   document.querySelectorAll('.sec-manageable').forEach(sec=>{
     state.sections.push({id:sec.dataset.secId,hidden:sec.classList.contains('sec-hidden')});
   });
+  // ジャーニー7シーンの並び順を data_json(texts) に保存（要素idと衝突しない cfg_ キー）
+  const order=currentSceneOrder();
+  if(order.length)state.texts.cfg_sceneOrder=JSON.stringify(order);
   return state;
 }
 async function saveAll(authArg){
@@ -1443,6 +1528,7 @@ async function saveAll(authArg){
 function applyState(d){
   if(!d)return;
   if(d.texts)Object.keys(d.texts).forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=d.texts[id];});
+  if(d.texts&&d.texts.cfg_sceneOrder){try{applySceneOrder(JSON.parse(d.texts.cfg_sceneOrder));}catch(e){}}
   if(d.imgs)Object.keys(d.imgs).forEach(id=>{
     const el=document.getElementById(id);if(!el)return;
     el.src=d.imgs[id];el.style.display='block';
