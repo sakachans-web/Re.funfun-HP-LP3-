@@ -706,9 +706,22 @@ body.edit-mode .hero-img-col{opacity:1 !important;transform:none !important;clip
 .hj-sticky{position:sticky;top:0;height:100vh;overflow:hidden;display:flex;align-items:center;justify-content:center;}
 .hero-slideshow{position:absolute;inset:0;z-index:0;background:#cfe0c8;}
 .hero-slide{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;}
-img.hero-slide{width:100%;height:100%;object-fit:cover;}
+img.hero-slide{width:100%;height:100%;object-fit:contain;z-index:1;}
 .hero-slide:first-child{opacity:1;}
-video.hero-slide{width:100%;height:100%;object-fit:cover;}
+video.hero-slide{width:100%;height:100%;object-fit:contain;z-index:1;}
+/* 案B: 縦長写真をPC横幅で cover 拡大すると「ズームされすぎ」になるため contain で全面表示。
+   余白は同じ写真をぼかし拡大した層(.hj-blur)で埋め、黒い空白を作らない（あたたかい世界観）。
+   JSが各imgに1枚ずつ .hj-blur を対応づけ、src差し替え(📷/GAS)にも追従する。
+   contain は全面表示なので、旧モバイルの object-position 補正（人物見切れ対策）は不要になり撤去。 */
+.hj-blur{position:absolute;inset:0;z-index:0;background-size:cover;background-position:center;filter:blur(34px) brightness(.66) saturate(1.06);opacity:0;}
+/* モバイルは縦長画面なので contain だと上下にぼかし帯(letterbox)が出て「ヒーローらしくない」ため、
+   従来どおり cover の全画面表示に戻す（ぼかし層は不要なので非表示）。
+   cover は中央クロップなので、人物が左寄りの橋ルック(bgScene2)だけ object-position を左へ寄せて見切れを防ぐ。 */
+@media(max-width:600px){
+  img.hero-slide{object-fit:cover;}
+  .hj-blur{display:none;}
+  #bgScene2{object-position:25% center;}
+}
 /* 世界観を見せるため画像はしっかり表示。文字可読性はソフトスクリムで確保（明るく柔らかい印象） */
 .hero-scrim{position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(26,40,24,.18) 0%,rgba(26,40,24,.36) 45%,rgba(26,40,24,.46) 100%);}
 /* スライド連動キャプション（GSAPがスクロールに合わせて出し分け） */
@@ -1215,20 +1228,51 @@ function cfInit(){
     if(scenes.length<2) return;
     // 各パネルの中身（ラベル/タイトル/説明/ボタン）を個別に時間差で出すため子要素を取得
     const kids=panels.map(p=>gsap.utils.toArray(p.children));
-    gsap.set(scenes,{opacity:0}); gsap.set(scenes[0],{opacity:1});
+    /* === 案B: contain（写真を全面表示）＋ 同写真のぼかしフィル ===
+       縦長写真をPC横幅で cover 拡大すると顔が巨大化＝「ズームされすぎ」になるため、前景は object-fit:contain で全面表示し、
+       余白を「同じ写真をぼかし拡大した層(.hj-blur)」で埋めて黒い空白を作らない。
+       前景写真は切り取らず静止＝常に全面表示。動きは ぼかし背景の ごく緩やかなズーム/微パンで添える。
+       クロスフェードは前景img＋ぼかし背景を“セット”で行う。FADE/HOLD は1シーン尺の重み（scrubが1120vhへ比例マップ）。 */
+    // 各imgに ぼかし背景divを1枚ずつ対応づけ（参照で対応＝シーン順入替後も崩れない。全レイヤー absolute inset:0 で重なるだけ＝DOM順は見た目に無関係）
+    const blurFor=new Map();
+    scenes.forEach(img=>{
+      let b=img.previousElementSibling;
+      if(!b||!b.classList.contains('hj-blur')){ b=document.createElement('div'); b.className='hj-blur'; img.parentNode.insertBefore(b,img); }
+      const sync=()=>{ const u=img.currentSrc||img.getAttribute('src'); if(u) b.style.backgroundImage="url('"+u+"')"; };
+      sync();
+      new MutationObserver(sync).observe(img,{attributes:true,attributeFilter:['src']}); // 📷/GASのsrc差し替えに追従
+      blurFor.set(img,b);
+    });
+    const blurs=scenes.map(s=>blurFor.get(s));
+
+    const FADE=1.6, HOLD=2.4, STEP=FADE+HOLD;
+    // 前景写真は scale1 で静止＝全面表示を保つ。ぼかし背景だけ緩やかにズーム/微パンして“呼吸する”動きを添える。
+    const bgFrom=()=>({scale:1.1, xPercent:0, yPercent:0});
+    const bgTo  =i=>({scale:1.22, xPercent:1.6*(i%2?1:-1), yPercent:1.0*(i%2?-1:1)});
+
+    // 初期状態: 先頭シーンのみ可視（前景img＋ぼかし背景をセットで）。文字は先頭のみ表示。
+    scenes.forEach((s,i)=>gsap.set(s,{opacity:i===0?1:0, willChange:'opacity'}));
+    blurs.forEach((b,i)=>gsap.set(b,Object.assign({opacity:i===0?1:0, willChange:'transform,opacity'},bgFrom(i))));
     gsap.set(panels,{opacity:1,pointerEvents:'none'}); if(panels[0]) gsap.set(panels[0],{pointerEvents:'auto'});
-    kids.forEach((k,idx)=>gsap.set(k,{opacity: idx===0?1:0, y: idx===0?0:44}));
-    const tl=gsap.timeline({scrollTrigger:{trigger:sec,start:'top top',end:'bottom bottom',scrub:1.5}});
+    kids.forEach((k,idx)=>gsap.set(k,{opacity: idx===0?1:0, y: idx===0?0:40}));
+
+    const tl=gsap.timeline({scrollTrigger:{trigger:sec,start:'top top',end:'bottom bottom',scrub:1.0}});
+    // 先頭: ぼかし背景だけゆっくりズーム（前景写真は静止＝全面のまま）
+    tl.to(blurs[0],Object.assign({duration:STEP,ease:'none'},bgTo(0)),0);
+
+    let t=HOLD; // 先頭シーンを少し見せてから最初の遷移へ
     for(let i=1;i<scenes.length;i++){
-      // 背景: 前シーンをゆっくりフェードアウト、次シーンは軽くズームしながら浮かび上がる
-      tl.to(scenes[i-1],{opacity:0,duration:2.0,ease:'none'})
-        .fromTo(scenes[i],{opacity:0,scale:1.08},{opacity:1,scale:1,duration:2.0,ease:'none'},'<');
-      // 前パネルの中身は上へ抜けて消える
-      if(kids[i-1].length) tl.to(kids[i-1],{opacity:0,y:-22,duration:.9,ease:'power1.in',stagger:0.1},'<');
-      tl.set(panels[i-1],{pointerEvents:'none'},'<').set(panels[i],{pointerEvents:'auto'},'>');
-      // 次パネル: タイトル→説明→ボタン の順に、ゆっくり時間差で浮かび上がる
-      if(kids[i].length) tl.fromTo(kids[i],{opacity:0,y:44},{opacity:1,y:0,duration:1.5,ease:'power2.out',stagger:1.1},'>');
-      tl.to({},{duration:2.0}); // 各シーンを保持
+      // クロスフェード: 前景img＋ぼかし背景を“セット”で sine.inOut（前out/次in を重ねて溶ける・黒落ち無し）
+      tl.to([scenes[i-1],blurs[i-1]],{opacity:0,duration:FADE,ease:'sine.inOut'},t)
+        .fromTo([scenes[i],blurs[i]],{opacity:0},{opacity:1,duration:FADE,ease:'sine.inOut'},t);
+      // 次シーンの ぼかし背景: 出現〜保持〜退場まで途切れずズーム
+      tl.fromTo(blurs[i],bgFrom(i),Object.assign({duration:STEP+FADE,ease:'none'},bgTo(i)),t);
+      // 前パネルの文字は上へ抜けて消える
+      if(kids[i-1].length) tl.to(kids[i-1],{opacity:0,y:-20,duration:FADE*0.7,ease:'power1.in',stagger:0.06},t);
+      tl.set(panels[i-1],{pointerEvents:'none'},t).set(panels[i],{pointerEvents:'auto'},t+FADE*0.5);
+      // 次パネルの文字は“写真が入れ替わった頃”に背景と同調してせり上がる
+      if(kids[i].length) tl.fromTo(kids[i],{opacity:0,y:40},{opacity:1,y:0,duration:1.0,ease:'power2.out',stagger:0.22},t+FADE*0.55);
+      t+=STEP;
     }
     gsap.to('.hj-hint',{opacity:0,scrollTrigger:{trigger:sec,start:'top top',end:'top -15%',scrub:true}});
   })();
