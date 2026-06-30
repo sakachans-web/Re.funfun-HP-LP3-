@@ -755,7 +755,22 @@ video.hero-slide{width:100%;height:100%;object-fit:contain;z-index:1;}
 .hero-sub2{color:rgba(255,255,255,.9) !important;text-shadow:0 1px 8px rgba(0,0,0,.35);}
 .hero-actions .btn-outline{border-color:#fff;color:#fff;background:transparent;}
 .hero-actions .btn-outline:hover{background:rgba(255,255,255,.15);}
-@media(prefers-reduced-motion:reduce){.hero-slide{animation:none;}.hero-slide:nth-child(1){opacity:1;}}
+/* 視差を減らす設定(prefers-reduced-motion): スクロール演出をやめ、ジャーニーを静的な縦積み表示にする（WCAG 2.3.3）。
+   各パネルに対応写真を背景としてセット(rfHjEditBg)＋スクリム＋文字。スライドショー層とスクリムは使わない。 */
+@media(prefers-reduced-motion:reduce){
+  .hero-slide{animation:none;}
+  .hero-journey{height:auto;}
+  .hj-sticky{position:static;height:auto;display:block;overflow:visible;}
+  .hero-bg{display:none;}
+  .hero-scrim{display:none;}
+  .hj-hint{display:none;}
+  .hj-content{position:static;pointer-events:auto;}
+  .hj-panel{position:relative;inset:auto;opacity:1;pointer-events:auto;min-height:100vh;background-size:cover;background-position:center;justify-content:center;}
+  .hj-panel[data-scene="bgScene2"]{background-position:25% center;} /* 橋ルックは人物が左寄りなので左寄せ */
+  .hj-panel::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(26,40,24,.34),rgba(26,40,24,.5));pointer-events:none;z-index:0;}
+  .hj-panel>*{position:relative;z-index:1;}
+  .reveal,[data-anim]{opacity:1!important;transform:none!important;transition:none!important;} /* スクロール出現は即時表示に */
+}
 </style>
 </head>
 <body>
@@ -1211,71 +1226,81 @@ gsap.registerPlugin(ScrollTrigger);
 const EASE_OUT  = 'power3.out';
 const EASE_EXPO = 'expo.out';
 
+// 視差を減らす設定(prefers-reduced-motion): ジャーニーのスクロール演出を作らず、CSS(@media reduce)で静的な縦積みにする（WCAG 2.3.3）
+const PREFERS_REDUCED = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion:reduce)').matches);
+let heroJourneyTL=null, heroJourneyHint=null;
+// ジャーニーのGSAPタイムライン構築（関数化＝シーン順がGASで変わったら作り直せる。HJ-05対策）
+function buildHeroJourney(){
+  if(PREFERS_REDUCED) return;                       // 視差オフ時はタイムラインを作らない
+  const sec=document.querySelector('.hero-journey'); if(!sec) return;
+  // 既存タイムライン/トリガを破棄してから組み直す（再構築で孤児化させない）
+  if(heroJourneyTL){ if(heroJourneyTL.scrollTrigger) heroJourneyTL.scrollTrigger.kill(); heroJourneyTL.kill(); heroJourneyTL=null; }
+  if(heroJourneyHint){ if(heroJourneyHint.scrollTrigger) heroJourneyHint.scrollTrigger.kill(); heroJourneyHint.kill(); heroJourneyHint=null; }
+  const scenes=gsap.utils.toArray('.hero-journey .hero-slide');
+  const panels=gsap.utils.toArray('.hero-journey .hj-panel');
+  if(scenes.length<2) return;
+  const kids=panels.map(p=>gsap.utils.toArray(p.children));
+  /* === 案B: contain（写真を全面表示）＋ 同写真のぼかしフィル ===
+     縦長写真をPC横幅で cover 拡大すると顔が巨大化＝「ズームされすぎ」になるため、前景は object-fit:contain で全面表示し、
+     余白を「同じ写真をぼかし拡大した層(.hj-blur)」で埋めて黒い空白を作らない。前景写真は静止＝常に全面、動きはぼかし背景だけ。 */
+  // ぼかし背景: imgごとに1枚（img.__hjBlur に参照で紐付け＝シーン順入替でDOM位置が変わっても崩れない）。生成とsrc追従observerは初回のみ。
+  const blurFor=new Map();
+  scenes.forEach(img=>{
+    let b=img.__hjBlur;
+    if(!b){
+      b=document.createElement('div'); b.className='hj-blur'; img.parentNode.insertBefore(b,img); img.__hjBlur=b;
+      const sync=()=>{ const u=img.currentSrc||img.getAttribute('src'); if(u) b.style.backgroundImage="url('"+u+"')"; };
+      sync();
+      new MutationObserver(sync).observe(img,{attributes:true,attributeFilter:['src']}); // 📷/GASのsrc差し替えに追従
+    }
+    blurFor.set(img,b);
+  });
+  const blurs=scenes.map(s=>blurFor.get(s));
+  // ※clearProps は使わない（ぼかし背景の backgroundImage まで消えるため）。下の gsap.set 群で
+  //   opacity / transform / willChange を明示的に再設定するので、再構築時も残存スタイルは上書きされる。
+
+  const FADE=1.6, HOLD=2.4, STEP=FADE+HOLD;
+  const bgFrom=()=>({scale:1.1, xPercent:0, yPercent:0});
+  const bgTo  =i=>({scale:1.22, xPercent:1.6*(i%2?1:-1), yPercent:1.0*(i%2?-1:1)});
+
+  scenes.forEach((s,i)=>gsap.set(s,{opacity:i===0?1:0, willChange:'opacity'}));
+  blurs.forEach((b,i)=>gsap.set(b,Object.assign({opacity:i===0?1:0, willChange:'transform,opacity'},bgFrom(i))));
+  gsap.set(panels,{opacity:1,pointerEvents:'none'}); if(panels[0]) gsap.set(panels[0],{pointerEvents:'auto'});
+  kids.forEach((k,idx)=>gsap.set(k,{opacity: idx===0?1:0, y: idx===0?0:40}));
+
+  const tl=gsap.timeline({scrollTrigger:{trigger:sec,start:'top top',end:'bottom bottom',scrub:1.0}});
+  heroJourneyTL=tl;
+  tl.to(blurs[0],Object.assign({duration:STEP,ease:'none'},bgTo(0)),0);   // 先頭: ぼかし背景だけゆっくりズーム
+  let t=HOLD;
+  for(let i=1;i<scenes.length;i++){
+    // クロスフェード: 前景img＋ぼかし背景を“セット”で sine.inOut（前out/次in を重ねて溶ける・黒落ち無し）
+    tl.to([scenes[i-1],blurs[i-1]],{opacity:0,duration:FADE,ease:'sine.inOut'},t)
+      .fromTo([scenes[i],blurs[i]],{opacity:0},{opacity:1,duration:FADE,ease:'sine.inOut'},t);
+    tl.fromTo(blurs[i],bgFrom(i),Object.assign({duration:STEP+FADE,ease:'none'},bgTo(i)),t);
+    if(kids[i-1].length) tl.to(kids[i-1],{opacity:0,y:-20,duration:FADE*0.7,ease:'power1.in',stagger:0.06},t);
+    tl.set(panels[i-1],{pointerEvents:'none'},t).set(panels[i],{pointerEvents:'auto'},t+FADE*0.5);
+    if(kids[i].length) tl.fromTo(kids[i],{opacity:0,y:40},{opacity:1,y:0,duration:1.0,ease:'power2.out',stagger:0.22},t+FADE*0.55);
+    t+=STEP;
+  }
+  heroJourneyHint=gsap.to('.hj-hint',{opacity:0,scrollTrigger:{trigger:sec,start:'top top',end:'top -15%',scrub:true}});
+}
+
 function cfInit(){
   if(document.body.classList.contains('edit-mode')) return;
+  if(PREFERS_REDUCED){
+    // 視差を減らす設定(B): ジャーニーはCSS(@media reduce)で静的な縦積みになる。各パネル背景に対応写真をセットし、GSAPアニメは一切作らない。
+    hjInitScenes(); applySceneOrder(getSceneOrder()); rfHjEditBg(true);
+    return;
+  }
 
   /* --- ヒーロー: ページロード時 --- */
   // 背景: ゆっくりズーム (photo-scale)
   if(document.querySelector('#heroBgImg')) gsap.to('#heroBgImg', {scale:1.1, duration:14, ease:'none'});
 
   /* --- ヒーロー: ピン留めスクロール・ジャーニー（scrubでシーンをクロスフェード） --- */
-  (function(){
-    const sec=document.querySelector('.hero-journey'); if(!sec) return;
-    // 保存されたシーン順をGSAP構築前にDOMへ反映（タイムラインが正しい順序で組まれる）
-    hjInitScenes(); applySceneOrder(getSceneOrder());
-    const scenes=gsap.utils.toArray('.hero-journey .hero-slide');
-    const panels=gsap.utils.toArray('.hero-journey .hj-panel');
-    if(scenes.length<2) return;
-    // 各パネルの中身（ラベル/タイトル/説明/ボタン）を個別に時間差で出すため子要素を取得
-    const kids=panels.map(p=>gsap.utils.toArray(p.children));
-    /* === 案B: contain（写真を全面表示）＋ 同写真のぼかしフィル ===
-       縦長写真をPC横幅で cover 拡大すると顔が巨大化＝「ズームされすぎ」になるため、前景は object-fit:contain で全面表示し、
-       余白を「同じ写真をぼかし拡大した層(.hj-blur)」で埋めて黒い空白を作らない。
-       前景写真は切り取らず静止＝常に全面表示。動きは ぼかし背景の ごく緩やかなズーム/微パンで添える。
-       クロスフェードは前景img＋ぼかし背景を“セット”で行う。FADE/HOLD は1シーン尺の重み（scrubが1120vhへ比例マップ）。 */
-    // 各imgに ぼかし背景divを1枚ずつ対応づけ（参照で対応＝シーン順入替後も崩れない。全レイヤー absolute inset:0 で重なるだけ＝DOM順は見た目に無関係）
-    const blurFor=new Map();
-    scenes.forEach(img=>{
-      let b=img.previousElementSibling;
-      if(!b||!b.classList.contains('hj-blur')){ b=document.createElement('div'); b.className='hj-blur'; img.parentNode.insertBefore(b,img); }
-      const sync=()=>{ const u=img.currentSrc||img.getAttribute('src'); if(u) b.style.backgroundImage="url('"+u+"')"; };
-      sync();
-      new MutationObserver(sync).observe(img,{attributes:true,attributeFilter:['src']}); // 📷/GASのsrc差し替えに追従
-      blurFor.set(img,b);
-    });
-    const blurs=scenes.map(s=>blurFor.get(s));
-
-    const FADE=1.6, HOLD=2.4, STEP=FADE+HOLD;
-    // 前景写真は scale1 で静止＝全面表示を保つ。ぼかし背景だけ緩やかにズーム/微パンして“呼吸する”動きを添える。
-    const bgFrom=()=>({scale:1.1, xPercent:0, yPercent:0});
-    const bgTo  =i=>({scale:1.22, xPercent:1.6*(i%2?1:-1), yPercent:1.0*(i%2?-1:1)});
-
-    // 初期状態: 先頭シーンのみ可視（前景img＋ぼかし背景をセットで）。文字は先頭のみ表示。
-    scenes.forEach((s,i)=>gsap.set(s,{opacity:i===0?1:0, willChange:'opacity'}));
-    blurs.forEach((b,i)=>gsap.set(b,Object.assign({opacity:i===0?1:0, willChange:'transform,opacity'},bgFrom(i))));
-    gsap.set(panels,{opacity:1,pointerEvents:'none'}); if(panels[0]) gsap.set(panels[0],{pointerEvents:'auto'});
-    kids.forEach((k,idx)=>gsap.set(k,{opacity: idx===0?1:0, y: idx===0?0:40}));
-
-    const tl=gsap.timeline({scrollTrigger:{trigger:sec,start:'top top',end:'bottom bottom',scrub:1.0}});
-    // 先頭: ぼかし背景だけゆっくりズーム（前景写真は静止＝全面のまま）
-    tl.to(blurs[0],Object.assign({duration:STEP,ease:'none'},bgTo(0)),0);
-
-    let t=HOLD; // 先頭シーンを少し見せてから最初の遷移へ
-    for(let i=1;i<scenes.length;i++){
-      // クロスフェード: 前景img＋ぼかし背景を“セット”で sine.inOut（前out/次in を重ねて溶ける・黒落ち無し）
-      tl.to([scenes[i-1],blurs[i-1]],{opacity:0,duration:FADE,ease:'sine.inOut'},t)
-        .fromTo([scenes[i],blurs[i]],{opacity:0},{opacity:1,duration:FADE,ease:'sine.inOut'},t);
-      // 次シーンの ぼかし背景: 出現〜保持〜退場まで途切れずズーム
-      tl.fromTo(blurs[i],bgFrom(i),Object.assign({duration:STEP+FADE,ease:'none'},bgTo(i)),t);
-      // 前パネルの文字は上へ抜けて消える
-      if(kids[i-1].length) tl.to(kids[i-1],{opacity:0,y:-20,duration:FADE*0.7,ease:'power1.in',stagger:0.06},t);
-      tl.set(panels[i-1],{pointerEvents:'none'},t).set(panels[i],{pointerEvents:'auto'},t+FADE*0.5);
-      // 次パネルの文字は“写真が入れ替わった頃”に背景と同調してせり上がる
-      if(kids[i].length) tl.fromTo(kids[i],{opacity:0,y:40},{opacity:1,y:0,duration:1.0,ease:'power2.out',stagger:0.22},t+FADE*0.55);
-      t+=STEP;
-    }
-    gsap.to('.hj-hint',{opacity:0,scrollTrigger:{trigger:sec,start:'top top',end:'top -15%',scrub:true}});
-  })();
+  // 保存されたシーン順をDOMへ反映してからタイムライン構築。構築は buildHeroJourney() に関数化＝
+  // GASがあとからシーン順を変えても作り直せる（HJ-05: 構築後の並べ替えで孤児化しない）。
+  hjInitScenes(); applySceneOrder(getSceneOrder()); buildHeroJourney();
 
   // P1 (タイトル+ボタン): 写真の出現と同時に、まとめてふわっと表示（順次=パワポ感を解消）
   // ※ボタンは hero-actions ごとまとめて動かす（個別アニメだと縦ズレの原因になる）
@@ -1393,6 +1418,10 @@ if(document.readyState === 'loading'){
 }
 // 画像読み込みでレイアウトが変わるとtrigger位置がズレるので、load後に再計算
 window.addEventListener('load', ()=>{ if(window.ScrollTrigger) ScrollTrigger.refresh(); });
+// Webフォント(Noto)適用で行高が変わると trigger 位置がズレるため、フォント確定後にも再計算（F4/IDX-3）
+if(document.fonts&&document.fonts.ready){ document.fonts.ready.then(()=>{ if(window.ScrollTrigger) ScrollTrigger.refresh(); }); }
+// リサイズ/端末回転でも 1120vh ジャーニーの start/end がズレるため再計算（C: iOSアドレスバー伸縮・回転対策）
+let __rfRT; window.addEventListener('resize', ()=>{ clearTimeout(__rfRT); __rfRT=setTimeout(()=>{ if(window.ScrollTrigger) ScrollTrigger.refresh(); }, 200); });
 
 /* ===== 後方互換: .reveal / [data-anim] ===== */
 function reObserve(){
@@ -1612,7 +1641,13 @@ async function saveAll(authArg){
 function applyState(d){
   if(!d)return;
   if(d.texts)Object.keys(d.texts).forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=d.texts[id];});
-  if(d.texts&&d.texts.cfg_sceneOrder2){try{applySceneOrder(JSON.parse(d.texts.cfg_sceneOrder2));}catch(e){}}
+  if(d.texts&&d.texts.cfg_sceneOrder2){
+    try{applySceneOrder(JSON.parse(d.texts.cfg_sceneOrder2));}catch(e){}
+    // シーン順が変わったら反映: 通常はタイムライン再構築(HJ-05)、視差オフ時はパネル背景を貼り直し
+    if(!document.body.classList.contains('edit-mode')){
+      if(PREFERS_REDUCED) rfHjEditBg(true); else buildHeroJourney();
+    }
+  }
   if(d.imgs)Object.keys(d.imgs).forEach(id=>{
     const el=document.getElementById(id);if(!el)return;
     el.src=d.imgs[id];el.style.display='block';
@@ -1654,6 +1689,7 @@ function applyState(d){
     requestAnimationFrame(()=>{
       requestAnimationFrame(()=>{
         document.documentElement.classList.add('snap-ready');
+        if(window.ScrollTrigger) ScrollTrigger.refresh(); // F2: 並べ替え＋レイアウト確定後に再計算（画像decode後のズレ防止）
       });
     });
   }
