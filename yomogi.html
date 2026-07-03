@@ -223,7 +223,8 @@ a{color:inherit;text-decoration:none;}
 .price-num{font-family:'Noto Serif JP',serif;font-size:3.8rem;color:var(--sage);font-weight:600;line-height:1;}
 .price-tax{font-size:.85rem;color:var(--muted);margin-top:.5rem;}
 .price-div{width:48px;height:1px;background:var(--beige2);margin:1.6rem auto;}
-.price-note-txt{font-size:.78rem;color:var(--muted);line-height:2;}
+.price-note-txt{font-size:.78rem;color:var(--muted);line-height:2;margin-top:.9rem;}
+.price-detail{font-size:.78rem;color:var(--muted);line-height:2;}
 .price-edit-btn{display:none;background:none;border:1px solid var(--sage-l);border-radius:6px;padding:.3rem .8rem;color:var(--sage);font-size:.74rem;cursor:pointer;margin-top:1.2rem;}
 .edit-mode .price-edit-btn{display:inline-block;}
 
@@ -677,8 +678,9 @@ body.edit-mode .hero-slide:nth-child(1){opacity:1 !important;}
           <div class="price-box-deco"></div>
           <span class="price-lbl">受講料</span>
           <p class="price-num" id="priceNum">33,000円（税込）</p>
+          <p class="price-note-txt" id="priceNote">詳細はInstagram DM または公式LINEにてご案内します</p>
           <div class="price-div"></div>
-          <p class="price-note-txt" id="priceNote">おかま直伝®で統一の受講料です。詳細はInstagram DM または公式LINEにてご案内します</p>
+          <p class="price-detail" id="priceDetail">申込後に開始希望月で日程調整 → Instagram告知<br>申込方法：Instagram または公式LINE DM</p>
           <button class="price-edit-btn" onclick="openPriceEdit()">✏️ 編集</button>
         </div>
       </div>
