@@ -755,22 +755,8 @@ video.hero-slide{width:100%;height:100%;object-fit:contain;z-index:1;}
 .hero-sub2{color:rgba(255,255,255,.9) !important;text-shadow:0 1px 8px rgba(0,0,0,.35);}
 .hero-actions .btn-outline{border-color:#fff;color:#fff;background:transparent;}
 .hero-actions .btn-outline:hover{background:rgba(255,255,255,.15);}
-/* 視差を減らす設定(prefers-reduced-motion): スクロール演出をやめ、ジャーニーを静的な縦積み表示にする（WCAG 2.3.3）。
-   各パネルに対応写真を背景としてセット(rfHjEditBg)＋スクリム＋文字。スライドショー層とスクリムは使わない。 */
-@media(prefers-reduced-motion:reduce){
-  .hero-slide{animation:none;}
-  .hero-journey{height:auto;}
-  .hj-sticky{position:static;height:auto;display:block;overflow:visible;}
-  .hero-bg{display:none;}
-  .hero-scrim{display:none;}
-  .hj-hint{display:none;}
-  .hj-content{position:static;pointer-events:auto;}
-  .hj-panel{position:relative;inset:auto;opacity:1;pointer-events:auto;min-height:100vh;background-size:cover;background-position:center;justify-content:center;}
-  .hj-panel[data-scene="bgScene2"]{background-position:25% center;} /* 橋ルックは人物が左寄りなので左寄せ */
-  .hj-panel::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(26,40,24,.34),rgba(26,40,24,.5));pointer-events:none;z-index:0;}
-  .hj-panel>*{position:relative;z-index:1;}
-  .reveal,[data-anim]{opacity:1!important;transform:none!important;transition:none!important;} /* スクロール出現は即時表示に */
-}
+/* クライアント要望により、視差軽減(prefers-reduced-motion)による静止化は無効化。
+   端末の「視差効果を減らす」設定に関係なく、全端末でスクロール演出をフル表示する（A案）。 */
 </style>
 </head>
 <body>
@@ -1226,8 +1212,9 @@ gsap.registerPlugin(ScrollTrigger);
 const EASE_OUT  = 'power3.out';
 const EASE_EXPO = 'expo.out';
 
-// 視差を減らす設定(prefers-reduced-motion): ジャーニーのスクロール演出を作らず、CSS(@media reduce)で静的な縦積みにする（WCAG 2.3.3）
-const PREFERS_REDUCED = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion:reduce)').matches);
+// クライアント要望により、視差軽減(prefers-reduced-motion)を無視して全端末でフル演出を表示（A案）。
+// ＝この値を常に false に固定することで、下の reduce 用分岐（buildHeroJourney/cfInit/applyState）は動かず、常にフルのスクロール演出が組まれる。
+const PREFERS_REDUCED = false;
 let heroJourneyTL=null, heroJourneyHint=null;
 // ジャーニーのGSAPタイムライン構築（関数化＝シーン順がGASで変わったら作り直せる。HJ-05対策）
 function buildHeroJourney(){
