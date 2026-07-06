@@ -124,7 +124,7 @@ a{color:inherit;text-decoration:none;}
 .hero-slide:nth-child(3){animation-delay:14s;}
 @keyframes heroSlide{0%{opacity:0;}3%{opacity:1;}30%{opacity:1;}34%{opacity:0;}100%{opacity:0;}}
 /* 写真の左端をクリーム余白へ溶かすブレンド層（旧: 緑スクリム）。淡い白ベールで写真を少し引かせる */
-.hero-scrim{position:absolute;top:0;bottom:0;left:44%;right:0;z-index:1;pointer-events:none;background:linear-gradient(to right,var(--cream) 0%,rgba(247,243,236,.88) 22%,rgba(247,243,236,.34) 46%,rgba(247,243,236,0) 66%),linear-gradient(rgba(255,255,255,.07),rgba(255,255,255,.07));}
+.hero-scrim{position:absolute;top:0;bottom:0;left:44%;right:0;z-index:1;pointer-events:none;background:linear-gradient(to right,var(--cream) 0%,rgba(247,243,236,.60) 6%,rgba(247,243,236,.10) 13%,rgba(247,243,236,0) 20%),linear-gradient(rgba(255,255,255,.03),rgba(255,255,255,.03));}
 .hero-inner{position:relative;z-index:2;max-width:1140px;margin:0 auto;padding:8rem var(--pad-x) 6rem;width:100%;}
 .hero-text{max-width:500px;}
 .hero-eyebrow{font-size:.72rem;letter-spacing:.22em;color:var(--sage);margin-bottom:1.6rem;display:flex;align-items:center;gap:.7rem;opacity:0;animation:ey-in .8s .3s ease forwards;}
@@ -417,12 +417,17 @@ footer{background:#efe9dc;color:rgba(58,53,45,.6);border-top:1px solid #e5dece;p
   /* ヒーロー: 上=写真(残り空間に伸縮・下端をクリームへフェード) / 下=文字。ヘッダー60px+パンくず約32pxを引いた1画面に全部収める */
   .hero{min-height:calc(100svh - 92px);display:flex;flex-direction:column;align-items:stretch;background:var(--cream);}
   .hero-slideshow{position:relative;left:0;right:0;width:100%;flex:1 1 auto;min-height:200px;}
-  .hero-slideshow::after{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(to bottom,rgba(247,243,236,0) 58%,var(--cream) 100%);}
+  .hero-slideshow::after{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(to bottom,rgba(247,243,236,0) 48%,var(--cream) 100%);}
   .hero-scrim{display:none;}
   .hero-inner{flex:none;grid-template-columns:1fr;gap:3rem;text-align:center;padding:1.4rem 1.5rem 2rem;}
   .hero-text{max-width:none;}
-  .hero-catch{padding-left:0;border-left:none;}
-  .hero-eyebrow,.hero-btns{justify-content:center;}
+  /* 601-960px(PCハーフ/タブレット)は文字ブロックを圧縮して写真に高さを回す */
+  .hero-eyebrow{display:none;}
+  .hero h1{font-size:clamp(1.5rem,3vw,1.9rem);margin-bottom:.9rem;}
+  .hero-tag{margin-bottom:.9rem;}
+  .hero-catch{padding-left:0;border-left:none;margin-bottom:.4rem;}
+  .hero-sub{margin-bottom:0;}
+  .hero-btns{justify-content:center;}
   .scroll-ind{display:none;}
   .hero-img-col{max-width:280px;margin:0 auto;}
   .catch-inner{grid-template-columns:1fr;gap:0;}
